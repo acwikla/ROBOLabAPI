@@ -9,6 +9,11 @@ namespace ROBOLabAPI
 {
     public class ROBOLabDbContext : DbContext
     {
+        public ROBOLabDbContext()
+        {
+
+        }
+
         public ROBOLabDbContext(DbContextOptions<ROBOLabDbContext> options)
             : base(options)
         {
