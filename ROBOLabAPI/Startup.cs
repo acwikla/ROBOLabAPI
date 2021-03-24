@@ -36,6 +36,9 @@ namespace ROBOLabAPI
 
             services.AddDbContext<ROBOLabDbContext>(opt => opt.UseInMemoryDatabase("ROBOLabDB"));
             //services.AddDbContext<ROBOLabDbContext>(opt => opt.UseSqlServer(Configuration.GetConnectionString("ROBOLabDB")));
+
+            services.AddAutoMapper(typeof(Startup));
+            services.AddControllersWithViews();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
