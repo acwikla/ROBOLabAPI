@@ -4,19 +4,13 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace ROBOLab.Core.Models
+namespace ROBOLab.Core.DTO
 {
-    public class DeviceType
+    public class DeviceTypeDTO
     {
         public int Id { get; set; }
 
         [Required]
         public string Name { get; set; }
-
-        public ICollection<Device> Devices { get; set; }
-
-        public ICollection<Job> Jobs { get; set; }
-
-        public ICollection<Property> Properties { get; set; }
     }
 }

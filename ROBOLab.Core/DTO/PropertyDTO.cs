@@ -5,9 +5,9 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace ROBOLab.Core.Models
+namespace ROBOLab.Core.DTO
 {
-    public class Property
+    public class PropertyDTO
     {
         public int Id { get; set; }
 
@@ -17,17 +17,7 @@ namespace ROBOLab.Core.Models
         [Required]
         public string Body { get; set; }
 
-        [Required]
-        public int DeviceTypeId { get; set; }
-
-        [Required]
-        public DeviceType DeviceType { get; set; }
-
         [DefaultValue(false)]
         public bool IsMode { get; set; }
-
-        public int ModeId { get; set; }
-
-        public Mode Mode { get; set; }
     }
 }

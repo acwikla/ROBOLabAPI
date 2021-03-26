@@ -29,6 +29,12 @@ namespace ROBOLabAPI.Map
 
             CreateMap<DeviceToViewDTO, Device>();
             CreateMap<Device, DeviceToViewDTO>();
+
+            //DeviceType
+            CreateMap<DeviceTypeDTO, DeviceType>();
+            CreateMap<DeviceType, DeviceTypeDTO>();
+
+
         }
     }
 }
