@@ -13,8 +13,8 @@ using ROBOLabAPI;
 
 namespace ROBOLabAPI.Controllers
 {
-    [Route("api/[controller]")]
-    [ApiController]
+    [Route("api/users")]
+    //[ApiController]
     public class UsersController : ControllerBase
     {
         private readonly ROBOLabDbContext _context;
@@ -61,8 +61,8 @@ namespace ROBOLabAPI.Controllers
             return Ok(userViewDTO);
         }
 
-        // GET: api/Users/5/device
-        [HttpGet("{id}/device")]
+        // GET: api/Users/5/devices
+        [HttpGet("{id}/devices")]
         public async Task<ActionResult<IEnumerable<DeviceToViewDTO>>> GetUsersDevices(int id)
         {
             var user = await _context.Users.FirstOrDefaultAsync();
@@ -90,7 +90,7 @@ namespace ROBOLabAPI.Controllers
         }
 
         // GET: api/Users/1/device/1
-        [HttpGet("{id}/device/{deviceId}")]
+        [HttpGet("{id}/devices/{deviceId}")]
         public async Task<ActionResult<DeviceToViewDTO>> GetUsersDevice(int id, int deviceId)
         {
             var user = await _context.Users.FirstOrDefaultAsync();
@@ -191,9 +191,9 @@ namespace ROBOLabAPI.Controllers
             return response;
         }
 
-        // POST: api/Users/1/device/device-type/{deviceTypeId}
-        [HttpPost("{id}/device/deviceTypeId={deviceTypeId}")]
-        public async Task<ActionResult<DeviceToViewDTO>> PostDevice(int id, int deviceTypeId, DeviceDTO device)
+        // POST: api/Users/1/device
+        [HttpPost("{id}/device")]
+        public async Task<ActionResult<DeviceToViewDTO>> PostDevice(int id, DeviceTypeDTO deviceTypeDTO, DeviceDTO deviceDTO)
         {
             var user = await _context.Users.FindAsync(id);
             if (user == null)
@@ -201,13 +201,13 @@ namespace ROBOLabAPI.Controllers
                 return NotFound($"There is no user for given id: {id}.");
             }
 
-            var deviceType = await _context.DeviceTypes.FindAsync(deviceTypeId);
+            var deviceType = await _context.DeviceTypes.FindAsync(deviceTypeDTO.Id);
             if (deviceType == null)
             {
-                return NotFound($"There is no device type for given id: {deviceTypeId}.");
+                return NotFound($"There is no device type for given id: {deviceTypeDTO.Id}.");
             }
 
-            Device newDevice = _mapper.Map<Device>(device);
+            Device newDevice = _mapper.Map<Device>(deviceDTO);
             newDevice.UserId = user.Id;
             newDevice.User = user;
             newDevice.DeviceTypeId = deviceType.Id;
@@ -217,8 +217,8 @@ namespace ROBOLabAPI.Controllers
             deviceType.Devices.Add(newDevice);
             await _context.SaveChangesAsync();
 
-            DeviceToViewDTO deviceDTO = _mapper.Map<DeviceToViewDTO>(newDevice);
-            return CreatedAtAction("GetUsersDevice", new { id, deviceId= deviceDTO.Id }, deviceDTO);
+            DeviceToViewDTO deviceToViewDTO = _mapper.Map<DeviceToViewDTO>(newDevice);
+            return CreatedAtAction("GetUsersDevice", new { id, deviceId= deviceToViewDTO.Id }, deviceToViewDTO);
         }
 
         // DELETE: api/Users/5

@@ -65,21 +65,17 @@ namespace ROBOLabAPI.Controllers
         [HttpGet("{id}/devices/userId={userId}")]
         public async Task<ActionResult<ICollection<DeviceDTO>>> GetAllDevicesByDeviceType(int id, int userId)
         {
-            //v1
             var deviceType = await _context.DeviceTypes.FindAsync(id);
-            var devicesByDeviceType = await _context.DeviceTypes.Include(d => d.Devices).Where(user => user.Id == userId).SelectMany(d=> d.Devices).ToListAsync();
-
-            //v2
             var usersDevices = await _context.Users.Include(n => n.Devices).Where(user => user.Id == userId).SelectMany(user => user.Devices).ToListAsync();
             var usersDevicesByDeviceType = usersDevices.Where(device => device.DeviceTypeId == id).ToList();
 
-            if (devicesByDeviceType == null)
+            if (usersDevicesByDeviceType == null)
             {
                 return NotFound($"There is no devices for device type: {deviceType.Name} for user with given id: {userId}");
             }
 
             List<DeviceDTO> devicesByDeviceTypeDTO = new List<DeviceDTO>();
-            foreach (Device d in devicesByDeviceType)
+            foreach (Device d in usersDevicesByDeviceType)
             {
                 DeviceDTO deviceDTO = _mapper.Map<DeviceDTO>(d);
                 devicesByDeviceTypeDTO.Add(deviceDTO);
@@ -103,7 +99,7 @@ namespace ROBOLabAPI.Controllers
                 return NotFound($"There is no device type for given id: {id}.");
             }
 
-            deviceTypeToUpdate.Name = deviceTypeDTO.Name;
+            deviceTypeToUpdate.Name = deviceTypeDTO.DeviceTypeName;
 
             _context.Entry(deviceTypeToUpdate).State = EntityState.Modified;
 
@@ -130,7 +126,7 @@ namespace ROBOLabAPI.Controllers
         [HttpPost]
         public async Task<ActionResult<DeviceType>> PostDeviceType(DeviceTypeDTO deviceTypeDTO)
         {
-            if (DeviceTypeNameExists(deviceTypeDTO.Name))
+            if (DeviceTypeNameExists(deviceTypeDTO.DeviceTypeName))
             {
                 return BadRequest("Device type with this name already exists.");
             }
