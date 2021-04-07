@@ -2,56 +2,107 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using AutoMapper;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using ROBOLab.Core.DTO;
 using ROBOLab.Core.Models;
 using ROBOLabAPI;
 
 namespace ROBOLabAPI.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/jobs")]
     [ApiController]
     public class JobsController : ControllerBase
     {
         private readonly ROBOLabDbContext _context;
+        private readonly IMapper _mapper;
 
-        public JobsController(ROBOLabDbContext context)
+        public JobsController(ROBOLabDbContext context, IMapper mapper)
         {
             _context = context;
+            _mapper = mapper;
         }
 
-        // GET: api/Jobs
+        // GET: api/jobs
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Job>>> GetJobs()
+        public async Task<ActionResult<IEnumerable<JobDTO>>> GetJobs()
         {
-            return await _context.Jobs.ToListAsync();
+            var jobs = await _context.Jobs.ToListAsync();
+
+            List<JobDTO> jobsDTO = new List<JobDTO>();
+            foreach (Job j in jobs)
+            {
+                JobDTO jobDTO = _mapper.Map<JobDTO>(j);
+                jobsDTO.Add(jobDTO);
+            }
+
+            return jobsDTO;
         }
 
-        // GET: api/Jobs/5
+        // GET: api/jobs/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<Job>> GetJob(int id)
+        public async Task<ActionResult<JobDTO>> GetJob(int id)
         {
             var job = await _context.Jobs.FindAsync(id);
 
             if (job == null)
             {
-                return NotFound();
+                return NotFound($"There is no job for given id: {id}.");
             }
 
-            return job;
+            JobDTO jobDTO = _mapper.Map<JobDTO>(job);
+            return jobDTO;
         }
 
-        // PUT: api/Jobs/5
-        [HttpPut("{id}")]
-        public async Task<IActionResult> PutJob(int id, Job job)
+        // GET: api/jobs?devtype={type}
+        [HttpGet("{devtype}")]
+        public async Task<ActionResult<IEnumerable<JobDTO>>> GetJobForDeviceType([FromQuery] string type)
         {
-            if (id != job.Id)
+            var deviceType = await _context.DeviceTypes.Include(d => d.Jobs).Where(deviceType => deviceType.Name == type).FirstOrDefaultAsync();
+
+            if (deviceType == null)
             {
-                return BadRequest();
+                return NotFound($"There is no device type with given name: {type}.");
             }
 
-            _context.Entry(job).State = EntityState.Modified;
+            if (deviceType.Jobs == null)
+            {
+                return NotFound($"There is no job for device type with given name: {type}.");
+            }
+
+            List<JobDTO> jobsDTO = new List<JobDTO>();
+            foreach (Job j in deviceType.Jobs)
+            {
+                JobDTO jobDTO = _mapper.Map<JobDTO>(j);
+                jobsDTO.Add(jobDTO);
+            }
+            
+            return jobsDTO;
+        }
+
+        // PUT: api/jobs/5
+        [HttpPut("{id}")]
+        public async Task<IActionResult> PutJob(int id, JobDTO jobDTO)
+        {
+            /*if (id != job.Id)
+            {
+                return BadRequest();
+            }*/
+
+            var jobToUpdate = await _context.Jobs.FindAsync(id);
+
+            if (jobToUpdate == null)
+            {
+                return NotFound($"There is no job for given id: {id}.");
+            }
+
+            jobToUpdate.Name = jobDTO.Name;
+            jobToUpdate.Description = jobDTO.Description;
+            jobToUpdate.JobProperties = jobDTO.JobProperties;
+
+            _context.Entry(jobToUpdate).State = EntityState.Modified;
 
             try
             {
@@ -72,19 +123,25 @@ namespace ROBOLabAPI.Controllers
             return NoContent();
         }
 
-        // POST: api/Jobs
+        // POST: api/jobs
         [HttpPost]
-        public async Task<ActionResult<Job>> PostJob(Job job)
+        public async Task<ActionResult<JobDTO>> PostJob(JobDTO jobDTO)
         {
+            var deviceType = await _context.DeviceTypes.Include(d => d.Jobs).Where(deviceType => deviceType.Name == jobDTO.DeviceType.DeviceTypeName).FirstOrDefaultAsync();
+
+            Job job = _mapper.Map<Job>(jobDTO);
+
             _context.Jobs.Add(job);
+            deviceType.Jobs.Add(job);
             await _context.SaveChangesAsync();
 
-            return CreatedAtAction("GetJob", new { id = job.Id }, job);
+            JobDTO jobToViewDTO = _mapper.Map<JobDTO>(job);
+            return CreatedAtAction("GetJob", new { id = jobToViewDTO.Id }, jobToViewDTO);
         }
 
-        // DELETE: api/Jobs/5
+        // DELETE: api/jobs/5
         [HttpDelete("{id}")]
-        public async Task<ActionResult<Job>> DeleteJob(int id)
+        public async Task<ActionResult<JobDTO>> DeleteJob(int id)
         {
             var job = await _context.Jobs.FindAsync(id);
             if (job == null)
@@ -95,7 +152,8 @@ namespace ROBOLabAPI.Controllers
             _context.Jobs.Remove(job);
             await _context.SaveChangesAsync();
 
-            return job;
+            JobDTO jobDTO = _mapper.Map<JobDTO>(job);
+            return jobDTO;
         }
 
         private bool JobExists(int id)

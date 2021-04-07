@@ -40,17 +40,17 @@ namespace ROBOLabAPI.Controllers
 
             if (deviceJob == null)
             {
-                return NotFound($"There is no deviceJob for given id: {id}.");
+                return NotFound($"There is no device job for given id: {id}.");
             }
 
             if (deviceJob.Device == null)
             {
-                return NotFound($"There is no device for deviceJob with given id: {id}.");
+                return NotFound($"There is no device for device job with given id: {id}.");
             }
 
             if (deviceJob.Job == null)
             {
-                return NotFound($"There is no job for deviceJob with given id: {id}.");
+                return NotFound($"There is no job for device job with given id: {id}.");
             }
 
             DeviceToViewDTO deviceDTO = _mapper.Map<DeviceToViewDTO>(deviceJob.Device);
