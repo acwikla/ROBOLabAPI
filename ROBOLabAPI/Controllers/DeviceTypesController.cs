@@ -63,7 +63,7 @@ namespace ROBOLabAPI.Controllers
 
         // GET: api/device-types/{id}/devices/user/{userId}
         [HttpGet("{id}/devices/user/{userId}")]
-        public async Task<ActionResult<ICollection<DeviceAddDTO>>> GetAllDevicesByDeviceType(int id, int userId)
+        public async Task<ActionResult<IEnumerable<DeviceToViewDTO>>> GetAllDevicesByDeviceType(int id, int userId)
         {
             var deviceType = await _context.DeviceTypes.FindAsync(id);
             var usersDevices = await _context.Users.Include(n => n.Devices).Where(user => user.Id == userId).SelectMany(user => user.Devices).ToListAsync();
@@ -74,10 +74,10 @@ namespace ROBOLabAPI.Controllers
                 return NotFound($"There is no devices for device type: {deviceType.Name} for user with given id: {userId}");
             }
 
-            List<DeviceAddDTO> devicesByDeviceTypeDTO = new List<DeviceAddDTO>();
+            List<DeviceToViewDTO> devicesByDeviceTypeDTO = new List<DeviceToViewDTO>();
             foreach (Device d in usersDevicesByDeviceType)
             {
-                DeviceAddDTO deviceDTO = _mapper.Map<DeviceAddDTO>(d);
+                DeviceToViewDTO deviceDTO = _mapper.Map<DeviceToViewDTO>(d);
                 devicesByDeviceTypeDTO.Add(deviceDTO);
             }
 
@@ -124,7 +124,7 @@ namespace ROBOLabAPI.Controllers
 
         // POST: api/device-types
         [HttpPost]
-        public async Task<ActionResult<DeviceType>> PostDeviceType(DeviceTypeDTO deviceTypeDTO)
+        public async Task<ActionResult<DeviceTypeDTO>> PostDeviceType(DeviceTypeDTO deviceTypeDTO)
         {
             if (DeviceTypeNameExists(deviceTypeDTO.DeviceTypeName))
             {

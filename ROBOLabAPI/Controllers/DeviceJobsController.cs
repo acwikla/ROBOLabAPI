@@ -64,15 +64,15 @@ namespace ROBOLabAPI.Controllers
             return Ok(deviceJobDTO);
         }
 
-        // GET: api/device-jobs/device/{id}
-        [HttpGet("/device/{id}")]
-        public async Task<ActionResult<ICollection<DeviceJobToViewDTO>>> GetDeviceJobForDevice(int id)
+        // GET: api/device-jobs/device/{deviceId}
+        [HttpGet("/device/{deviceId}")]
+        public async Task<ActionResult<IEnumerable<DeviceJobToViewDTO>>> GetDeviceJobForDevice(int deviceId)
         {
-            List<DeviceJob> deviceJobs = await _context.DeviceJobs.Include(d => d.Device).Include(j => j.Job).Where(deviceJob => deviceJob.Device.Id == id).ToListAsync();
+            List<DeviceJob> deviceJobs = await _context.DeviceJobs.Include(d => d.Device).Include(j => j.Job).Where(deviceJob => deviceJob.Device.Id == deviceId).ToListAsync();
             
             if (deviceJobs == null)
             {
-                return NotFound($"There is no device job for device with given id: {id}.");
+                return NotFound($"There is no device job for device with given id: {deviceId}.");
             }
 
             List<DeviceJobToViewDTO> deviceJobsDTO = new List<DeviceJobToViewDTO>();
@@ -94,15 +94,15 @@ namespace ROBOLabAPI.Controllers
         }
 
         // GET: api/device-jobs/device/{id}/flase-done-flag
-        [HttpGet("device/{id}/flase-done-flag")]
-        public async Task<ActionResult<DeviceJobToViewDTO>> GetDeviceJobFalseDoneFlag(int id)
+        [HttpGet("device/{deviceId}/flase-done-flag")]
+        public async Task<ActionResult<DeviceJobToViewDTO>> GetDeviceJobFalseDoneFlag(int deviceId)
         {
-            List<DeviceJob> deviceJobs = await _context.DeviceJobs.Where(deviceJob => deviceJob.Done == false).Include(d => d.Device).Include(j => j.Job).Where(deviceJob => deviceJob.Device.Id == id).ToListAsync();
+            List<DeviceJob> deviceJobs = await _context.DeviceJobs.Where(deviceJob => deviceJob.Done == false).Include(d => d.Device).Include(j => j.Job).Where(deviceJob => deviceJob.Device.Id == deviceId).ToListAsync();
 
             var deviceJob = deviceJobs.FirstOrDefault();
             if (deviceJob == null)
             {
-                return NotFound($"There is no device job with false isDone flag for device with given id: {id}.");
+                return NotFound($"There is no device job with false isDone flag for device with given id: {deviceId}.");
             }
 
             DeviceToViewDTO deviceDTO = _mapper.Map<DeviceToViewDTO>(deviceJob.Device);
@@ -139,6 +139,39 @@ namespace ROBOLabAPI.Controllers
             var deviceToUpdate = deviceJobToUpdate.Device;
 
             _context.Entry(deviceToUpdate).State = EntityState.Modified;
+            _context.Entry(deviceJobToUpdate).State = EntityState.Modified;
+
+            try
+            {
+                await _context.SaveChangesAsync();
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                if (!DeviceJobExists(id))
+                {
+                    return NotFound();
+                }
+                else
+                {
+                    throw;
+                }
+            }
+
+            return NoContent();
+        }
+
+        // PATCH: api/device-jobs/5
+        [HttpPatch("{id}")]
+        public async Task<IActionResult> UpdateDoneProperty(int id, IsDoneFlagDTO DoneFlag)
+        {
+            var deviceJobToUpdate = await _context.DeviceJobs.Include(d => d.Device).Include(j => j.Job).Where(deviceJobs => deviceJobs.Id == id).FirstOrDefaultAsync();
+            if (deviceJobToUpdate == null)
+            {
+                return NotFound($"There is no deviceJob for given id: {id}.");
+            }
+
+            deviceJobToUpdate.Done = DoneFlag.Done;
+
             _context.Entry(deviceJobToUpdate).State = EntityState.Modified;
 
             try
