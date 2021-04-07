@@ -12,7 +12,7 @@ using ROBOLabAPI;
 
 namespace ROBOLabAPI.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/device-types")]
     [ApiController]
     public class DeviceTypesController : ControllerBase
     {
@@ -25,7 +25,7 @@ namespace ROBOLabAPI.Controllers
             _mapper = mapper;
         }
 
-        // GET: api/DeviceTypes
+        // GET: api/device-types
         [HttpGet]
         public async Task<ActionResult<IEnumerable<DeviceTypeDTO>>> GetDeviceTypes()
         {
@@ -46,7 +46,7 @@ namespace ROBOLabAPI.Controllers
             return deviceTypesDTO;
         }
 
-        // GET: api/DeviceTypes/5
+        // GET: api/device-types/5
         [HttpGet("{id}")]
         public async Task<ActionResult<DeviceTypeDTO>> GetDeviceType(int id)
         {
@@ -61,8 +61,8 @@ namespace ROBOLabAPI.Controllers
             return deviceTypeDTO;
         }
 
-        // GET: api/DeviceTypes/5/user/{userId}/devices
-        [HttpGet("{id}/devices/userId={userId}")]
+        // GET: api/device-types/{id}/devices/user/{userId}
+        [HttpGet("{id}/devices/user/{userId}")]
         public async Task<ActionResult<ICollection<DeviceAddDTO>>> GetAllDevicesByDeviceType(int id, int userId)
         {
             var deviceType = await _context.DeviceTypes.FindAsync(id);
@@ -84,7 +84,7 @@ namespace ROBOLabAPI.Controllers
             return devicesByDeviceTypeDTO;
         }
 
-        // PUT: api/DeviceTypes/5
+        // PUT: api/device-types/5
         [HttpPut("{id}")]
         public async Task<IActionResult> PutDeviceType(int id, DeviceTypeDTO deviceTypeDTO)
         {
@@ -122,7 +122,7 @@ namespace ROBOLabAPI.Controllers
             return NoContent();
         }
 
-        // POST: api/DeviceTypes
+        // POST: api/device-types
         [HttpPost]
         public async Task<ActionResult<DeviceType>> PostDeviceType(DeviceTypeDTO deviceTypeDTO)
         {
@@ -139,7 +139,7 @@ namespace ROBOLabAPI.Controllers
             return CreatedAtAction("GetDeviceType", new { id = deviceTypeToView.Id }, deviceTypeToView);
         }
 
-        //POST: /api/DeviceTypes/{id}/properties
+        //POST: /api/device-types/{id}/properties
         [HttpPost("{id}/properties")]
         public async Task<ActionResult<PropertyDTO>> PostPropertyToDeviceType(int id, PropertyDTO propertyDTO)
         {
@@ -159,9 +159,9 @@ namespace ROBOLabAPI.Controllers
             return propertyDTO;
         }
 
-        // DELETE: api/DeviceTypes/5
+        // DELETE: api/device-types/5
         [HttpDelete("{id}")]
-        public async Task<ActionResult<DeviceType>> DeleteDeviceType(int id)
+        public async Task<ActionResult<DeviceTypeDTO>> DeleteDeviceType(int id)
         {
             var deviceType = await _context.DeviceTypes.FindAsync(id);
             if (deviceType == null)
@@ -172,7 +172,8 @@ namespace ROBOLabAPI.Controllers
             _context.DeviceTypes.Remove(deviceType);
             await _context.SaveChangesAsync();
 
-            return deviceType;
+            DeviceTypeDTO deviceTypeDTO = _mapper.Map<DeviceTypeDTO>(deviceType);
+            return deviceTypeDTO;
         }
 
         private bool DeviceTypeExists(int id)
