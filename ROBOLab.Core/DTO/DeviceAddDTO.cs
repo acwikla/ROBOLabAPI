@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace ROBOLab.Core.DTO
 {
-    public class DeviceDTO
+    public class DeviceAddDTO
     {
         public int Id { get; set; }
 

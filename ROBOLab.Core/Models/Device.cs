@@ -25,6 +25,8 @@ namespace ROBOLab.Core.Models
         [Required]
         public User User { get; set; }
 
+        public ICollection<DeviceJob> DeviceJob { get; set; }
+
         public ICollection<Value> Values { get; set; }
 
         public ICollection<Mode> Modes { get; set; }

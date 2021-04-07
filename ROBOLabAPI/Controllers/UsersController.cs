@@ -193,7 +193,7 @@ namespace ROBOLabAPI.Controllers
 
         // POST: api/Users/1/device
         [HttpPost("{id}/device")]
-        public async Task<ActionResult<DeviceToViewDTO>> PostDevice(int id, DeviceTypeDTO deviceTypeDTO, DeviceDTO deviceDTO)
+        public async Task<ActionResult<DeviceToViewDTO>> PostDevice(int id, DeviceTypeDTO deviceTypeDTO, DeviceAddDTO deviceDTO)
         {
             var user = await _context.Users.FindAsync(id);
             if (user == null)

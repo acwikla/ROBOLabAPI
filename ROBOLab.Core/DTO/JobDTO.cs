@@ -4,9 +4,9 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace ROBOLab.Core.Models
+namespace ROBOLab.Core.DTO
 {
-    public class Job
+    public class JobDTO
     {
         public int Id { get; set; }
 
@@ -20,11 +20,6 @@ namespace ROBOLab.Core.Models
         public string JobProperties { get; set; }
 
         [Required]
-        public int DeviceTypeId { get; set; }
-
-        [Required]
-        public DeviceType DeviceType { get; set; }
-
-        public ICollection<DeviceJob> DeviceJob { get; set; }
+        public DeviceTypeDTO DeviceType { get; set; }
     }
 }

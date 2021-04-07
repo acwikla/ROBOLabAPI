@@ -14,24 +14,31 @@ namespace ROBOLabAPI.Map
             // Add as many of these lines as you need to map your objects
 
             //User:
-            CreateMap<UserRegisterDTO, User>().ReverseMap();
-            CreateMap<UserToViewDTO, User>().ReverseMap();
-            CreateMap<UserToLoginDTO, User>().ReverseMap();
+            CreateMap<User, UserRegisterDTO>().ReverseMap();
+            CreateMap<User, UserToViewDTO>().ReverseMap();
+            CreateMap<User, UserToLoginDTO>().ReverseMap();
 
             //Device:
-            CreateMap<DeviceDTO, Device>().ReverseMap();
-            CreateMap<DeviceToViewDTO, Device>().ReverseMap();
+            CreateMap<Device, DeviceAddDTO> ().ReverseMap();
+            CreateMap<Device, DeviceToViewDTO>().ReverseMap();
 
-            CreateMap<Device, DeviceDTO>()
+            CreateMap<Device, DeviceAddDTO>()
             .ForMember(dest => dest.DeviceName,
             opt => opt.MapFrom(src => src.Name)).ReverseMap();
 
             //DeviceType
-            CreateMap<DeviceTypeDTO, DeviceType>().ReverseMap();
+            CreateMap<DeviceType, DeviceTypeDTO>().ReverseMap();
 
             CreateMap<DeviceType, DeviceTypeDTO>()
             .ForMember(dest => dest.DeviceTypeName,
             opt => opt.MapFrom(src => src.Name)).ReverseMap();
+
+            //DeviceJob:
+            CreateMap<DeviceJob, DeviceJobAddDTO>().ReverseMap();
+            CreateMap<DeviceJob, DeviceJobToViewDTO>().ReverseMap();
+
+            //Job:
+            CreateMap<Job, JobDTO>().ReverseMap();
 
         }
     }
