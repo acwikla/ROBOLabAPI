@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace ROBOLab.Core.DTO
 {
-    public class DeviceToViewDTO
+    public class PropertyToViewDTO
     {
         public int Id { get; set; }
 
@@ -14,6 +14,11 @@ namespace ROBOLab.Core.DTO
         public string Name { get; set; }
 
         [Required]
+        public string Body { get; set; }
+
+        [Required]
         public DeviceTypeDTO DeviceType { get; set; }
+
+        public bool IsMode { get; set; }
     }
 }

@@ -25,6 +25,7 @@ namespace ROBOLabAPI.Controllers
             _mapper = mapper;
         }
 
+        //TODO dodac pobieranie devtype dla joba
         // GET: api/device-types
         [HttpGet]
         public async Task<ActionResult<IEnumerable<DeviceTypeDTO>>> GetDeviceTypes()
@@ -46,6 +47,7 @@ namespace ROBOLabAPI.Controllers
             return deviceTypesDTO;
         }
 
+        //TODO dodac pobieranie devtype dla joba
         // GET: api/device-types/5
         [HttpGet("{id}")]
         public async Task<ActionResult<DeviceTypeDTO>> GetDeviceType(int id)
@@ -141,7 +143,7 @@ namespace ROBOLabAPI.Controllers
 
         //POST: /api/device-types/{id}/properties
         [HttpPost("{id}/properties")]
-        public async Task<ActionResult<PropertyDTO>> PostPropertyToDeviceType(int id, PropertyDTO propertyDTO)
+        public async Task<ActionResult<PropertyToViewDTO>> PostPropertyToDeviceType(int id, PropertyDTO propertyDTO)
         {
             var deviceType = await _context.DeviceTypes.FindAsync(id);
 
@@ -151,12 +153,16 @@ namespace ROBOLabAPI.Controllers
             }
 
             Property property = _mapper.Map<Property>(propertyDTO);
+            property.DeviceTypeId = deviceType.Id;
+            property.DeviceType = deviceType;
 
             await _context.Properties.AddAsync(property);
             deviceType.Properties.Add(property);
+
             await _context.SaveChangesAsync();
 
-            return propertyDTO;
+            PropertyToViewDTO propertyToViewDTO = _mapper.Map<PropertyToViewDTO>(property);
+            return propertyToViewDTO;
         }
 
         // DELETE: api/device-types/5

@@ -72,7 +72,8 @@ namespace ROBOLabAPI.Controllers
                 return NotFound($"There is no user for given id: {id}.");
             }
 
-            var userDevices = await _context.Users.Include(n => n.Devices).Where(user => user.Id == id).SelectMany(user => user.Devices).ToListAsync();
+            var userDevices = await _context.Users.Include(n => n.Devices).Where(user => user.Id == id).SelectMany(user => user.Devices).Include(d=> d.DeviceType).ToListAsync();
+            //var userDevices = await _context.Devices.Include(d => d.DeviceType).Where(user => user.Id == id).ToListAsync();
 
             if (userDevices == null)
             {
@@ -93,14 +94,16 @@ namespace ROBOLabAPI.Controllers
         [HttpGet("{id}/devices/{deviceId}")]
         public async Task<ActionResult<DeviceToViewDTO>> GetUsersDevice(int id, int deviceId)
         {
-            var user = await _context.Users.FirstOrDefaultAsync();
+            var user = await _context.Users.FindAsync(id);
 
             if (user == null)
             {
                 return NotFound($"There is no user for given id: {id}.");
             }
 
-            var userDevices = await _context.Users.Include(n => n.Devices).Where(user => user.Id == id).SelectMany(user => user.Devices).ToListAsync();
+            //var userDevices = await _context.Users.Include(n => n.Devices).Where(user => user.Id == id).SelectMany(user => user.Devices).ToListAsync();
+            
+            var userDevices = await _context.Devices.Include(d => d.DeviceType).Where(user => user.Id == id).ToListAsync();
             Device device = userDevices.Where(device => device.Id == deviceId).FirstOrDefault();
 
             if (device == null)
@@ -192,19 +195,20 @@ namespace ROBOLabAPI.Controllers
         }
 
         // POST: api/Users/1/device
-        [HttpPost("{id}/device")]
-        public async Task<ActionResult<DeviceToViewDTO>> PostDevice(int id, DeviceTypeDTO deviceTypeDTO, DeviceAddDTO deviceDTO)
+        [HttpPost("{userId}/device")]
+        public async Task<ActionResult<DeviceToViewDTO>> PostDevice(int userId, DeviceTypeDTO deviceTypeDTO, DeviceAddDTO deviceDTO)
         {
-            var user = await _context.Users.FindAsync(id);
+            var user = await _context.Users.FindAsync(userId);
             if (user == null)
             {
-                return NotFound($"There is no user for given id: {id}.");
+                return NotFound($"There is no user for given id: {userId}.");
             }
 
-            var deviceType = await _context.DeviceTypes.FindAsync(deviceTypeDTO.Id);
+            //search by name
+            var deviceType = await _context.DeviceTypes.Where(deviceJobs => deviceJobs.Name == deviceTypeDTO.DeviceTypeName).FirstOrDefaultAsync();
             if (deviceType == null)
             {
-                return NotFound($"There is no device type for given id: {deviceTypeDTO.Id}.");
+                return NotFound($"There is no device type for given name: {deviceTypeDTO.DeviceTypeName}.");
             }
 
             Device newDevice = _mapper.Map<Device>(deviceDTO);
@@ -218,7 +222,7 @@ namespace ROBOLabAPI.Controllers
             await _context.SaveChangesAsync();
 
             DeviceToViewDTO deviceToViewDTO = _mapper.Map<DeviceToViewDTO>(newDevice);
-            return CreatedAtAction("GetUsersDevice", new { id, deviceId= deviceToViewDTO.Id }, deviceToViewDTO);
+            return CreatedAtAction("GetUsersDevice", new { id = userId, deviceId = deviceToViewDTO.Id }, deviceToViewDTO);
         }
 
         // DELETE: api/Users/5

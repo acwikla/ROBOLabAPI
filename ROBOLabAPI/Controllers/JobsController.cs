@@ -25,8 +25,8 @@ namespace ROBOLabAPI.Controllers
             _mapper = mapper;
         }
 
-        // GET: api/jobs
-        [HttpGet]
+        // GET: api/jobs/all
+        [HttpGet("all")]
         public async Task<ActionResult<IEnumerable<JobDTO>>> GetJobs()
         {
             var jobs = await _context.Jobs.ToListAsync();
@@ -48,7 +48,7 @@ namespace ROBOLabAPI.Controllers
 
         // GET: api/jobs/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<JobDTO>> GetJob(int id)
+        public async Task<ActionResult<JobDTO>> GetJob([FromRoute] int id)
         {
             var job = await _context.Jobs.FindAsync(id);
 
@@ -61,20 +61,20 @@ namespace ROBOLabAPI.Controllers
             return jobDTO;
         }
 
-        // GET: api/jobs?devtype={type}
-        [HttpGet("{devtype}")]
-        public async Task<ActionResult<IEnumerable<JobDTO>>> GetJobForDeviceType([FromQuery] string type)
+        // GET: api/jobs?devtype=devtype
+        [HttpGet]
+        public async Task<ActionResult<IEnumerable<JobDTO>>> GetJobForDeviceType([FromQuery] string devtype)
         {
-            var deviceType = await _context.DeviceTypes.Include(d => d.Jobs).Where(deviceType => deviceType.Name == type).FirstOrDefaultAsync();
+            var deviceType = await _context.DeviceTypes.Include(d => d.Jobs).Where(deviceType => deviceType.Name == devtype).FirstOrDefaultAsync();
 
             if (deviceType == null)
             {
-                return NotFound($"There is no device type with given name: {type}.");
+                return NotFound($"There is no device type with given name: {devtype}.");
             }
 
             if (deviceType.Jobs == null)
             {
-                return NotFound($"There is no job for device type with given name: {type}.");
+                return NotFound($"There is no job for device type with given name: {devtype}.");
             }
 
             List<JobDTO> jobsDTO = new List<JobDTO>();

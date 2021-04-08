@@ -93,6 +93,7 @@ namespace ROBOLabAPI.Controllers
             return deviceJobsDTO;
         }
 
+        //return first job with false value done flag
         // GET: api/device-jobs/device/{id}/flase-done-flag
         [HttpGet("device/{deviceId}/flase-done-flag")]
         public async Task<ActionResult<DeviceJobToViewDTO>> GetDeviceJobFalseDoneFlag(int deviceId)
@@ -160,8 +161,8 @@ namespace ROBOLabAPI.Controllers
             return NoContent();
         }
 
-        // PATCH: api/device-jobs/5
-        [HttpPatch("{id}")]
+        // PATCH: api/device-jobs/5/done-flag-value
+        [HttpPatch("{id}/done-flag-value")]
         public async Task<IActionResult> UpdateDoneProperty(int id, IsDoneFlagDTO DoneFlag)
         {
             var deviceJobToUpdate = await _context.DeviceJobs.Include(d => d.Device).Include(j => j.Job).Where(deviceJobs => deviceJobs.Id == id).FirstOrDefaultAsync();
@@ -228,7 +229,7 @@ namespace ROBOLabAPI.Controllers
             await _context.DeviceJobs.AddAsync(newDeviceJob);
             await _context.SaveChangesAsync();
 
-            DeviceJobToViewDTO deviceJobDTO = _mapper.Map<DeviceJobToViewDTO>(deviceJob);
+            DeviceJobToViewDTO deviceJobDTO = _mapper.Map<DeviceJobToViewDTO>(newDeviceJob);
             deviceJobDTO.Device = deviceDTO;
             deviceJobDTO.Job = jobDTO;
 
