@@ -10,7 +10,7 @@ using ROBOLabAPI;
 
 namespace ROBOLabAPI.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/devices")]
     [ApiController]
     public class DevicesController : ControllerBase
     {
@@ -21,14 +21,14 @@ namespace ROBOLabAPI.Controllers
             _context = context;
         }
 
-        // GET: api/Devices
+        // GET: api/devices
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Device>>> GetDevices()
         {
             return await _context.Devices.ToListAsync();
         }
 
-        // GET: api/Devices/5
+        // GET: api/devices/5
         [HttpGet("{id}")]
         public async Task<ActionResult<Device>> GetDevice(int id)
         {
@@ -42,7 +42,7 @@ namespace ROBOLabAPI.Controllers
             return device;
         }
 
-        // PUT: api/Devices/5
+        // PUT: api/devices/5
         [HttpPut("{id}")]
         public async Task<IActionResult> PutDevice(int id, Device device)
         {
@@ -72,7 +72,7 @@ namespace ROBOLabAPI.Controllers
             return NoContent();
         }
 
-        // POST: api/Devices
+        // POST: api/devices
         [HttpPost]
         public async Task<ActionResult<Device>> PostDevice(Device device)
         {
@@ -82,7 +82,17 @@ namespace ROBOLabAPI.Controllers
             return CreatedAtAction("GetDevice", new { id = device.Id }, device);
         }
 
-        // DELETE: api/Devices/5
+        // POST: api/devices/{id}/values
+        [HttpPost]
+        public async Task<ActionResult<Device>> PostNewValueForDevice(Device device)
+        {
+            _context.Devices.Add(device);
+            await _context.SaveChangesAsync();
+
+            return CreatedAtAction("GetDevice", new { id = device.Id }, device);
+        }
+
+        // DELETE: api/devices/5
         [HttpDelete("{id}")]
         public async Task<ActionResult<Device>> DeleteDevice(int id)
         {

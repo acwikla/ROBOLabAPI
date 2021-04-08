@@ -31,6 +31,11 @@ namespace ROBOLabAPI.Controllers
         {
             var jobs = await _context.Jobs.ToListAsync();
 
+            if (jobs == null)
+            {
+                return NotFound("There is no jobs in database.");
+            }
+
             List<JobDTO> jobsDTO = new List<JobDTO>();
             foreach (Job j in jobs)
             {
@@ -146,7 +151,7 @@ namespace ROBOLabAPI.Controllers
             var job = await _context.Jobs.FindAsync(id);
             if (job == null)
             {
-                return NotFound();
+                return NotFound($"There is no job for given id: {id}.");
             }
 
             _context.Jobs.Remove(job);
