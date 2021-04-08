@@ -229,17 +229,22 @@ namespace ROBOLabAPI.Controllers
         {
             //without include device type in job and device
             //TODO: check if the device type in device and job are the same
-            var device = await _context.Devices.FindAsync(deviceId);
+            var device = await _context.Devices.Include(d => d.DeviceType).Where(d => d.Id == deviceId).FirstOrDefaultAsync();
 
             if (device == null)
             {
                 return NotFound($"There is no device for given id: {deviceId}.");
             }
 
-            var job = await _context.Jobs.FindAsync(jobId);
+            var job = await _context.Jobs.Include(j => j.DeviceType).Where(j => j.Id == jobId).FirstOrDefaultAsync();
             if (job == null)
             {
                 return NotFound($"There is no job for given id: {jobId}.");
+            }
+
+            if (device.DeviceTypeId != job.DeviceTypeId)
+            {
+                return BadRequest("Requested job cannot be performed by given device. Device types do not match.");
             }
 
             DeviceToViewDTO deviceDTO = _mapper.Map<DeviceToViewDTO>(device);
