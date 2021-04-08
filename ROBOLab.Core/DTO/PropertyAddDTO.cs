@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace ROBOLab.Core.DTO
 {
-    public class PropertyDTO
+    public class PropertyAddDTO
     {
         public int Id { get; set; }
 

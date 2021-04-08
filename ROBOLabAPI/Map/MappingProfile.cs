@@ -42,7 +42,7 @@ namespace ROBOLabAPI.Map
             CreateMap<Job, JobDTO>().ReverseMap();
 
             //Property:
-            CreateMap<Property, PropertyDTO>().ReverseMap();
+            CreateMap<Property, PropertyAddDTO>().ReverseMap();
             CreateMap<Property, PropertyToViewDTO>().ReverseMap();
         }
     }

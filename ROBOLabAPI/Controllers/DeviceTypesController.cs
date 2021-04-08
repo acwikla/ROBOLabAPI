@@ -141,7 +141,7 @@ namespace ROBOLabAPI.Controllers
 
         //POST: /api/device-types/{id}/properties
         [HttpPost("{id}/properties")]
-        public async Task<ActionResult<PropertyToViewDTO>> PostPropertyToDeviceType(int id, PropertyDTO propertyDTO)
+        public async Task<ActionResult<PropertyToViewDTO>> PostPropertyToDeviceType(int id, PropertyAddDTO propertyDTO)
         {
             var deviceType = await _context.DeviceTypes.FindAsync(id);
 
