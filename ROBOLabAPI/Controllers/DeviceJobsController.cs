@@ -29,7 +29,9 @@ namespace ROBOLabAPI.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<DeviceJobToViewDTO>>> GetDeviceJobs()
         {
-            var deviceJobs = await _context.DeviceJobs.Include(d => d.Device).Include(j => j.Job).ToListAsync();
+            var deviceJobs = await _context.DeviceJobs.Include(d => d.Device).Include(d => d.Job).Include(d => d.Device.DeviceType).Include(d => d.Job.DeviceType).ToListAsync();
+            //without include device type in job and device
+            //var deviceJobs = await _context.DeviceJobs.Include(d => d.Device).Include(j => j.Job).ToListAsync();
 
             if (deviceJobs == null)
             {
@@ -57,7 +59,9 @@ namespace ROBOLabAPI.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<DeviceJobToViewDTO>> GetDeviceJob(int id)
         {
-            var deviceJob = await _context.DeviceJobs.Include(d => d.Device).Include(j => j.Job).Where(deviceJobs => deviceJobs.Id == id).FirstOrDefaultAsync();
+            var deviceJob = await _context.DeviceJobs.Include(d => d.Device).Include(j => j.Job).Where(deviceJobs => deviceJobs.Id == id).Include(d => d.Device.DeviceType).Include(d => d.Job.DeviceType).FirstOrDefaultAsync();
+            //without include device type in job and device
+            //var deviceJob = await _context.DeviceJobs.Include(d => d.Device).Include(j => j.Job).Where(deviceJobs => deviceJobs.Id == id).FirstOrDefaultAsync();
 
             if (deviceJob == null)
             {
@@ -89,8 +93,10 @@ namespace ROBOLabAPI.Controllers
         [HttpGet("/device/{deviceId}")]
         public async Task<ActionResult<IEnumerable<DeviceJobToViewDTO>>> GetDeviceJobForDevice(int deviceId)
         {
-            List<DeviceJob> deviceJobs = await _context.DeviceJobs.Include(d => d.Device).Include(j => j.Job).Where(deviceJob => deviceJob.Device.Id == deviceId).ToListAsync();
-            
+            List<DeviceJob> deviceJobs = await _context.DeviceJobs.Include(d => d.Device).Include(j => j.Job).Where(deviceJob => deviceJob.Device.Id == deviceId).Include(d => d.Device.DeviceType).Include(d => d.Job.DeviceType).ToListAsync();
+            //without include device type in job and device
+            //List<DeviceJob> deviceJobs = await _context.DeviceJobs.Include(d => d.Device).Include(j => j.Job).Where(deviceJob => deviceJob.Device.Id == deviceId).ToListAsync();
+
             if (deviceJobs == null)
             {
                 return NotFound($"There is no device job for device with given id: {deviceId}.");
@@ -119,7 +125,9 @@ namespace ROBOLabAPI.Controllers
         [HttpGet("device/{deviceId}/flase-done-flag")]
         public async Task<ActionResult<DeviceJobToViewDTO>> GetDeviceJobFalseDoneFlag(int deviceId)
         {
-            List<DeviceJob> deviceJobs = await _context.DeviceJobs.Where(deviceJob => deviceJob.Done == false).Include(d => d.Device).Include(j => j.Job).Where(deviceJob => deviceJob.Device.Id == deviceId).ToListAsync();
+            List<DeviceJob> deviceJobs = await _context.DeviceJobs.Where(deviceJob => deviceJob.Done == false).Include(d => d.Device).Include(j => j.Job).Where(deviceJob => deviceJob.Device.Id == deviceId).Include(d => d.Device.DeviceType).Include(d => d.Job.DeviceType).ToListAsync();
+            //without include device type in job and device
+            //List<DeviceJob> deviceJobs = await _context.DeviceJobs.Where(deviceJob => deviceJob.Done == false).Include(d => d.Device).Include(j => j.Job).Where(deviceJob => deviceJob.Device.Id == deviceId).ToListAsync();
 
             var deviceJob = deviceJobs.FirstOrDefault();
             if (deviceJob == null)
@@ -219,6 +227,8 @@ namespace ROBOLabAPI.Controllers
         [HttpPost("device-jobs/device/{deviceId}/job/{jobId}")]
         public async Task<ActionResult<DeviceJobToViewDTO>> PostDeviceJob(int deviceId, int jobId, DeviceJobAddDTO deviceJob)
         {
+            //without include device type in job and device
+            //TODO: check if the device type in device and job are the same
             var device = await _context.Devices.FindAsync(deviceId);
 
             if (device == null)
