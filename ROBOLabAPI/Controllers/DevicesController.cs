@@ -83,7 +83,7 @@ namespace ROBOLabAPI.Controllers
         }
 
         // POST: api/devices/{id}/values
-        [HttpPost]
+        [HttpPost("{id}/values")]
         public async Task<ActionResult<Device>> PostNewValueForDevice(Device device)
         {
             _context.Devices.Add(device);
