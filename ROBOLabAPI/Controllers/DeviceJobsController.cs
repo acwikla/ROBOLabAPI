@@ -27,9 +27,30 @@ namespace ROBOLabAPI.Controllers
 
         // GET: api/device-jobs
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<DeviceJob>>> GetDeviceJobs()
+        public async Task<ActionResult<IEnumerable<DeviceJobToViewDTO>>> GetDeviceJobs()
         {
-            return await _context.DeviceJobs.ToListAsync();
+            var deviceJobs = await _context.DeviceJobs.Include(d => d.Device).Include(j => j.Job).ToListAsync();
+
+            if (deviceJobs == null)
+            {
+                return NotFound($"There is no device job in database.");
+            }
+
+            List<DeviceJobToViewDTO> deviceJobsDTO = new List<DeviceJobToViewDTO>();
+            foreach (DeviceJob d in deviceJobs)
+            {
+                DeviceToViewDTO deviceDTO = _mapper.Map<DeviceToViewDTO>(d.Device);
+
+                JobDTO jobDTO = _mapper.Map<JobDTO>(d.Job);
+
+                DeviceJobToViewDTO deviceJobDTO = _mapper.Map<DeviceJobToViewDTO>(d);
+                deviceJobDTO.Device = deviceDTO;
+                deviceJobDTO.Job = jobDTO;
+
+                deviceJobsDTO.Add(deviceJobDTO);
+            }
+
+            return Ok(deviceJobsDTO);
         }
 
         // GET: api/device-jobs/5

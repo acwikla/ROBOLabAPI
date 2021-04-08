@@ -29,7 +29,7 @@ namespace ROBOLabAPI.Controllers
         [HttpGet("all")]
         public async Task<ActionResult<IEnumerable<JobDTO>>> GetJobs()
         {
-            var jobs = await _context.Jobs.ToListAsync();
+            var jobs = await _context.Jobs.Include(j=> j.DeviceType).ToListAsync();
 
             if (jobs == null)
             {
@@ -50,7 +50,7 @@ namespace ROBOLabAPI.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<JobDTO>> GetJob([FromRoute] int id)
         {
-            var job = await _context.Jobs.FindAsync(id);
+            var job = await _context.Jobs.Include(j => j.DeviceType).Where(j => j.Id == id).FirstOrDefaultAsync();
 
             if (job == null)
             {

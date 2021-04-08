@@ -25,7 +25,6 @@ namespace ROBOLabAPI.Controllers
             _mapper = mapper;
         }
 
-        //TODO dodac pobieranie devtype dla joba
         // GET: api/device-types
         [HttpGet]
         public async Task<ActionResult<IEnumerable<DeviceTypeDTO>>> GetDeviceTypes()
@@ -47,7 +46,6 @@ namespace ROBOLabAPI.Controllers
             return deviceTypesDTO;
         }
 
-        //TODO dodac pobieranie devtype dla joba
         // GET: api/device-types/5
         [HttpGet("{id}")]
         public async Task<ActionResult<DeviceTypeDTO>> GetDeviceType(int id)
