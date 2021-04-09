@@ -150,6 +150,11 @@ namespace ROBOLabAPI.Controllers
                 return NotFound($"There is no device type for given id: {id}.");
             }
 
+            if (PropertyNameExists(propertyDTO.Name))
+            {
+                return BadRequest($"Property with this name already exist for device type : {deviceType.Name}.");
+            }
+
             Property property = _mapper.Map<Property>(propertyDTO);
             property.DeviceTypeId = deviceType.Id;
             property.DeviceType = deviceType;
@@ -188,6 +193,22 @@ namespace ROBOLabAPI.Controllers
         private bool DeviceTypeNameExists(string name)
         {
             return _context.DeviceTypes.Any(d => d.Name == name);
+        }
+
+        private bool PropertyNameExists(string name)
+        {
+
+            var devTypeProperty = _context.DeviceTypes.Include(d => d.Properties).SelectMany(d => d.Properties).ToList();
+
+            foreach (Property p in devTypeProperty)
+            {
+                if (p.Name==name)
+                {
+                    return true;
+                }
+            }
+
+            return false;
         }
     }
 }

@@ -2,58 +2,112 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using AutoMapper;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using ROBOLab.Core.DTO;
 using ROBOLab.Core.Models;
 using ROBOLabAPI;
 
 namespace ROBOLabAPI.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/properties")]
     [ApiController]
     public class PropertiesController : ControllerBase
     {
         private readonly ROBOLabDbContext _context;
+        private readonly IMapper _mapper;
 
-        public PropertiesController(ROBOLabDbContext context)
+        public PropertiesController(ROBOLabDbContext context, IMapper mapper)
         {
             _context = context;
+            _mapper = mapper;
         }
 
-        // GET: api/Properties
-        [HttpGet]
-        public async Task<ActionResult<IEnumerable<Property>>> GetProperties()
+        // GET: api/properties/all
+        [HttpGet("all")]
+        public async Task<ActionResult<IEnumerable<PropertyToViewDTO>>> GetProperties()
         {
-            return await _context.Properties.ToListAsync();
-        }
+            var property = await _context.Properties.Include(p => p.DeviceType).ToListAsync();
 
-        // GET: api/Properties/5
-        [HttpGet("{id}")]
-        public async Task<ActionResult<Property>> GetProperty(int id)
-        {
-            var @property = await _context.Properties.FindAsync(id);
-
-            if (@property == null)
+            if (property == null)
             {
-                return NotFound();
+                return NotFound($"There is no property in database.");
             }
 
-            return @property;
+            List<PropertyToViewDTO> popertiesToViewDTO = new List<PropertyToViewDTO>();
+            foreach (Property p in property)
+            {
+                PropertyToViewDTO propertyToViewDTO = _mapper.Map<PropertyToViewDTO>(property);
+                popertiesToViewDTO.Add(propertyToViewDTO);
+            }
+            
+            return popertiesToViewDTO;
         }
 
-        // PUT: api/Properties/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to, for
-        // more details, see https://go.microsoft.com/fwlink/?linkid=2123754.
-        [HttpPut("{id}")]
-        public async Task<IActionResult> PutProperty(int id, Property @property)
+        // GET: api/properties/5
+        [HttpGet("{id}")]
+        public async Task<ActionResult<PropertyToViewDTO>> GetProperty(int id)
         {
-            if (id != @property.Id)
+            var property = await _context.Properties.Include(p => p.DeviceType).Where(p => p.Id == id).FirstOrDefaultAsync();
+
+            if (property == null)
+            {
+                return NotFound($"There is no property with given id: {id}.");
+            }
+
+            PropertyToViewDTO propertyToViewDTO = _mapper.Map<PropertyToViewDTO>(property);
+
+            return propertyToViewDTO;
+        }
+
+        // GET: api/properties?devtype={type}
+        [HttpGet]
+        public async Task<ActionResult<IEnumerable<PropertyToViewDTO>>> GetPropertyForDeviceType([FromQuery] string devtype)
+        {
+            var deviceType = await _context.DeviceTypes.Include(d => d.Properties).Where(deviceType => deviceType.Name == devtype).FirstOrDefaultAsync();
+
+            if (deviceType == null)
+            {
+                return NotFound($"There is no device type with given name: {devtype}.");
+            }
+
+            if (deviceType.Properties == null)
+            {
+                return NotFound($"There is no properties for device type with given name: {devtype}.");
+            }
+
+            List<PropertyToViewDTO> propertiesToViewDTO = new List<PropertyToViewDTO>();
+            foreach (Property p in deviceType.Properties)
+            {
+                PropertyToViewDTO propertyToViewDTO = _mapper.Map<PropertyToViewDTO>(p);
+            }
+
+            return propertiesToViewDTO;
+        }
+
+        // PUT: api/properties/5
+        [HttpPut("{id}")]
+        public async Task<IActionResult> PutProperty(int id, PropertyAddDTO propertyDTO)
+        {
+            /*if (id != property.Id)
             {
                 return BadRequest();
+            }*/
+
+            var propertyToUpdate = await _context.Properties.Include(p => p.DeviceType).Where(p => p.Id == id).FirstOrDefaultAsync();
+
+            if (propertyToUpdate == null)
+            {
+                return NotFound($"There is no property with given id: {id}.");
             }
 
-            _context.Entry(@property).State = EntityState.Modified;
+            propertyToUpdate.Name = propertyDTO.Name;
+            propertyToUpdate.Body = propertyDTO.Body;
+            propertyToUpdate.IsMode = propertyDTO.IsMode;
+
+            _context.Entry(propertyToUpdate).State = EntityState.Modified;
 
             try
             {
@@ -74,32 +128,21 @@ namespace ROBOLabAPI.Controllers
             return NoContent();
         }
 
-        // POST: api/Properties
-        // To protect from overposting attacks, enable the specific properties you want to bind to, for
-        // more details, see https://go.microsoft.com/fwlink/?linkid=2123754.
-        [HttpPost]
-        public async Task<ActionResult<Property>> PostProperty(Property @property)
-        {
-            _context.Properties.Add(@property);
-            await _context.SaveChangesAsync();
-
-            return CreatedAtAction("GetProperty", new { id = @property.Id }, @property);
-        }
-
-        // DELETE: api/Properties/5
+        // DELETE: api/properties/5
         [HttpDelete("{id}")]
-        public async Task<ActionResult<Property>> DeleteProperty(int id)
+        public async Task<ActionResult<PropertyToViewDTO>> DeleteProperty(int id)
         {
-            var @property = await _context.Properties.FindAsync(id);
-            if (@property == null)
+            var property = await _context.Properties.FindAsync(id);
+            if (property == null)
             {
-                return NotFound();
+                return NotFound($"There is no property with given id: {id}.");
             }
 
-            _context.Properties.Remove(@property);
+            _context.Properties.Remove(property);
             await _context.SaveChangesAsync();
 
-            return @property;
+            PropertyToViewDTO propertyToViewDTO = _mapper.Map<PropertyToViewDTO>(property);
+            return propertyToViewDTO;
         }
 
         private bool PropertyExists(int id)

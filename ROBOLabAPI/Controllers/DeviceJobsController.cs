@@ -147,6 +147,38 @@ namespace ROBOLabAPI.Controllers
             return Ok(deviceJobDTO);
         }
 
+        //return all jobs with false value done flag
+        // GET: api/device-jobs/device/{id}/all-flase-done-flag
+        [HttpGet("device/{deviceId}/all-flase-done-flag")]
+        public async Task<ActionResult<IEnumerable<DeviceJobToViewDTO>>> GetAllDeviceJobsFalseDoneFlag(int deviceId)
+        {
+            List<DeviceJob> deviceJobs = await _context.DeviceJobs.Where(deviceJob => deviceJob.Done == false).Include(d => d.Device).Include(j => j.Job).Where(deviceJob => deviceJob.Device.Id == deviceId).Include(d => d.Device.DeviceType).Include(d => d.Job.DeviceType).ToListAsync();
+            //without include device type in job and device
+            //List<DeviceJob> deviceJobs = await _context.DeviceJobs.Where(deviceJob => deviceJob.Done == false).Include(d => d.Device).Include(j => j.Job).Where(deviceJob => deviceJob.Device.Id == deviceId).ToListAsync();
+
+            if (deviceJobs == null)
+            {
+                return NotFound($"There is no device job with false isDone flag for device with given id: {deviceId}.");
+            }
+
+            List<DeviceJobToViewDTO> deviceJobsToViewDTO = new List<DeviceJobToViewDTO>();
+            foreach (DeviceJob d in deviceJobs)
+            {
+                DeviceToViewDTO deviceDTO = _mapper.Map<DeviceToViewDTO>(d.Device);
+
+                JobDTO jobDTO = _mapper.Map<JobDTO>(d.Job);
+
+                DeviceJobToViewDTO deviceJobDTO = _mapper.Map<DeviceJobToViewDTO>(d);
+                deviceJobDTO.Device = deviceDTO;
+                deviceJobDTO.Job = jobDTO;
+
+                deviceJobsToViewDTO.Add(deviceJobDTO);
+            }
+            
+            //deviceJobs.Remove(deviceJob);
+            return Ok(deviceJobsToViewDTO);
+        }
+
         // PUT: api/device-jobs/5
         [HttpPut("{id}")]
         public async Task<IActionResult> PutDeviceJob(int id, DeviceJobAddDTO deviceJob)

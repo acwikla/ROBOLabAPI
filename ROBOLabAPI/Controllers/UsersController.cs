@@ -25,7 +25,7 @@ namespace ROBOLabAPI.Controllers
             _mapper = mapper;
         }
 
-        // GET: api/Users
+        // GET: api/users
         [HttpGet]
         public async Task<ActionResult<IEnumerable<UserToViewDTO>>> GetUsers()
         {
@@ -46,7 +46,7 @@ namespace ROBOLabAPI.Controllers
             return Ok(usersViewDTO);
         }
 
-        // GET: api/Users/5
+        // GET: api/users/5
         [HttpGet("{id}")]
         public async Task<ActionResult<UserToViewDTO>> GetUser(int id)
         {
@@ -61,7 +61,7 @@ namespace ROBOLabAPI.Controllers
             return Ok(userViewDTO);
         }
 
-        // GET: api/Users/5/devices
+        // GET: api/users/5/devices
         [HttpGet("{id}/devices")]
         public async Task<ActionResult<IEnumerable<DeviceToViewDTO>>> GetUsersDevices(int id)
         {
@@ -90,7 +90,7 @@ namespace ROBOLabAPI.Controllers
             return Ok(devicesToViewDTO);
         }
 
-        // GET: api/Users/1/device/1
+        // GET: api/users/1/device/1
         [HttpGet("{id}/devices/{deviceId}")]
         public async Task<ActionResult<DeviceToViewDTO>> GetUsersDevice(int id, int deviceId)
         {
@@ -115,7 +115,7 @@ namespace ROBOLabAPI.Controllers
             return Ok(deviceToViewDTO);
         }
 
-        // PUT: api/Users/5
+        // PUT: api/users/5
         [HttpPut("{id}")]
         public async Task<IActionResult> PutUser(int id, UserRegisterDTO user)
         {
@@ -156,7 +156,7 @@ namespace ROBOLabAPI.Controllers
             return NoContent();
         }
 
-        // POST: api/Users
+        // POST: api/users
         [HttpPost]
         public async Task<ActionResult<UserToViewDTO>> PostUser(UserRegisterDTO user)
         {
@@ -175,7 +175,7 @@ namespace ROBOLabAPI.Controllers
             return CreatedAtAction("GetUser", new { id = userViewDTO.Id }, userViewDTO);
         }
 
-        // POST: api/Users/login
+        // POST: api/users/login
         [HttpPost("login")]
         public async Task<IActionResult> Login(UserToLoginDTO userToLogin)
         {
@@ -194,7 +194,7 @@ namespace ROBOLabAPI.Controllers
             return response;
         }
 
-        // POST: api/Users/1/device
+        // POST: api/users/1/device
         [HttpPost("{userId}/device")]
         public async Task<ActionResult<DeviceToViewDTO>> PostDevice(int userId, DeviceTypeDTO deviceTypeDTO, DeviceAddDTO deviceDTO)
         {
@@ -225,7 +225,7 @@ namespace ROBOLabAPI.Controllers
             return CreatedAtAction("GetUsersDevice", new { id = userId, deviceId = deviceToViewDTO.Id }, deviceToViewDTO);
         }
 
-        // DELETE: api/Users/5
+        // DELETE: api/users/5
         [HttpDelete("{id}")]
         public async Task<ActionResult<User>> DeleteUser(int id)
         {
