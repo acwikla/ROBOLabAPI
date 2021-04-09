@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace ROBOLab.Core.DTO
 {
-    public class DeviceJobToViewDTO
+    public class ViewDeviceJobDTO
     {
         public int Id { get; set; }
 
@@ -21,7 +21,7 @@ namespace ROBOLab.Core.DTO
         [Required]
         public string Body { get; set; }
 
-        public DeviceToViewDTO Device { get; set; }
+        public ViewDeviceDTO Device { get; set; }
 
         public JobDTO Job { get; set; }
     }

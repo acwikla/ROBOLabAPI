@@ -63,7 +63,7 @@ namespace ROBOLabAPI.Controllers
 
         // GET: api/device-types/{id}/devices/user/{userId}
         [HttpGet("{id}/devices/user/{userId}")]
-        public async Task<ActionResult<IEnumerable<DeviceToViewDTO>>> GetAllDevicesByDeviceType(int id, int userId)
+        public async Task<ActionResult<IEnumerable<ViewDeviceDTO>>> GetAllDevicesByDeviceType(int id, int userId)
         {
             var deviceType = await _context.DeviceTypes.FindAsync(id);
             var usersDevices = await _context.Users.Include(n => n.Devices).Where(user => user.Id == userId).SelectMany(user => user.Devices).ToListAsync();
@@ -74,10 +74,10 @@ namespace ROBOLabAPI.Controllers
                 return NotFound($"There is no devices for device type: {deviceType.Name} for user with given id: {userId}");
             }
 
-            List<DeviceToViewDTO> devicesByDeviceTypeDTO = new List<DeviceToViewDTO>();
+            List<ViewDeviceDTO> devicesByDeviceTypeDTO = new List<ViewDeviceDTO>();
             foreach (Device d in usersDevicesByDeviceType)
             {
-                DeviceToViewDTO deviceDTO = _mapper.Map<DeviceToViewDTO>(d);
+                ViewDeviceDTO deviceDTO = _mapper.Map<ViewDeviceDTO>(d);
                 devicesByDeviceTypeDTO.Add(deviceDTO);
             }
 
@@ -141,7 +141,7 @@ namespace ROBOLabAPI.Controllers
 
         //POST: /api/device-types/{id}/properties
         [HttpPost("{id}/properties")]
-        public async Task<ActionResult<PropertyToViewDTO>> PostPropertyToDeviceType(int id, PropertyAddDTO propertyDTO)
+        public async Task<ActionResult<ViewPropertyDTO>> PostPropertyToDeviceType(int id, AddPropertyDTO propertyDTO)
         {
             var deviceType = await _context.DeviceTypes.FindAsync(id);
 
@@ -164,7 +164,7 @@ namespace ROBOLabAPI.Controllers
 
             await _context.SaveChangesAsync();
 
-            PropertyToViewDTO propertyToViewDTO = _mapper.Map<PropertyToViewDTO>(property);
+            ViewPropertyDTO propertyToViewDTO = _mapper.Map<ViewPropertyDTO>(property);
             return propertyToViewDTO;
         }
 

@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace ROBOLab.Core.DTO
 {
-    public class UserRegisterDTO
+    public class RegisterUserDTO
     {
         public int Id { get; set; }
 

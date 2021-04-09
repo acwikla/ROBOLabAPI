@@ -29,5 +29,7 @@ namespace ROBOLab.Core.Models
         public int ModeId { get; set; }
 
         public Mode Mode { get; set; }
+
+        public virtual ICollection<Value> Values { get; set; }
     }
 }

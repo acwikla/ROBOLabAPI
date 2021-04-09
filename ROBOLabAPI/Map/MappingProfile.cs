@@ -14,15 +14,15 @@ namespace ROBOLabAPI.Map
             // Add as many of these lines as you need to map your objects
 
             //User:
-            CreateMap<User, UserRegisterDTO>().ReverseMap();
-            CreateMap<User, UserToViewDTO>().ReverseMap();
-            CreateMap<User, UserToLoginDTO>().ReverseMap();
+            CreateMap<User, RegisterUserDTO>().ReverseMap();
+            CreateMap<User, ViewUserDTO>().ReverseMap();
+            CreateMap<User, LoginUserDTO>().ReverseMap();
 
             //Device:
-            CreateMap<Device, DeviceAddDTO> ().ReverseMap();
-            CreateMap<Device, DeviceToViewDTO>().ReverseMap();
+            CreateMap<Device, AddDeviceDTO> ().ReverseMap();
+            CreateMap<Device, ViewDeviceDTO>().ReverseMap();
 
-            CreateMap<Device, DeviceAddDTO>()
+            CreateMap<Device, AddDeviceDTO>()
             .ForMember(dest => dest.DeviceName,
             opt => opt.MapFrom(src => src.Name)).ReverseMap();
 
@@ -34,16 +34,16 @@ namespace ROBOLabAPI.Map
             opt => opt.MapFrom(src => src.Name)).ReverseMap();
 
             //DeviceJob:
-            CreateMap<DeviceJob, DeviceJobAddDTO>().ReverseMap();
-            CreateMap<DeviceJobAddDTO, DeviceJobToViewDTO>().ReverseMap();
-            CreateMap<DeviceJob, DeviceJobToViewDTO>().ReverseMap();
+            CreateMap<DeviceJob, AddDeviceJobDTO>().ReverseMap();
+            CreateMap<AddDeviceJobDTO, ViewDeviceJobDTO>().ReverseMap();
+            CreateMap<DeviceJob, ViewDeviceJobDTO>().ReverseMap();
 
             //Job:
             CreateMap<Job, JobDTO>().ReverseMap();
 
             //Property:
-            CreateMap<Property, PropertyAddDTO>().ReverseMap();
-            CreateMap<Property, PropertyToViewDTO>().ReverseMap();
+            CreateMap<Property, AddPropertyDTO>().ReverseMap();
+            CreateMap<Property, ViewPropertyDTO>().ReverseMap();
         }
     }
 }

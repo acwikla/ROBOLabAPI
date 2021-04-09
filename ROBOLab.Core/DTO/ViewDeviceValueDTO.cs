@@ -1,36 +1,31 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Threading.Tasks;
+using ROBOLab.Core.Models;
 
-namespace ROBOLab.Core.Models
+namespace ROBOLab.Core.DTO
 {
-    public class Value
+    public class ViewDeviceValueDTO
     {
         public int Id { get; set; }
 
         [Required]
         public string Val { get; set; }
 
-        [DatabaseGenerated(DatabaseGeneratedOption.Computed)]
         public DateTime DateTime { get; set; }
 
         [Required]
         public int PropertyId { get; set; }
 
         [Required]
-        public Property Property { get; set; }
+        public ViewPropertyDTO Property { get; set; }
 
         [Required]
         public int DeviceId { get; set; }
 
         [Required]
-        public Device Device { get; set; }
-
-        public int JobId { get; set; }
-
-        public Job Job { get; set; }
+        public ViewDeviceDTO Device { get; set; }
     }
 }

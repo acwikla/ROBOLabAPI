@@ -6,14 +6,16 @@ using System.Threading.Tasks;
 
 namespace ROBOLab.Core.DTO
 {
-    public class UserToViewDTO
+    public class LoginUserDTO
     {
         public int Id { get; set; }
 
         [Required]
-        public string Login { get; set; }
+        [MinLength(6, ErrorMessage = "Invalid password.")]
+        public string Password { get; set; }
 
         [Required]
+        [EmailAddress(ErrorMessage = "Invalid email adress.")]
         public string Email { get; set; }
     }
 }

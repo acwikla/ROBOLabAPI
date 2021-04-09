@@ -27,7 +27,7 @@ namespace ROBOLabAPI.Controllers
 
         // GET: api/users
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<UserToViewDTO>>> GetUsers()
+        public async Task<ActionResult<IEnumerable<ViewUserDTO>>> GetUsers()
         {
             var users = await _context.Users.ToListAsync();
 
@@ -36,10 +36,10 @@ namespace ROBOLabAPI.Controllers
                 return NotFound($"There is no users in database.");
             }
 
-            List<UserToViewDTO> usersViewDTO = new List<UserToViewDTO>();
+            List<ViewUserDTO> usersViewDTO = new List<ViewUserDTO>();
             foreach (User u in users)
             {
-                UserToViewDTO userViewDTO = _mapper.Map<UserToViewDTO>(u);
+                ViewUserDTO userViewDTO = _mapper.Map<ViewUserDTO>(u);
                 usersViewDTO.Add(userViewDTO);
             }
 
@@ -48,7 +48,7 @@ namespace ROBOLabAPI.Controllers
 
         // GET: api/users/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<UserToViewDTO>> GetUser(int id)
+        public async Task<ActionResult<ViewUserDTO>> GetUser(int id)
         {
             var user = await _context.Users.FindAsync(id);
 
@@ -57,13 +57,13 @@ namespace ROBOLabAPI.Controllers
                 return NotFound($"There is no user for given id: {id}.");
             }
 
-            UserToViewDTO userViewDTO = _mapper.Map<UserToViewDTO>(user);
+            ViewUserDTO userViewDTO = _mapper.Map<ViewUserDTO>(user);
             return Ok(userViewDTO);
         }
 
         // GET: api/users/5/devices
         [HttpGet("{id}/devices")]
-        public async Task<ActionResult<IEnumerable<DeviceToViewDTO>>> GetUsersDevices(int id)
+        public async Task<ActionResult<IEnumerable<ViewDeviceDTO>>> GetUsersDevices(int id)
         {
             var user = await _context.Users.FirstOrDefaultAsync();
 
@@ -80,10 +80,10 @@ namespace ROBOLabAPI.Controllers
                 return NotFound($"There is no devices for user with given id: {id}.");
             }
 
-            List<DeviceToViewDTO> devicesToViewDTO = new List<DeviceToViewDTO>();
+            List<ViewDeviceDTO> devicesToViewDTO = new List<ViewDeviceDTO>();
             foreach (Device d in userDevices)
             {
-                DeviceToViewDTO deviceToViewDTO = _mapper.Map<DeviceToViewDTO>(d);
+                ViewDeviceDTO deviceToViewDTO = _mapper.Map<ViewDeviceDTO>(d);
                 devicesToViewDTO.Add(deviceToViewDTO);
             }
 
@@ -92,7 +92,7 @@ namespace ROBOLabAPI.Controllers
 
         // GET: api/users/1/device/1
         [HttpGet("{id}/devices/{deviceId}")]
-        public async Task<ActionResult<DeviceToViewDTO>> GetUsersDevice(int id, int deviceId)
+        public async Task<ActionResult<ViewDeviceDTO>> GetUsersDevice(int id, int deviceId)
         {
             var user = await _context.Users.FindAsync(id);
 
@@ -111,13 +111,13 @@ namespace ROBOLabAPI.Controllers
                 return NotFound($"There is no device for given id: {deviceId}.");
             }
 
-            DeviceToViewDTO deviceToViewDTO = _mapper.Map<DeviceToViewDTO>(device);
+            ViewDeviceDTO deviceToViewDTO = _mapper.Map<ViewDeviceDTO>(device);
             return Ok(deviceToViewDTO);
         }
 
         // PUT: api/users/5
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutUser(int id, UserRegisterDTO user)
+        public async Task<IActionResult> PutUser(int id, RegisterUserDTO user)
         {
             /*if (id != UserRegisterDTO.Id)
             {
@@ -158,7 +158,7 @@ namespace ROBOLabAPI.Controllers
 
         // POST: api/users
         [HttpPost]
-        public async Task<ActionResult<UserToViewDTO>> PostUser(UserRegisterDTO user)
+        public async Task<ActionResult<ViewUserDTO>> PostUser(RegisterUserDTO user)
         {
             if (EmailExists(user.Email))
             {
@@ -171,13 +171,13 @@ namespace ROBOLabAPI.Controllers
             _context.Users.Add(newUser);
             await _context.SaveChangesAsync();
 
-            UserToViewDTO userViewDTO = _mapper.Map<UserToViewDTO>(newUser);
+            ViewUserDTO userViewDTO = _mapper.Map<ViewUserDTO>(newUser);
             return CreatedAtAction("GetUser", new { id = userViewDTO.Id }, userViewDTO);
         }
 
         // POST: api/users/login
         [HttpPost("login")]
-        public async Task<IActionResult> Login(UserToLoginDTO userToLogin)
+        public async Task<IActionResult> Login(LoginUserDTO userToLogin)
         {
             IActionResult response = Unauthorized();
 
@@ -196,7 +196,7 @@ namespace ROBOLabAPI.Controllers
 
         // POST: api/users/1/device
         [HttpPost("{userId}/device")]
-        public async Task<ActionResult<DeviceToViewDTO>> PostDevice(int userId, DeviceTypeDTO deviceTypeDTO, DeviceAddDTO deviceDTO)
+        public async Task<ActionResult<ViewDeviceDTO>> PostDevice(int userId, DeviceTypeDTO deviceTypeDTO, AddDeviceDTO deviceDTO)
         {
             var user = await _context.Users.FindAsync(userId);
             if (user == null)
@@ -221,7 +221,7 @@ namespace ROBOLabAPI.Controllers
             deviceType.Devices.Add(newDevice);
             await _context.SaveChangesAsync();
 
-            DeviceToViewDTO deviceToViewDTO = _mapper.Map<DeviceToViewDTO>(newDevice);
+            ViewDeviceDTO deviceToViewDTO = _mapper.Map<ViewDeviceDTO>(newDevice);
             return CreatedAtAction("GetUsersDevice", new { id = userId, deviceId = deviceToViewDTO.Id }, deviceToViewDTO);
         }
 
@@ -238,7 +238,7 @@ namespace ROBOLabAPI.Controllers
             _context.Users.Remove(user);
             await _context.SaveChangesAsync();
 
-            UserToViewDTO userViewDTO = _mapper.Map<UserToViewDTO>(user);
+            ViewUserDTO userViewDTO = _mapper.Map<ViewUserDTO>(user);
             return Ok(userViewDTO);
         }
 

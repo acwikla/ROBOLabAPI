@@ -27,7 +27,7 @@ namespace ROBOLabAPI.Controllers
 
         // GET: api/properties/all
         [HttpGet("all")]
-        public async Task<ActionResult<IEnumerable<PropertyToViewDTO>>> GetProperties()
+        public async Task<ActionResult<IEnumerable<ViewPropertyDTO>>> GetProperties()
         {
             var property = await _context.Properties.Include(p => p.DeviceType).ToListAsync();
 
@@ -36,10 +36,10 @@ namespace ROBOLabAPI.Controllers
                 return NotFound($"There is no property in database.");
             }
 
-            List<PropertyToViewDTO> popertiesToViewDTO = new List<PropertyToViewDTO>();
+            List<ViewPropertyDTO> popertiesToViewDTO = new List<ViewPropertyDTO>();
             foreach (Property p in property)
             {
-                PropertyToViewDTO propertyToViewDTO = _mapper.Map<PropertyToViewDTO>(property);
+                ViewPropertyDTO propertyToViewDTO = _mapper.Map<ViewPropertyDTO>(property);
                 popertiesToViewDTO.Add(propertyToViewDTO);
             }
             
@@ -48,7 +48,7 @@ namespace ROBOLabAPI.Controllers
 
         // GET: api/properties/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<PropertyToViewDTO>> GetProperty(int id)
+        public async Task<ActionResult<ViewPropertyDTO>> GetProperty(int id)
         {
             var property = await _context.Properties.Include(p => p.DeviceType).Where(p => p.Id == id).FirstOrDefaultAsync();
 
@@ -57,14 +57,14 @@ namespace ROBOLabAPI.Controllers
                 return NotFound($"There is no property with given id: {id}.");
             }
 
-            PropertyToViewDTO propertyToViewDTO = _mapper.Map<PropertyToViewDTO>(property);
+            ViewPropertyDTO propertyToViewDTO = _mapper.Map<ViewPropertyDTO>(property);
 
             return propertyToViewDTO;
         }
 
         // GET: api/properties?devtype={type}
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<PropertyToViewDTO>>> GetPropertyForDeviceType([FromQuery] string devtype)
+        public async Task<ActionResult<IEnumerable<ViewPropertyDTO>>> GetPropertyForDeviceType([FromQuery] string devtype)
         {
             var deviceType = await _context.DeviceTypes.Include(d => d.Properties).Where(deviceType => deviceType.Name == devtype).FirstOrDefaultAsync();
 
@@ -78,10 +78,10 @@ namespace ROBOLabAPI.Controllers
                 return NotFound($"There is no properties for device type with given name: {devtype}.");
             }
 
-            List<PropertyToViewDTO> propertiesToViewDTO = new List<PropertyToViewDTO>();
+            List<ViewPropertyDTO> propertiesToViewDTO = new List<ViewPropertyDTO>();
             foreach (Property p in deviceType.Properties)
             {
-                PropertyToViewDTO propertyToViewDTO = _mapper.Map<PropertyToViewDTO>(p);
+                ViewPropertyDTO propertyToViewDTO = _mapper.Map<ViewPropertyDTO>(p);
             }
 
             return propertiesToViewDTO;
@@ -89,7 +89,7 @@ namespace ROBOLabAPI.Controllers
 
         // PUT: api/properties/5
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutProperty(int id, PropertyAddDTO propertyDTO)
+        public async Task<IActionResult> PutProperty(int id, AddPropertyDTO propertyDTO)
         {
             /*if (id != property.Id)
             {
@@ -130,7 +130,7 @@ namespace ROBOLabAPI.Controllers
 
         // DELETE: api/properties/5
         [HttpDelete("{id}")]
-        public async Task<ActionResult<PropertyToViewDTO>> DeleteProperty(int id)
+        public async Task<ActionResult<ViewPropertyDTO>> DeleteProperty(int id)
         {
             var property = await _context.Properties.FindAsync(id);
             if (property == null)
@@ -141,7 +141,7 @@ namespace ROBOLabAPI.Controllers
             _context.Properties.Remove(property);
             await _context.SaveChangesAsync();
 
-            PropertyToViewDTO propertyToViewDTO = _mapper.Map<PropertyToViewDTO>(property);
+            ViewPropertyDTO propertyToViewDTO = _mapper.Map<ViewPropertyDTO>(property);
             return propertyToViewDTO;
         }
 
