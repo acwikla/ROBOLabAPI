@@ -1,12 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
+using System.ComponentModel.DataAnnotations;
 
 namespace ROBOLab.Core.DTO
 {
-    public class ViewDeviceDTO
+    public class PropertyNameDTO
     {
         public int Id { get; set; }
 
@@ -14,8 +14,6 @@ namespace ROBOLab.Core.DTO
         public string Name { get; set; }
 
         [Required]
-        public DeviceTypeDTO DeviceType { get; set; }
-
-        public ViewUserDTO User { get; set; }
+        public string Body { get; set; }
     }
 }

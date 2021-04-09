@@ -198,9 +198,6 @@ namespace ROBOLabAPI.Controllers
             deviceJobToUpdate.ExecutionTime = deviceJob.ExecutionTime;
             deviceJobToUpdate.Body = deviceJob.Body;
 
-            var deviceToUpdate = deviceJobToUpdate.Device;
-
-            _context.Entry(deviceToUpdate).State = EntityState.Modified;
             _context.Entry(deviceJobToUpdate).State = EntityState.Modified;
 
             try

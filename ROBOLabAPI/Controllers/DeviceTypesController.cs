@@ -139,10 +139,13 @@ namespace ROBOLabAPI.Controllers
             return CreatedAtAction("GetDeviceType", new { id = deviceTypeToView.Id }, deviceTypeToView);
         }
 
+        //TODO: dodac metode, która przyjmuje deviceId i automatycznie doda do device.value 
+        //wszystkie property jakie znajdują sie w device typie do ktorego nalezy device - albo dodac to do post/devtype/properties
+
         //POST: /api/device-types/{id}/properties
         [HttpPost("{id}/properties")]
         public async Task<ActionResult<ViewPropertyDTO>> PostPropertyToDeviceType(int id, AddPropertyDTO propertyDTO)
-        {
+        { 
             var deviceType = await _context.DeviceTypes.FindAsync(id);
 
             if (deviceType == null)
