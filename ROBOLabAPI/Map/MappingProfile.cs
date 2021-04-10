@@ -18,20 +18,17 @@ namespace ROBOLabAPI.Map
             CreateMap<User, ViewUserDTO>().ReverseMap();
             CreateMap<User, LoginUserDTO>().ReverseMap();
 
-            //Device:
-            CreateMap<Device, AddDeviceDTO> ().ReverseMap();
+            //Device
             CreateMap<Device, ViewDeviceDTO>().ReverseMap();
-
             CreateMap<Device, AddDeviceDTO>()
-            .ForMember(dest => dest.DeviceName,
-            opt => opt.MapFrom(src => src.Name)).ReverseMap();
+                .ForMember(dest => dest.DeviceName, opt => opt.MapFrom(src => src.Name))
+                .ReverseMap();
 
             //DeviceType
             CreateMap<DeviceType, DeviceTypeDTO>().ReverseMap();
-
             CreateMap<DeviceType, DeviceTypeDTO>()
-            .ForMember(dest => dest.DeviceTypeName,
-            opt => opt.MapFrom(src => src.Name)).ReverseMap();
+                .ForMember(dest => dest.DeviceTypeName, opt => opt.MapFrom(src => src.Name))
+                .ReverseMap();
 
             //DeviceJob:
             CreateMap<DeviceJob, AddDeviceJobDTO>().ReverseMap();

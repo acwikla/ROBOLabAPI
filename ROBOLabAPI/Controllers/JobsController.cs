@@ -31,19 +31,7 @@ namespace ROBOLabAPI.Controllers
         {
             var jobs = await _context.Jobs.Include(j=> j.DeviceType).ToListAsync();
 
-            if (jobs == null)
-            {
-                return NotFound("There is no jobs in database.");
-            }
-
-            List<JobDTO> jobsDTO = new List<JobDTO>();
-            foreach (Job j in jobs)
-            {
-                JobDTO jobDTO = _mapper.Map<JobDTO>(j);
-                jobsDTO.Add(jobDTO);
-            }
-
-            return jobsDTO;
+            return _mapper.Map<List<JobDTO>>(jobs);
         }
 
         // GET: api/jobs/5
@@ -57,8 +45,7 @@ namespace ROBOLabAPI.Controllers
                 return NotFound($"There is no job for given id: {id}.");
             }
 
-            JobDTO jobDTO = _mapper.Map<JobDTO>(job);
-            return jobDTO;
+            return _mapper.Map<JobDTO>(job);
         }
 
         // GET: api/jobs?devtype=devtype
@@ -77,14 +64,7 @@ namespace ROBOLabAPI.Controllers
                 return NotFound($"There is no job for device type with given name: {devtype}.");
             }
 
-            List<JobDTO> jobsDTO = new List<JobDTO>();
-            foreach (Job j in deviceType.Jobs)
-            {
-                JobDTO jobDTO = _mapper.Map<JobDTO>(j);
-                jobsDTO.Add(jobDTO);
-            }
-            
-            return jobsDTO;
+            return _mapper.Map<List<JobDTO>>(deviceType.Jobs);
         }
 
         // PUT: api/jobs/5
