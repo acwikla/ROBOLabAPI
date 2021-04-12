@@ -99,7 +99,7 @@ namespace ROBOLabAPI.Controllers
                 return NotFound($"There is no device type for given id: {id}.");
             }
 
-            deviceTypeToUpdate.Name = deviceTypeDTO.DeviceTypeName;
+            deviceTypeToUpdate.Name = deviceTypeDTO.Name;
 
             _context.Entry(deviceTypeToUpdate).State = EntityState.Modified;
 
@@ -126,7 +126,7 @@ namespace ROBOLabAPI.Controllers
         [HttpPost]
         public async Task<ActionResult<DeviceTypeDTO>> PostDeviceType(DeviceTypeDTO deviceTypeDTO)
         {
-            if (DeviceTypeNameExists(deviceTypeDTO.DeviceTypeName))
+            if (DeviceTypeNameExists(deviceTypeDTO.Name))
             {
                 return BadRequest("Device type with this name already exists.");
             }

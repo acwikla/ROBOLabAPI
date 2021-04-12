@@ -38,7 +38,10 @@ namespace ROBOLabAPI.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<JobDTO>> GetJob([FromRoute] int id)
         {
-            var job = await _context.Jobs.Include(j => j.DeviceType).Where(j => j.Id == id).FirstOrDefaultAsync();
+            var job = await _context.Jobs
+                .Include(j => j.DeviceType)
+                .Where(j => j.Id == id)
+                .FirstOrDefaultAsync();
 
             if (job == null)
             {
@@ -52,7 +55,10 @@ namespace ROBOLabAPI.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<JobDTO>>> GetJobForDeviceType([FromQuery] string devtype)
         {
-            var deviceType = await _context.DeviceTypes.Include(d => d.Jobs).Where(deviceType => deviceType.Name == devtype).FirstOrDefaultAsync();
+            var deviceType = await _context.DeviceTypes
+                .Include(d => d.Jobs)
+                .Where(deviceType => deviceType.Name == devtype)
+                .FirstOrDefaultAsync();
 
             if (deviceType == null)
             {
@@ -112,7 +118,10 @@ namespace ROBOLabAPI.Controllers
         [HttpPost]
         public async Task<ActionResult<JobDTO>> PostJob(JobDTO jobDTO)
         {
-            var deviceType = await _context.DeviceTypes.Include(d => d.Jobs).Where(deviceType => deviceType.Name == jobDTO.DeviceType.DeviceTypeName).FirstOrDefaultAsync();
+            /*var deviceType = await _context.DeviceTypes
+                .Include(d => d.Jobs)
+                .Where(deviceType => deviceType.Name == jobDTO.DeviceType.DeviceTypeName)
+                .FirstOrDefaultAsync();
 
             Job job = _mapper.Map<Job>(jobDTO);
 
@@ -120,7 +129,20 @@ namespace ROBOLabAPI.Controllers
             deviceType.Jobs.Add(job);
             await _context.SaveChangesAsync();
 
-            JobDTO jobToViewDTO = _mapper.Map<JobDTO>(job);
+            JobDTO jobToViewDTO = _mapper.Map<JobDTO>(job);*/
+
+
+            // get dev type
+            var deviceType = await _context.DeviceTypes
+                .Where(dt => dt.Name == jobDTO.DeviceType.Name)
+                .FirstOrDefaultAsync();
+
+            // set dev type
+            var job = _mapper.Map<Job>(jobDTO);
+            job.DeviceType = deviceType;
+            await _context.SaveChangesAsync();
+
+            var jobToViewDTO = _mapper.Map<JobDTO>(job);
             return CreatedAtAction("GetJob", new { id = jobToViewDTO.Id }, jobToViewDTO);
         }
 
