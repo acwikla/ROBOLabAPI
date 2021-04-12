@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using ROBOLab.Core.Models;
 
-namespace ROBOLabAPI
+namespace ROBOLab.API
 {
     public class ROBOLabDbContext : DbContext
     {

@@ -7,10 +7,10 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using ROBOLab.Core.Models;
 using ROBOLab.Core.DTO;
-using ROBOLabAPI;
+using ROBOLab.API;
 using AutoMapper;
 
-namespace ROBOLabAPI.Controllers
+namespace ROBOLab.API.Controllers
 {
     [Route("api/devices")]
     [ApiController]

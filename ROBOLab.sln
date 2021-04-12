@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.30406.217
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ROBOLabAPI", "ROBOLabAPI\ROBOLabAPI.csproj", "{28DB306D-3A7A-4B55-97B2-0C3F4316B8F6}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ROBOLab.API", "ROBOLabAPI\ROBOLab.API.csproj", "{28DB306D-3A7A-4B55-97B2-0C3F4316B8F6}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ROBOLab.Core", "ROBOLab.Core\ROBOLab.Core.csproj", "{C2AFD537-C5D2-4BD3-976C-986C01D710AE}"
 EndProject

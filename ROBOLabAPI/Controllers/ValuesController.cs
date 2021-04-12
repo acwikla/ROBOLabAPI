@@ -6,9 +6,9 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using ROBOLab.Core.Models;
-using ROBOLabAPI;
+using ROBOLab.API;
 
-namespace ROBOLabAPI.Controllers
+namespace ROBOLab.API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]

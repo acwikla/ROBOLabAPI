@@ -13,7 +13,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.EntityFrameworkCore;
 using ROBOLab.Core.Models;
 
-namespace ROBOLabAPI
+namespace ROBOLab.API
 {
     public class Startup
     {

@@ -5,7 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using ROBOLab.Core.DTO;
-namespace ROBOLabAPI.Map
+namespace ROBOLab.API.Map
 {
     public class MappingProfile : Profile
     {

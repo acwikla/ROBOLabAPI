@@ -9,9 +9,9 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using ROBOLab.Core.DTO;
 using ROBOLab.Core.Models;
-using ROBOLabAPI;
+using ROBOLab.API;
 
-namespace ROBOLabAPI.Controllers
+namespace ROBOLab.API.Controllers
 {
     [Route("api/users")]
     //[ApiController]
@@ -205,10 +205,10 @@ namespace ROBOLabAPI.Controllers
             }
 
             //search by name
-            var deviceType = await _context.DeviceTypes.Where(deviceJobs => deviceJobs.Name == deviceTypeDTO.DeviceTypeName).FirstOrDefaultAsync();
+            var deviceType = await _context.DeviceTypes.Where(deviceJobs => deviceJobs.Name == deviceTypeDTO.Name).FirstOrDefaultAsync();
             if (deviceType == null)
             {
-                return NotFound($"There is no device type for given name: {deviceTypeDTO.DeviceTypeName}.");
+                return NotFound($"There is no device type for given name: {deviceTypeDTO.Name}.");
             }
 
             Device newDevice = _mapper.Map<Device>(deviceDTO);
