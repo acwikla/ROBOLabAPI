@@ -91,7 +91,7 @@ namespace ROBOLab.API.Controllers
 
             jobToUpdate.Name = jobDTO.Name;
             jobToUpdate.Description = jobDTO.Description;
-            jobToUpdate.JobProperties = jobDTO.JobProperties;
+            jobToUpdate.Properties = jobDTO.JobProperties;
 
             _context.Entry(jobToUpdate).State = EntityState.Modified;
 

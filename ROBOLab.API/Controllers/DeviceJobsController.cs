@@ -271,7 +271,7 @@ namespace ROBOLab.API.Controllers
                 return NotFound($"There is no job for given id: {jobId}.");
             }
 
-            if (device.DeviceTypeId != job.DeviceTypeId)
+            if (device.DeviceType.Id != job.DeviceType.Id)
             {
                 return BadRequest("Requested job cannot be performed by given device. Device types do not match.");
             }

@@ -17,14 +17,14 @@ namespace ROBOLab.Core.Models
         public string Description { get; set; }
 
         [Required]
-        public string JobProperties { get; set; }
+        public string Properties { get; set; }
 
-        [Required]
-        public int DeviceTypeId { get; set; }
+        //[Required]
+        //public int DeviceTypeId { get; set; }
 
         [Required]
         public DeviceType DeviceType { get; set; }
 
-        public ICollection<DeviceJob> DeviceJob { get; set; }
+        public ICollection<DeviceJob> DeviceJobs { get; set; }
     }
 }

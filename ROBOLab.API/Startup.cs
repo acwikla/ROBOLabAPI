@@ -34,8 +34,16 @@ namespace ROBOLab.API
 
             services.AddControllers();
 
-            services.AddDbContext<ROBOLabDbContext>(opt => opt.UseInMemoryDatabase("ROBOLabDB"));
+            //services.AddDbContext<ROBOLabDbContext>(opt => opt.UseInMemoryDatabase("ROBOLabDB"));
             //services.AddDbContext<ROBOLabDbContext>(opt => opt.UseSqlServer(Configuration.GetConnectionString("ROBOLabDB")));
+            services.AddDbContext<ROBOLabDbContext>(opt => opt.UseSqlite(@"Data Source=ROBOLab.db"));
+
+            //TODO: sciezke do sqlite umiescic w conn stringu
+
+            // Do przegladania baz Sqlite mozna uzyc softu DBeaver (https://dbeaver.io)
+            // Supports all popular databases: MySQL, PostgreSQL, SQLite, Oracle, DB2, SQL Server, Sybase, MS Access,
+            // Teradata, Firebird, Apache Hive, Phoenix, Presto, etc.
+
 
             services.AddAutoMapper(typeof(Startup));
             services.AddControllers();
@@ -50,8 +58,11 @@ namespace ROBOLab.API
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, ROBOLabDbContext dbContext)
         {
+            // run migrations on startup (database update)
+            dbContext.Database.Migrate();
+
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
