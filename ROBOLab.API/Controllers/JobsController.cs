@@ -124,12 +124,8 @@ namespace ROBOLab.API.Controllers
 
         // POST: api/jobs
         [HttpPost]
-        public async Task<ActionResult<JobDTO>> PostJob(JobDTO jobDTO)
+        public async Task<ActionResult<JobDTO>> PostJob(AddJobDTO jobDTO)
         {
-            //TODO: dla POST nie sa potrzebne: jobDTO.id ani jobDTO.devicetype.id
-            // do poprawki na pozniej (zrobi Daniel)
-
-
             // get dev type
             var deviceType = await _context.DeviceTypes
                 .Where(dt => dt.Name == jobDTO.DeviceType.Name)

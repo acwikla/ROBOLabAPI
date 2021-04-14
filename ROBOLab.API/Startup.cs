@@ -36,7 +36,10 @@ namespace ROBOLab.API
 
             //services.AddDbContext<ROBOLabDbContext>(opt => opt.UseInMemoryDatabase("ROBOLabDB"));
             //services.AddDbContext<ROBOLabDbContext>(opt => opt.UseSqlServer(Configuration.GetConnectionString("ROBOLabDB")));
-            services.AddDbContext<ROBOLabDbContext>(opt => opt.UseSqlite(@"Data Source=ROBOLab.db"));
+            services.AddDbContext<ROBOLabDbContext>(opt => opt
+                .UseSqlite(@"Data Source=ROBOLab.db")
+                .EnableSensitiveDataLogging()           // log sql queries
+                );
 
             //TODO: sciezke do sqlite umiescic w conn stringu
 

@@ -209,6 +209,26 @@ namespace ROBOLab.API.Migrations
                 values: new object[] { 2, "Device type test" });
 
             migrationBuilder.InsertData(
+                table: "Users",
+                columns: new[] { "Id", "Email", "Login", "Password" },
+                values: new object[] { 1, "buuu.email@gmail.com", "ola", "pass1" });
+
+            migrationBuilder.InsertData(
+                table: "Users",
+                columns: new[] { "Id", "Email", "Login", "Password" },
+                values: new object[] { 2, "daniel.email@gmail.com", "daniel", "pass2" });
+
+            migrationBuilder.InsertData(
+                table: "Devices",
+                columns: new[] { "Id", "DeviceTypeId", "Name", "UserId" },
+                values: new object[] { 1, 1, "Test device 1 (SmartTerra)", 1 });
+
+            migrationBuilder.InsertData(
+                table: "Devices",
+                columns: new[] { "Id", "DeviceTypeId", "Name", "UserId" },
+                values: new object[] { 2, 1, "Test device 2 (SmartTerra)", 2 });
+
+            migrationBuilder.InsertData(
                 table: "Jobs",
                 columns: new[] { "Id", "Description", "DeviceTypeId", "Name", "Properties" },
                 values: new object[] { 1, "Turn on the LED strip and set color of the LEDs .", 1, "TurnOnLED", "" });

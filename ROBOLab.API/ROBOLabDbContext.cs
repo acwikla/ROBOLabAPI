@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging.Console;
 using ROBOLab.Core.Models;
 
 namespace ROBOLab.API
@@ -44,7 +46,6 @@ namespace ROBOLab.API
                 testDevType
             });
 
-
             // jobs
 
             modelBuilder.Entity<Job>().HasData(new object[]
@@ -72,6 +73,49 @@ namespace ROBOLab.API
                     DeviceTypeId = smartTerraDevType.Id,
                     Properties = "",
                     Description = "Turn on the water pump for given period of time."
+                }
+            });
+
+            // users
+
+            var user1 = new User
+            {
+                Id = 1,
+                Email = "buuu.email@gmail.com",
+                Login = "ola",
+                Password = "pass1"
+            };
+            var user2 = new User
+            {
+                Id = 2,
+                Email = "daniel.email@gmail.com",
+                Login = "daniel",
+                Password = "pass2"
+            };
+
+            modelBuilder.Entity<User>().HasData(new User[]
+            {
+                user1,
+                user2
+            });
+
+            // devices
+
+            modelBuilder.Entity<Device>().HasData(new Device[]
+            {
+                new Device
+                {
+                    Id = 1,
+                    DeviceTypeId = smartTerraDevType.Id,
+                    Name = "Test device 1 (SmartTerra)",
+                    UserId = user1.Id,
+                },
+                new Device
+                {
+                    Id = 2,
+                    DeviceTypeId = smartTerraDevType.Id,
+                    Name = "Test device 2 (SmartTerra)",
+                    UserId = user2.Id,
                 }
             });
 

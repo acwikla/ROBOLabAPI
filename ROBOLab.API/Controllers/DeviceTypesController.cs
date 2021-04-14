@@ -31,19 +31,7 @@ namespace ROBOLab.API.Controllers
         {
             var deviceTypes = await _context.DeviceTypes.ToListAsync();
 
-            if (deviceTypes == null)
-            {
-                return NotFound("There is no device types in database.");
-            }
-
-            List<DeviceTypeDTO> deviceTypesDTO = new List<DeviceTypeDTO>();
-            foreach (DeviceType d in deviceTypes)
-            {
-                DeviceTypeDTO deviceTypeDTO = _mapper.Map<DeviceTypeDTO>(d);
-                deviceTypesDTO.Add(deviceTypeDTO);
-            }
-
-            return deviceTypesDTO;
+            return _mapper.Map<List<DeviceTypeDTO>>(deviceTypes);
         }
 
         // GET: api/device-types/5
@@ -57,31 +45,18 @@ namespace ROBOLab.API.Controllers
                 return NotFound($"There is no device type for given id: {id}.");
             }
 
-            DeviceTypeDTO deviceTypeDTO = _mapper.Map<DeviceTypeDTO>(deviceType);
-            return deviceTypeDTO;
+            return _mapper.Map<DeviceTypeDTO>(deviceType);
         }
 
-        // GET: api/device-types/{id}/devices/user/{userId}
-        [HttpGet("{id}/devices/user/{userId}")]
-        public async Task<ActionResult<IEnumerable<ViewDeviceDTO>>> GetAllDevicesByDeviceType(int id, int userId)
+        // GET: api/device-types/{devTypeId}/devices/user/{userId}
+        [HttpGet("{devTypeId}/devices/user/{userId}")]
+        public async Task<ActionResult<IEnumerable<ViewDeviceDTO>>> GetAllDevicesByDeviceType(int devTypeId, int userId)
         {
-            var deviceType = await _context.DeviceTypes.FindAsync(id);
-            var usersDevices = await _context.Users.Include(n => n.Devices).Where(user => user.Id == userId).SelectMany(user => user.Devices).ToListAsync();
-            var usersDevicesByDeviceType = usersDevices.Where(device => device.DeviceType.Id == id).ToList();
+            var devices = await _context.Devices
+                .Where(d => d.UserId == userId && d.DeviceTypeId == devTypeId)
+                .ToListAsync();
 
-            if (usersDevicesByDeviceType == null)
-            {
-                return NotFound($"There is no devices for device type: {deviceType.Name} for user with given id: {userId}");
-            }
-
-            List<ViewDeviceDTO> devicesByDeviceTypeDTO = new List<ViewDeviceDTO>();
-            foreach (Device d in usersDevicesByDeviceType)
-            {
-                ViewDeviceDTO deviceDTO = _mapper.Map<ViewDeviceDTO>(d);
-                devicesByDeviceTypeDTO.Add(deviceDTO);
-            }
-
-            return devicesByDeviceTypeDTO;
+            return _mapper.Map<List<ViewDeviceDTO>>(devices);
         }
 
         // PUT: api/device-types/5

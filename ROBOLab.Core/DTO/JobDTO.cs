@@ -6,10 +6,8 @@ using System.Threading.Tasks;
 
 namespace ROBOLab.Core.DTO
 {
-    public class JobDTO
+    public class AddJobDTO
     {
-        public int Id { get; set; }
-
         [Required]
         public string Name { get; set; }
 
@@ -21,5 +19,10 @@ namespace ROBOLab.Core.DTO
 
         [Required]
         public DeviceTypeDTO DeviceType { get; set; }
+    }
+
+    public class JobDTO : AddJobDTO
+    {
+        public int Id { get; set; }
     }
 }

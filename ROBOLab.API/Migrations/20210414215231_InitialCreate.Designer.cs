@@ -9,7 +9,7 @@ using ROBOLab.API;
 namespace ROBOLab.API.Migrations
 {
     [DbContext(typeof(ROBOLabDbContext))]
-    [Migration("20210414070609_InitialCreate")]
+    [Migration("20210414215231_InitialCreate")]
     partial class InitialCreate
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -41,6 +41,22 @@ namespace ROBOLab.API.Migrations
                     b.HasIndex("UserId");
 
                     b.ToTable("Devices");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            DeviceTypeId = 1,
+                            Name = "Test device 1 (SmartTerra)",
+                            UserId = 1
+                        },
+                        new
+                        {
+                            Id = 2,
+                            DeviceTypeId = 1,
+                            Name = "Test device 2 (SmartTerra)",
+                            UserId = 2
+                        });
                 });
 
             modelBuilder.Entity("ROBOLab.Core.Models.DeviceJob", b =>
@@ -234,6 +250,22 @@ namespace ROBOLab.API.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Users");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            Email = "buuu.email@gmail.com",
+                            Login = "ola",
+                            Password = "pass1"
+                        },
+                        new
+                        {
+                            Id = 2,
+                            Email = "daniel.email@gmail.com",
+                            Login = "daniel",
+                            Password = "pass2"
+                        });
                 });
 
             modelBuilder.Entity("ROBOLab.Core.Models.Value", b =>
