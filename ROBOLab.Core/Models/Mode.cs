@@ -14,12 +14,12 @@ namespace ROBOLab.Core.Models
         public string Value { get; set; }
 
         [Required]
-        public ICollection<Property> Properties { get; set; }
+        public virtual ICollection<Property> Properties { get; set; }
 
         [Required]
         public int DeviceId { get; set; }
 
         [Required]
-        public Device Device { get; set; }
+        public virtual Device Device { get; set; }
     }
 }

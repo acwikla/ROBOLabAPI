@@ -17,7 +17,7 @@ namespace ROBOLab.Core.DTO
         public string Description { get; set; }
 
         [Required]
-        public string JobProperties { get; set; }
+        public string Properties { get; set; }
 
         [Required]
         public DeviceTypeDTO DeviceType { get; set; }

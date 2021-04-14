@@ -28,12 +28,12 @@ namespace ROBOLab.Core.Models
         public int DeviceId { get; set; }
 
         [Required]
-        public Device Device { get; set; }
+        public virtual Device Device { get; set; }
 
         [Required]
         public int JobId { get; set; }
 
         [Required]
-        public Job Job { get; set; }
+        public virtual Job Job { get; set; }
     }
 }

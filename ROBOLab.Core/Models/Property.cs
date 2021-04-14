@@ -21,14 +21,14 @@ namespace ROBOLab.Core.Models
         public int DeviceTypeId { get; set; }
 
         [Required]
-        public DeviceType DeviceType { get; set; }
+        public virtual DeviceType DeviceType { get; set; }
 
         [DefaultValue(false)]
         public bool IsMode { get; set; }
 
         public int ModeId { get; set; }
 
-        public Mode Mode { get; set; }
+        public virtual Mode Mode { get; set; }
 
         public virtual ICollection<Value> Values { get; set; }
     }

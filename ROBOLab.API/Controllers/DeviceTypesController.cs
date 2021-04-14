@@ -67,7 +67,7 @@ namespace ROBOLab.API.Controllers
         {
             var deviceType = await _context.DeviceTypes.FindAsync(id);
             var usersDevices = await _context.Users.Include(n => n.Devices).Where(user => user.Id == userId).SelectMany(user => user.Devices).ToListAsync();
-            var usersDevicesByDeviceType = usersDevices.Where(device => device.DeviceTypeId == id).ToList();
+            var usersDevicesByDeviceType = usersDevices.Where(device => device.DeviceType.Id == id).ToList();
 
             if (usersDevicesByDeviceType == null)
             {

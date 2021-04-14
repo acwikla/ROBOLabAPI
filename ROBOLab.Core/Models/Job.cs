@@ -19,12 +19,12 @@ namespace ROBOLab.Core.Models
         [Required]
         public string Properties { get; set; }
 
-        //[Required]
-        //public int DeviceTypeId { get; set; }
+        [Required]
+        public int DeviceTypeId { get; set; }
 
         [Required]
-        public DeviceType DeviceType { get; set; }
+        public virtual DeviceType DeviceType { get; set; }
 
-        public ICollection<DeviceJob> DeviceJobs { get; set; }
+        public virtual ICollection<DeviceJob> DeviceJobs { get; set; }
     }
 }

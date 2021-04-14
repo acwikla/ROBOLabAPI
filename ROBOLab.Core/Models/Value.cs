@@ -21,16 +21,16 @@ namespace ROBOLab.Core.Models
         public int PropertyId { get; set; }
 
         [Required]
-        public Property Property { get; set; }
+        public virtual Property Property { get; set; }
 
         [Required]
         public int DeviceId { get; set; }
 
         [Required]
-        public Device Device { get; set; }
+        public virtual Device Device { get; set; }
 
         public int JobId { get; set; }
 
-        public Job Job { get; set; }
+        public virtual Job Job { get; set; }
     }
 }

@@ -124,7 +124,7 @@ namespace ROBOLab.API.Controllers
 
             //sprawdz czy dev type w property zgadza się z dev type w device
             //na wszelki wypadek
-            if (property.DeviceTypeId == device.DeviceTypeId)
+            if (property.DeviceTypeId == device.DeviceType.Id)
             {
                 return BadRequest($"Device types in property and device do not match.");
             }

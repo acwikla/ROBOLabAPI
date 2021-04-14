@@ -212,9 +212,9 @@ namespace ROBOLab.API.Controllers
             }
 
             Device newDevice = _mapper.Map<Device>(deviceDTO);
-            newDevice.UserId = user.Id;
+            //newDevice.UserId = user.Id;
             newDevice.User = user;
-            newDevice.DeviceTypeId = deviceType.Id;
+            //newDevice.DeviceTypeId = deviceType.Id;
             newDevice.DeviceType = deviceType;
 
             await _context.Devices.AddAsync(newDevice);

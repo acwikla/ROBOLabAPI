@@ -29,7 +29,11 @@ namespace ROBOLab.API.Controllers
         [HttpGet("all")]
         public async Task<ActionResult<IEnumerable<JobDTO>>> GetJobs()
         {
-            var jobs = await _context.Jobs.Include(j=> j.DeviceType).ToListAsync();
+            // lazy loading jest wlaczony wiec include zrobi sie sam podczas mapowania,
+            // ale jeden include tutaj bedzie wydajniejszy
+            var jobs = await _context.Jobs
+                .Include(j=> j.DeviceType)    
+                .ToListAsync();
 
             return _mapper.Map<List<JobDTO>>(jobs);
         }
@@ -67,7 +71,8 @@ namespace ROBOLab.API.Controllers
 
             if (deviceType.Jobs == null)
             {
-                return NotFound($"There is no job for device type with given name: {devtype}.");
+                //return NotFound($"There is no job for device type with given name: {devtype}.");
+                return new List<JobDTO>();  // moze nie byc jobow i nie jest to blad wiec lepiej zwrocic pusta liste
             }
 
             return _mapper.Map<List<JobDTO>>(deviceType.Jobs);
@@ -91,7 +96,10 @@ namespace ROBOLab.API.Controllers
 
             jobToUpdate.Name = jobDTO.Name;
             jobToUpdate.Description = jobDTO.Description;
-            jobToUpdate.Properties = jobDTO.JobProperties;
+            jobToUpdate.Properties = jobDTO.Properties;
+
+            // TODO: jesli nie aktualizujemy device type (co jest ok) to obiekt jobDTO
+            // nie powinien posidac pola DeviceType (mozna zrobic inny dto np: JobUpdate)
 
             _context.Entry(jobToUpdate).State = EntityState.Modified;
 
@@ -118,18 +126,8 @@ namespace ROBOLab.API.Controllers
         [HttpPost]
         public async Task<ActionResult<JobDTO>> PostJob(JobDTO jobDTO)
         {
-            /*var deviceType = await _context.DeviceTypes
-                .Include(d => d.Jobs)
-                .Where(deviceType => deviceType.Name == jobDTO.DeviceType.DeviceTypeName)
-                .FirstOrDefaultAsync();
-
-            Job job = _mapper.Map<Job>(jobDTO);
-
-            _context.Jobs.Add(job);
-            deviceType.Jobs.Add(job);
-            await _context.SaveChangesAsync();
-
-            JobDTO jobToViewDTO = _mapper.Map<JobDTO>(job);*/
+            //TODO: dla POST nie sa potrzebne: jobDTO.id ani jobDTO.devicetype.id
+            // do poprawki na pozniej (zrobi Daniel)
 
 
             // get dev type
@@ -137,18 +135,24 @@ namespace ROBOLab.API.Controllers
                 .Where(dt => dt.Name == jobDTO.DeviceType.Name)
                 .FirstOrDefaultAsync();
 
+            if (deviceType == null)
+            {
+                return BadRequest($"There is no device type: {jobDTO.DeviceType.Name}.");
+            }
+
             // set dev type
             var job = _mapper.Map<Job>(jobDTO);
             job.DeviceType = deviceType;
+            _context.Jobs.Add(job);                 // brakowalo tej linii
             await _context.SaveChangesAsync();
 
             var jobToViewDTO = _mapper.Map<JobDTO>(job);
-            return CreatedAtAction("GetJob", new { id = jobToViewDTO.Id }, jobToViewDTO);
+            return CreatedAtAction(nameof(GetJob), new { id = jobToViewDTO.Id }, jobToViewDTO);
         }
 
         // DELETE: api/jobs/5
         [HttpDelete("{id}")]
-        public async Task<ActionResult<JobDTO>> DeleteJob(int id)
+        public async Task<IActionResult> DeleteJob(int id)
         {
             var job = await _context.Jobs.FindAsync(id);
             if (job == null)
@@ -159,8 +163,7 @@ namespace ROBOLab.API.Controllers
             _context.Jobs.Remove(job);
             await _context.SaveChangesAsync();
 
-            JobDTO jobDTO = _mapper.Map<JobDTO>(job);
-            return jobDTO;
+            return NoContent();
         }
 
         private bool JobExists(int id)
