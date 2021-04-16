@@ -52,6 +52,20 @@ namespace ROBOLab.API.Controllers
                 return NotFound($"There is no job for given id: {id}.");
             }
 
+
+
+            //IQueryable<Job> test = _context.Jobs
+            //    .Include(j => j.DeviceType);
+            //.Where(j => j.Id == id);
+
+
+            //var test2 = test.Where(.....);
+
+
+
+            //int a = test.First().DeviceTypeId;
+
+
             return _mapper.Map<JobDTO>(job);
         }
 
