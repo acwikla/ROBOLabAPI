@@ -20,7 +20,8 @@ namespace ROBOLab.Core.DTO
         [Required]
         public string Body { get; set; }
 
-        //public ViewDeviceDTO Device { get; set; } dane urzadzenia nie sa konieczne do wykonania zadania, wiec mozna nie udostepniac tych danych tutaj
+        public int DeviceId { get; set; }
+        //public ViewDeviceDTO Device { get; set; } 
 
         public JobDTO Job { get; set; }
     }
