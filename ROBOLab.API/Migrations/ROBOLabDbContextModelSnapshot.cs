@@ -68,7 +68,6 @@ namespace ROBOLab.API.Migrations
                         .HasColumnType("TEXT");
 
                     b.Property<DateTime>("CreatedDate")
-                        .ValueGeneratedOnAddOrUpdate()
                         .HasColumnType("TEXT");
 
                     b.Property<int>("DeviceId")
@@ -78,7 +77,6 @@ namespace ROBOLab.API.Migrations
                         .HasColumnType("INTEGER");
 
                     b.Property<DateTime?>("ExecutionTime")
-                        .IsRequired()
                         .HasColumnType("TEXT");
 
                     b.Property<int>("JobId")
@@ -91,6 +89,26 @@ namespace ROBOLab.API.Migrations
                     b.HasIndex("JobId");
 
                     b.ToTable("DeviceJobs");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            Body = "#FF6611",
+                            CreatedDate = new DateTime(2021, 4, 25, 22, 25, 27, 391, DateTimeKind.Local).AddTicks(2580),
+                            DeviceId = 1,
+                            Done = false,
+                            JobId = 1
+                        },
+                        new
+                        {
+                            Id = 2,
+                            Body = "",
+                            CreatedDate = new DateTime(2021, 4, 25, 22, 25, 27, 409, DateTimeKind.Local).AddTicks(5370),
+                            DeviceId = 1,
+                            Done = false,
+                            JobId = 2
+                        });
                 });
 
             modelBuilder.Entity("ROBOLab.Core.Models.DeviceType", b =>

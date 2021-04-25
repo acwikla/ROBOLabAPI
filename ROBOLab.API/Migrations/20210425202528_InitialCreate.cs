@@ -90,7 +90,7 @@ namespace ROBOLab.API.Migrations
                 {
                     Id = table.Column<int>(type: "INTEGER", nullable: false)
                         .Annotation("Sqlite:Autoincrement", true),
-                    ExecutionTime = table.Column<DateTime>(type: "TEXT", nullable: false),
+                    ExecutionTime = table.Column<DateTime>(type: "TEXT", nullable: true),
                     CreatedDate = table.Column<DateTime>(type: "TEXT", nullable: false),
                     Done = table.Column<bool>(type: "INTEGER", nullable: false),
                     Body = table.Column<string>(type: "TEXT", nullable: false),
@@ -242,6 +242,16 @@ namespace ROBOLab.API.Migrations
                 table: "Jobs",
                 columns: new[] { "Id", "Description", "DeviceTypeId", "Name", "Properties" },
                 values: new object[] { 3, "Turn on the water pump for given period of time.", 1, "TurnOnWaterPump", "" });
+
+            migrationBuilder.InsertData(
+                table: "DeviceJobs",
+                columns: new[] { "Id", "Body", "CreatedDate", "DeviceId", "Done", "ExecutionTime", "JobId" },
+                values: new object[] { 1, "#FF6611", new DateTime(2021, 4, 25, 22, 25, 27, 391, DateTimeKind.Local).AddTicks(2580), 1, false, null, 1 });
+
+            migrationBuilder.InsertData(
+                table: "DeviceJobs",
+                columns: new[] { "Id", "Body", "CreatedDate", "DeviceId", "Done", "ExecutionTime", "JobId" },
+                values: new object[] { 2, "", new DateTime(2021, 4, 25, 22, 25, 27, 409, DateTimeKind.Local).AddTicks(5370), 1, false, null, 2 });
 
             migrationBuilder.CreateIndex(
                 name: "IX_DeviceJobs_DeviceId",

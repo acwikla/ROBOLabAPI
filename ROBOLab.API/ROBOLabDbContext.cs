@@ -46,35 +46,43 @@ namespace ROBOLab.API
                 testDevType
             });
 
+
             // jobs
+
+            var jobTurnOnLED = new
+            {
+                Id = 1,
+                Name = "TurnOnLED",
+                DeviceTypeId = smartTerraDevType.Id,
+                Properties = "",
+                Description = "Turn on the LED strip and set color of the LEDs ."
+            };
+
+            var jobTurnOffLED = new
+            {
+                Id = 2,
+                Name = "TurnOffLED",
+                DeviceTypeId = smartTerraDevType.Id,
+                Properties = "",
+                Description = "Turn off the LED strip."
+            };
+
+            var jobTurnOnWaterPump = new
+            {
+                Id = 3,
+                Name = "TurnOnWaterPump",
+                DeviceTypeId = smartTerraDevType.Id,
+                Properties = "",
+                Description = "Turn on the water pump for given period of time."
+            };
 
             modelBuilder.Entity<Job>().HasData(new object[]
             {
-                new
-                {
-                    Id = 1,
-                    Name = "TurnOnLED",
-                    DeviceTypeId = smartTerraDevType.Id,
-                    Properties = "",
-                    Description = "Turn on the LED strip and set color of the LEDs ."
-                },
-                new
-                {
-                    Id = 2,
-                    Name = "TurnOffLED",
-                    DeviceTypeId = smartTerraDevType.Id,
-                    Properties = "",
-                    Description = "Turn off the LED strip."
-                },
-                new
-                {
-                    Id = 3,
-                    Name = "TurnOnWaterPump",
-                    DeviceTypeId = smartTerraDevType.Id,
-                    Properties = "",
-                    Description = "Turn on the water pump for given period of time."
-                }
+                jobTurnOnLED,
+                jobTurnOffLED,
+                jobTurnOnWaterPump
             });
+
 
             // users
 
@@ -85,6 +93,7 @@ namespace ROBOLab.API
                 Login = "ola",
                 Password = "pass1"
             };
+
             var user2 = new User
             {
                 Id = 2,
@@ -99,23 +108,58 @@ namespace ROBOLab.API
                 user2
             });
 
+
             // devices
+
+            var smartTerraDev1 = new Device
+            {
+                Id = 1,
+                DeviceTypeId = smartTerraDevType.Id,
+                Name = "Test device 1 (SmartTerra)",
+                UserId = user1.Id,
+            };
+
+            var smartTerraDev2 = new Device
+            {
+                Id = 2,
+                DeviceTypeId = smartTerraDevType.Id,
+                Name = "Test device 2 (SmartTerra)",
+                UserId = user2.Id,
+            };
 
             modelBuilder.Entity<Device>().HasData(new Device[]
             {
-                new Device
+                smartTerraDev1,
+                smartTerraDev2,
+            });
+
+
+            // device jobs
+
+            modelBuilder.Entity<DeviceJob>().HasData(new DeviceJob[]
+            {
+                // led on
+                new DeviceJob
                 {
                     Id = 1,
-                    DeviceTypeId = smartTerraDevType.Id,
-                    Name = "Test device 1 (SmartTerra)",
-                    UserId = user1.Id,
+                    CreatedDate = DateTime.Now,
+                    DeviceId = smartTerraDev1.Id,
+                    JobId = jobTurnOnLED.Id,
+                    Done = false,
+                    ExecutionTime = null,
+                    Body = "#FF6611",
                 },
-                new Device
+
+                // led off
+                new DeviceJob
                 {
                     Id = 2,
-                    DeviceTypeId = smartTerraDevType.Id,
-                    Name = "Test device 2 (SmartTerra)",
-                    UserId = user2.Id,
+                    CreatedDate = DateTime.Now,
+                    DeviceId = smartTerraDev1.Id,
+                    JobId = jobTurnOffLED.Id,
+                    Done = false,
+                    ExecutionTime = null,
+                    Body = "",
                 }
             });
 
