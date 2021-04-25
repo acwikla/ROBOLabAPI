@@ -17,8 +17,12 @@ namespace ROBOLab.Core.DTO
         [Required]
         public string Properties { get; set; }
 
+        // przy DODAWANIU jobs na pewno nie ma potrzeby podawania calego device type (albo id albo nazwa unikalna nazwa typu)
+        //[Required]
+        //public DeviceTypeDTO DeviceType { get; set; }
+
         [Required]
-        public DeviceTypeDTO DeviceType { get; set; }
+        public string DeviceTypeName { get; set; }
     }
 
     public class JobDTO : AddJobDTO

@@ -29,16 +29,29 @@ namespace ROBOLab.API.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<ViewDeviceJobDTO>>> GetDeviceJobs()
         {
-            var deviceJobs = await _context.DeviceJobs.Include(d => d.Device).Include(d => d.Job).Include(d => d.Device.DeviceType).Include(d => d.Job.DeviceType).ToListAsync();
+            //var deviceJobs = await _context.DeviceJobs.Include(d => d.Device).Include(d => d.Job).Include(d => d.Device.DeviceType).Include(d => d.Job.DeviceType).ToListAsync();
             //without include device type in job and device
             //var deviceJobs = await _context.DeviceJobs.Include(d => d.Device).Include(j => j.Job).ToListAsync();
 
-            if (deviceJobs == null)
+            // te include'y nie sa konieczne bo jest wlaczony lazy loading, ALE zostawilem je bo i tak sie zainkluduja podczas mapowania,
+            // ale bedzie to wtedy mniej wydajne -> ogolnie drobnostka :)
+            var deviceJobs = await _context.DeviceJobs
+                .Include(d => d.Job)
+                    .ThenInclude(j => j.DeviceType)
+                .ToListAsync();
+
+            //ToList nie zwroci null tylko pusta liste, wiec nie bedzie takiego przypadku,
+            //w dodatku to nie jest jakis szczegolny przypadek (brak jobow do wykonania, bo po prostu user mogl nie zlecic zadan)
+            /*if (deviceJobs == null)
             {
                 return NotFound($"There is no device job in database.");
-            }
+            }*/
 
-            List<ViewDeviceJobDTO> deviceJobsDTO = new List<ViewDeviceJobDTO>();
+
+            var deviceJobsDTO = _mapper.Map<List<ViewDeviceJobDTO>>(deviceJobs);
+
+            //OLD
+            /*List<ViewDeviceJobDTO> deviceJobsDTO = new List<ViewDeviceJobDTO>();
             foreach (DeviceJob d in deviceJobs)
             {
                 ViewDeviceDTO deviceDTO = _mapper.Map<ViewDeviceDTO>(d.Device);
@@ -46,11 +59,10 @@ namespace ROBOLab.API.Controllers
                 JobDTO jobDTO = _mapper.Map<JobDTO>(d.Job);
 
                 ViewDeviceJobDTO deviceJobDTO = _mapper.Map<ViewDeviceJobDTO>(d);
-                deviceJobDTO.Device = deviceDTO;
                 deviceJobDTO.Job = jobDTO;
 
                 deviceJobsDTO.Add(deviceJobDTO);
-            }
+            }*/
 
             return Ok(deviceJobsDTO);
         }
@@ -83,7 +95,7 @@ namespace ROBOLab.API.Controllers
             JobDTO jobDTO = _mapper.Map<JobDTO>(deviceJob.Job);
 
             ViewDeviceJobDTO deviceJobDTO = _mapper.Map<ViewDeviceJobDTO>(deviceJob);
-            deviceJobDTO.Device = deviceDTO;
+            
             deviceJobDTO.Job = jobDTO;
 
             return Ok(deviceJobDTO);
@@ -111,7 +123,6 @@ namespace ROBOLab.API.Controllers
                 JobDTO jobDTO = _mapper.Map<JobDTO>(d.Job);
 
                 ViewDeviceJobDTO deviceJobDTO = _mapper.Map<ViewDeviceJobDTO>(d);
-                deviceJobDTO.Device = deviceDTO;
                 deviceJobDTO.Job = jobDTO;
 
                 deviceJobsDTO.Add(deviceJobDTO);
@@ -140,7 +151,7 @@ namespace ROBOLab.API.Controllers
             JobDTO jobDTO = _mapper.Map<JobDTO>(deviceJob.Job);
 
             ViewDeviceJobDTO deviceJobDTO = _mapper.Map<ViewDeviceJobDTO>(deviceJob);
-            deviceJobDTO.Device = deviceDTO;
+
             deviceJobDTO.Job = jobDTO;
 
             //deviceJobs.Remove(deviceJob);
@@ -169,7 +180,7 @@ namespace ROBOLab.API.Controllers
                 JobDTO jobDTO = _mapper.Map<JobDTO>(d.Job);
 
                 ViewDeviceJobDTO deviceJobDTO = _mapper.Map<ViewDeviceJobDTO>(d);
-                deviceJobDTO.Device = deviceDTO;
+                
                 deviceJobDTO.Job = jobDTO;
 
                 deviceJobsToViewDTO.Add(deviceJobDTO);
@@ -295,7 +306,7 @@ namespace ROBOLab.API.Controllers
             await _context.SaveChangesAsync();
 
             ViewDeviceJobDTO deviceJobDTO = _mapper.Map<ViewDeviceJobDTO>(newDeviceJob);
-            deviceJobDTO.Device = deviceDTO;
+            
             deviceJobDTO.Job = jobDTO;
 
             return CreatedAtAction("GetDeviceJob", new { id = deviceJobDTO.Id }, deviceJobDTO);

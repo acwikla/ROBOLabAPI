@@ -11,7 +11,6 @@ namespace ROBOLab.Core.DTO
     {
         public int Id { get; set; }
 
-        [Required]
         public DateTime? ExecutionTime { get; set; }
 
         public DateTime CreatedDate { get; set; }
@@ -21,7 +20,7 @@ namespace ROBOLab.Core.DTO
         [Required]
         public string Body { get; set; }
 
-        public ViewDeviceDTO Device { get; set; }
+        //public ViewDeviceDTO Device { get; set; } dane urzadzenia nie sa konieczne do wykonania zadania, wiec mozna nie udostepniac tych danych tutaj
 
         public JobDTO Job { get; set; }
     }

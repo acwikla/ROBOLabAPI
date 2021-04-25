@@ -37,7 +37,10 @@ namespace ROBOLab.API.Map
             CreateMap<DeviceJob, ViewDeviceJobDTO>().ReverseMap();
 
             //Job:
-            CreateMap<Job, JobDTO>().ReverseMap();
+            CreateMap<Job, JobDTO>()
+                .ForMember(dest => dest.DeviceTypeName, opt => opt.MapFrom(src => src.DeviceType.Name))
+                .ReverseMap();
+            
 
             //Property:
             CreateMap<Property, AddPropertyDTO>().ReverseMap();

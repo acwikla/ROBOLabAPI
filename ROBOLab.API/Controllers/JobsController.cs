@@ -142,12 +142,12 @@ namespace ROBOLab.API.Controllers
         {
             // get dev type
             var deviceType = await _context.DeviceTypes
-                .Where(dt => dt.Name == jobDTO.DeviceType.Name)
+                .Where(dt => dt.Name == jobDTO.DeviceTypeName)
                 .FirstOrDefaultAsync();
 
             if (deviceType == null)
             {
-                return BadRequest($"There is no device type: {jobDTO.DeviceType.Name}.");
+                return BadRequest($"There is no device type: {jobDTO.DeviceTypeName}.");
             }
 
             // set dev type
