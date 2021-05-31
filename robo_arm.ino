@@ -4,10 +4,15 @@
 #include <ArduinoJson.h>
 
 MicroMaestro maestro(Serial2);
+//global server:
+//String IP = "51.158.163.165";
+//int device_id = 101;
 
-String IP = "51.158.163.165";
-int device_id = 101;
+//local ISSExpress:
+String IP = "192.168.0.164:5000";
+int device_id = 1002;
 int max_angle = 180;
+
 //const char* ssid = "Creative";
 //const char* password = "Cre@tive";
 const char* ssid = "UPCEA1369B";
@@ -77,6 +82,7 @@ void loop() {
   }*/
 
   if (WiFi.status() == WL_CONNECTED){
+      get_latest_device_property_id();
       Serial.println("initial:");
       turn_on_servo(angle_set_initial_pose, 10, 0);
       delay(2000);
@@ -227,6 +233,40 @@ void set_job_done_property(int dj_id, bool done_value){
   http.end();
 }
 
+void get_latest_device_property_id(){
+  HTTPClient http;
+  http.begin("http://"+ String(IP)+"/api/Devices/"+ String(device_id)+"/latestDeviceProperties");
+  int httpCode = http.GET();
+  String http_value = http.getString();
+  
+  Serial.print("http_value: "); Serial.println(http_value);
+  Serial.print("httpCode: "); Serial.println(httpCode);
+
+  if (httpCode > 0) 
+    {
+      const size_t bufferSize = JSON_OBJECT_SIZE(3) + JSON_OBJECT_SIZE(4) + JSON_OBJECT_SIZE(5) + JSON_OBJECT_SIZE(6) + 700;
+      DynamicJsonDocument doc(bufferSize);
+      
+      DeserializationError error = deserializeJson(doc, http_value);
+
+      // Test if parsing succeeds
+      if (error) {
+        Serial.print(F("deserializeJson() failed: "));
+        Serial.println(error.f_str());
+        http.end();
+        return;
+      }
+      
+      int dev_prop_id = doc["id"];
+      bool isLiquidLevelSufficient = doc["isLiquidLevelSufficient"];
+      //const char* isLiquidLevelSufficient = doc["isLiquidLevelSufficient"];
+      Serial.print("[get_latest_device_property_id] dev_prop_id: "); Serial.println(dev_prop_id);
+      Serial.print("isLiquidLevelSufficient: "); Serial.println(isLiquidLevelSufficient);
+  }
+  
+  http.end();
+}
+
 void check_device_job_data(){
   Serial.println("[check_device_job_data]");
   
@@ -300,7 +340,7 @@ void check_device_job_data(){
             delay(2000);
 
             bool job_done_value = true;
-            set_job_done_property(device_job_id, job_done_value);
+            //set_job_done_property(device_job_id, job_done_value);
           }
 
           if((String)job_name=="FillCubeWithWater"){
@@ -314,7 +354,7 @@ void check_device_job_data(){
             delay(2000);
 
             bool job_done_value = true;
-            set_job_done_property(device_job_id, job_done_value);
+            //set_job_done_property(device_job_id, job_done_value);
           }
       }
     }
