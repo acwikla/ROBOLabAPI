@@ -21,6 +21,7 @@ const char* password = "uckKvpbZfzu3";
 #define RXD2 16
 #define TXD2 17
 
+int number_of_elements = 0;
 int angle_set_initial_pose [] = {5, 90, 4, 0, 2, 45, 3, 45, 1, 90, 0, 0};
   
 int angle_set_amimation_move_teddy_bear [] = {
@@ -64,23 +65,17 @@ void setup() {
   Serial.begin(9600);
   Serial2.begin(9600, SERIAL_8N1, RXD2, TXD2);
   WiFi.begin(ssid, password);
-  
   delay(1000);
-  /*while (WiFi.status() != WL_CONNECTED) 
+  
+  while (WiFi.status() != WL_CONNECTED) 
   {
     delay(1000);
     Serial.println("Connecting...");
   }
-  Serial.println("Connected");*/
+  Serial.println("Connected");
 }
 
 void loop() {
-  /*for  (int i=0; i<15; i++){
-      //double angle_set2[] = {0,45,1,45, 2, 45, 3, 45, 5, 0+i*5};
-      //turn_on_servo(angle_set2);
-      delay(10);
-  }*/
-
   if (WiFi.status() == WL_CONNECTED){
       get_latest_device_property_id();
       Serial.println("initial:");
@@ -147,10 +142,12 @@ void turn_on_servo(int angle_set [], int num_of_el, int pouring_time_millisec){
     //Serial.println();
   }
 }
+
 JsonArray read_as_json_array(DynamicJsonDocument doc){
   JsonArray job_body_array = doc["body"].as<JsonArray>();
   Serial.print("job_body_array: ");
   Serial.println((String)job_body_array);
+  
   for(JsonVariant v : job_body_array) {
        Serial.println(v.as<int>());
   }
@@ -158,64 +155,74 @@ JsonArray read_as_json_array(DynamicJsonDocument doc){
   Serial.println(job_body_array.size());
 }
 
-int* convert_to_int_array(String job_body_string, int length_array){
-  int index_of_coma = 1;
-  static int angle_set_int [12] = {};
+int* convert_to_int_array(String job_body_string){
   
-  int j=0;
-  for(int i=1; i<=job_body_string.length(); i++){
-    if(job_body_string[i] == ','&&index_of_coma==1){
-      Serial.println("-----");
-      Serial.println("if 1");
+  int index_of_coma = 1;
+  static int angle_set_int [12] ={};
+  
+  number_of_elements = 0;
+  
+  for(int i=1, j=0; i<=job_body_string.length(); i++){
+    
+    if(job_body_string[i] == ','){
       Serial.println(i);
       Serial.println(j);
+      String val;
+   
+      if(index_of_coma==1){
+        Serial.println("-----");
+        Serial.println("if-start string");
+        val = job_body_string.substring(index_of_coma,i);
+      }
       
-      String val = job_body_string.substring(index_of_coma,i);
+      else if(i == job_body_string.length()){
+        Serial.println("-----");
+        Serial.println("if-end string");
+        val = job_body_string.substring(index_of_coma+1,i-1);
+      }
+      
+      else{
+        Serial.println("-----");
+        Serial.println("if-mid string");
+        val = job_body_string.substring(index_of_coma+1,i);
+      }
       int v = val.toInt();
       angle_set_int[j] = v;
       index_of_coma=i;
       j++;
-      Serial.println("values");
+      Serial.println("values: ");
       Serial.println(val);
       Serial.println(v);
-      Serial.println((String)angle_set_int[j]);
+      Serial.println(angle_set_int[j]);//dlaczego tutaj nie wypisuja sie wartosci mimo ze pozniej sa ok 
     }
-    else if(job_body_string[i] == ','){
-      Serial.println("-----");
-      Serial.println("if 2");
-      Serial.println(i);
-      Serial.println(j);
-      
-      String val = job_body_string.substring(index_of_coma+1,i);
-      int v = val.toInt();
-      angle_set_int[j]= v;
-      index_of_coma=i;
-      j++;
-      Serial.println("values");
-      Serial.println(val);
-      Serial.println(v);
-      Serial.println((String)angle_set_int[j]);
-    }
-    else if(i == job_body_string.length()){
-      Serial.println("-----");
-      Serial.println("if 3");
-      Serial.println(i);
-      Serial.println(j);
-      
-      String val = job_body_string.substring(index_of_coma+1,i-1);
-      int v = val.toInt();
-      angle_set_int[j] = v;
-      index_of_coma=i;
-      j++;
-      Serial.println("values");
-      Serial.println(val);
-      Serial.println(v);
-      Serial.println((String)angle_set_int[j]);//dlaczego tutaj nie wypisuja sie wartosci mimo ze pozniej sa ok 
-    }
+    
+    number_of_elements = j+1;
   }
 
   return angle_set_int;
 }
+
+void run_any_sequence(String sequence_of_angles){
+  int index_of_open_bracket = -1, index_of_close_bracket = -1;
+
+  for(int i=0; i<sequence_of_angles.length(); i++){
+    
+    if(sequence_of_angles[i] == '['){
+      index_of_open_bracket = i;
+    }
+    
+    if(sequence_of_angles[i] == ']'){
+      index_of_close_bracket = i;
+    }
+    
+    if(index_of_open_bracket != -1 && index_of_close_bracket != -1){
+      String set_of_angles = sequence_of_angles.substring(index_of_open_bracket+1, index_of_close_bracket);
+      int* int_array = convert_to_int_array(set_of_angles);
+      turn_on_servo(int_array, number_of_elements, 0);
+    }
+  }
+}
+
 
 void set_job_done_property(int dj_id, bool done_value){
   HTTPClient http;
@@ -223,12 +230,10 @@ void set_job_done_property(int dj_id, bool done_value){
   http.addHeader("Content-Type", "application/json-patch+json");
  
   int httpCode = http.PATCH("{\"done\": "+ String(done_value)+ " }");
-  String payload = http.getString();
-
-  Serial.println("set_job_done_property payload: ");
-  Serial.println(payload);
-  Serial.println("set_job_done_property httpCode: ");
-  Serial.println(httpCode);
+  String http_value = http.getString();
+  
+  Serial.print("[set_job_done_property] http_value: ");
+  Serial.println(http_value);
       
   http.end();
 }
@@ -239,7 +244,6 @@ void get_latest_device_property_id(){
   int httpCode = http.GET();
   String http_value = http.getString();
   
-  Serial.print("http_value: "); Serial.println(http_value);
   Serial.print("httpCode: "); Serial.println(httpCode);
 
   if (httpCode > 0) 
@@ -261,6 +265,7 @@ void get_latest_device_property_id(){
       bool isLiquidLevelSufficient = doc["isLiquidLevelSufficient"];
       //const char* isLiquidLevelSufficient = doc["isLiquidLevelSufficient"];
       Serial.print("[get_latest_device_property_id] dev_prop_id: "); Serial.println(dev_prop_id);
+      Serial.println("http_value: "); Serial.println(http_value);
       Serial.print("isLiquidLevelSufficient: "); Serial.println(isLiquidLevelSufficient);
   }
   
@@ -325,8 +330,9 @@ void check_device_job_data(){
         
         if((String)job_name=="MoveTeddyBear"){
             //read_as_json_array(doc);<--- metoda Daniela
+            
             int* job_angle;
-            job_angle = convert_to_int_array(job_body_string, 2);//<--- bardzo toporna metoda Oli
+            job_angle = convert_to_int_array(job_body_string);//<--- bardzo toporna metoda Oli
             for(int i=0; i<2; i++){
               Serial.print("job_angle: ");
               Serial.println(job_angle[i]);
@@ -344,13 +350,25 @@ void check_device_job_data(){
           }
 
           if((String)job_name=="FillCubeWithWater"){
-            //read_as_json_array(doc);<--- metoda Daniela
             int pouring_time_millisec = doc["body"];
             Serial.print("pouring_time_millisec: ");
             Serial.println(pouring_time_millisec);
               
             Serial.println("Animation job: FillCubeWithWater");
             turn_on_servo(angle_set_amimation_fill_water, 24, pouring_time_millisec);
+            delay(2000);
+
+            bool job_done_value = true;
+            //set_job_done_property(device_job_id, job_done_value);
+          }
+
+          if((String)job_name=="RunAnySequence"){
+            String sequence_of_angles = doc["body"];
+            Serial.print("sequence_of_angles: ");
+            Serial.println(sequence_of_angles);
+              
+            Serial.println("Animation job: RunAnySequence");
+            run_any_sequence(sequence_of_angles);
             delay(2000);
 
             bool job_done_value = true;
