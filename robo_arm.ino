@@ -4,14 +4,18 @@
 #include <ArduinoJson.h>
 
 MicroMaestro maestro(Serial2);
+//SmartTerra:
 //global server:
 //String IP = "51.158.163.165";
-//int device_id = 101;
-
-//local ISSExpress:
-String IP = "192.168.0.164:5000";
-int device_id = 1002;
-int max_angle = 180;
+//int smart_terra_device_id = 101;
+//local SmartTerraAPI:
+String SmartTerra_IP = "192.168.0.164:5000";
+int smart_terra_device_id = 1002;
+//---------------------------------------
+//ROBOLab:
+//local ROBOLabAPI:
+String ROBOLab_IP = "192.168.0.164:5000";
+int robo_arm_device_id = 3;
 
 //const char* ssid = "Creative";
 //const char* password = "Cre@tive";
@@ -21,6 +25,7 @@ const char* password = "uckKvpbZfzu3";
 #define RXD2 16
 #define TXD2 17
 
+int max_angle = 180;
 int number_of_elements = 0;
 int angle_set_initial_pose [] = {5, 90, 4, 0, 2, 45, 3, 45, 1, 90, 0, 0};
   
@@ -77,7 +82,7 @@ void setup() {
 
 void loop() {
   if (WiFi.status() == WL_CONNECTED){
-      get_latest_device_property_id();
+      //get_latest_device_property_id();
       Serial.println("initial:");
       turn_on_servo(angle_set_initial_pose, 10, 0);
       delay(2000);
@@ -158,67 +163,88 @@ JsonArray read_as_json_array(DynamicJsonDocument doc){
 int* convert_to_int_array(String job_body_string){
   
   int index_of_coma = 1;
-  static int angle_set_int [12] ={};
-  
+  static int angle_set_int [12] = {};
   number_of_elements = 0;
-  
-  for(int i=1, j=0; i<=job_body_string.length(); i++){
-    
-    if(job_body_string[i] == ','){
+  int j=0;
+  for(int i=1; i<=job_body_string.length(); i++){
+    if(job_body_string[i] == ','&&index_of_coma==1){
+      Serial.println("-----");
+      Serial.println("if 1");
       Serial.println(i);
       Serial.println(j);
-      String val;
-   
-      if(index_of_coma==1){
-        Serial.println("-----");
-        Serial.println("if-start string");
-        val = job_body_string.substring(index_of_coma,i);
-      }
       
-      else if(i == job_body_string.length()){
-        Serial.println("-----");
-        Serial.println("if-end string");
-        val = job_body_string.substring(index_of_coma+1,i-1);
-      }
-      
-      else{
-        Serial.println("-----");
-        Serial.println("if-mid string");
-        val = job_body_string.substring(index_of_coma+1,i);
-      }
+      String val = job_body_string.substring(index_of_coma,i);
       int v = val.toInt();
       angle_set_int[j] = v;
       index_of_coma=i;
       j++;
-      Serial.println("values: ");
+      Serial.println("values");
       Serial.println(val);
       Serial.println(v);
-      Serial.println(angle_set_int[j]);//dlaczego tutaj nie wypisuja sie wartosci mimo ze pozniej sa ok 
+      Serial.println((String)angle_set_int[j]);
     }
-    
+    else if(job_body_string[i] == ','){
+      Serial.println("-----");
+      Serial.println("if 2");
+      Serial.println(i);
+      Serial.println(j);
+      
+      String val = job_body_string.substring(index_of_coma+1,i);
+      int v = val.toInt();
+      angle_set_int[j]= v;
+      index_of_coma=i;
+      j++;
+      Serial.println("values");
+      Serial.println(val);
+      Serial.println(v);
+      Serial.println((String)angle_set_int[j]);
+    }
+    else if(i == job_body_string.length()){
+      Serial.println("-----");
+      Serial.println("if 3");
+      Serial.println(i);
+      Serial.println(j);
+      
+      String val = job_body_string.substring(index_of_coma+1,i-1);
+      int v = val.toInt();
+      angle_set_int[j] = v;
+      index_of_coma=i;
+      j++;
+      Serial.println("values");
+      Serial.println(val);
+      Serial.println(v);
+      Serial.println((String)angle_set_int[j]);//dlaczego tutaj nie wypisuja sie wartosci mimo ze pozniej sa ok 
+    }
     number_of_elements = j+1;
   }
-
   return angle_set_int;
 }
 
 void run_any_sequence(String sequence_of_angles){
   int index_of_open_bracket = -1, index_of_close_bracket = -1;
-
+  Serial.println("run_any_sequence: ");
+  
   for(int i=0; i<sequence_of_angles.length(); i++){
     
     if(sequence_of_angles[i] == '['){
+      Serial.print("index_of [: ");
+      Serial.println(i);
       index_of_open_bracket = i;
     }
     
     if(sequence_of_angles[i] == ']'){
+      Serial.print("index_of ]: ");
+      Serial.println(i);
       index_of_close_bracket = i;
     }
     
     if(index_of_open_bracket != -1 && index_of_close_bracket != -1){
-      String set_of_angles = sequence_of_angles.substring(index_of_open_bracket+1, index_of_close_bracket);
-      int* int_array = convert_to_int_array(set_of_angles);
-      turn_on_servo(int_array, number_of_elements, 0);
+      String set_of_angles = sequence_of_angles.substring(index_of_open_bracket, index_of_close_bracket+1);
+      //int* int_array = convert_to_int_array(set_of_angles);
+      Serial.println("final set_of_angles");
+      Serial.println(set_of_angles);
+      index_of_open_bracket = -1; index_of_close_bracket = -1;
+      //turn_on_servo(int_array, number_of_elements, 0);
     }
   }
 }
@@ -226,7 +252,7 @@ void run_any_sequence(String sequence_of_angles){
 
 void set_job_done_property(int dj_id, bool done_value){
   HTTPClient http;
-  http.begin("http://"+ String(IP)+"/api/DeviceJobs/"+ String(dj_id)+"");
+  http.begin("http://"+ String(ROBOLab_IP)+"/api/device-jobs/"+ String(dj_id)+"done-flag-value");
   http.addHeader("Content-Type", "application/json-patch+json");
  
   int httpCode = http.PATCH("{\"done\": "+ String(done_value)+ " }");
@@ -238,9 +264,10 @@ void set_job_done_property(int dj_id, bool done_value){
   http.end();
 }
 
+//terrarium prop:
 void get_latest_device_property_id(){
   HTTPClient http;
-  http.begin("http://"+ String(IP)+"/api/Devices/"+ String(device_id)+"/latestDeviceProperties");
+  http.begin("http://"+ String(SmartTerra_IP)+"/api/Devices/"+ String(smart_terra_device_id)+"/latestDeviceProperties");
   int httpCode = http.GET();
   String http_value = http.getString();
   
@@ -272,14 +299,20 @@ void get_latest_device_property_id(){
   http.end();
 }
 
+//robo arm job:
 void check_device_job_data(){
   Serial.println("[check_device_job_data]");
   
   HTTPClient http;
-  http.begin("http://"+ String(IP)+"/api/DeviceJobs/deviceId="+ String(device_id)+"/FalseDoneFlag");
+  http.begin("http://"+ String(ROBOLab_IP)+"/api/device-jobs/device/"+ String(robo_arm_device_id)+"/false-done-flag");
   int httpCode = http.GET();
+  for(int i = 0; i< http.headers(); i++){
+  Serial.println(http.header(i));
+  }
   String http_value = http.getString();
-
+  Serial.println("httpCode:");
+  Serial.println(httpCode);
+  Serial.println(http.header("location"));
   if (httpCode > 0)
     {  
       Serial.println("raw string:");
@@ -306,7 +339,7 @@ void check_device_job_data(){
       }
           
       int device_job_id= doc["id"];
-      const char* job_type = doc["job"]["type"];
+      const char* job_type = doc["job"]["deviceTypeName"];
       const char* job_name = doc["job"]["name"];
       const char* job_body = doc["body"];
       
@@ -325,8 +358,8 @@ void check_device_job_data(){
         http.end();
         return;
       }
-
-      if((String)job_type=="ROBOTIC_ARM"){
+      
+      if((String)job_type=="ROBOTIC ARM"){
         
         if((String)job_name=="MoveTeddyBear"){
             //read_as_json_array(doc);<--- metoda Daniela
@@ -346,7 +379,7 @@ void check_device_job_data(){
             delay(2000);
 
             bool job_done_value = true;
-            //set_job_done_property(device_job_id, job_done_value);
+            set_job_done_property(device_job_id, job_done_value);
           }
 
           if((String)job_name=="FillCubeWithWater"){
@@ -359,7 +392,7 @@ void check_device_job_data(){
             delay(2000);
 
             bool job_done_value = true;
-            //set_job_done_property(device_job_id, job_done_value);
+            set_job_done_property(device_job_id, job_done_value);
           }
 
           if((String)job_name=="RunAnySequence"){
@@ -372,7 +405,7 @@ void check_device_job_data(){
             delay(2000);
 
             bool job_done_value = true;
-            //set_job_done_property(device_job_id, job_done_value);
+            set_job_done_property(device_job_id, job_done_value);
           }
       }
     }
