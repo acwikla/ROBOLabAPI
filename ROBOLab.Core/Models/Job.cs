@@ -16,7 +16,7 @@ namespace ROBOLab.Core.Models
         [Required]
         public string Description { get; set; }
 
-        [Required]
+        //[Required]
         public string Properties { get; set; }
 
         [Required]

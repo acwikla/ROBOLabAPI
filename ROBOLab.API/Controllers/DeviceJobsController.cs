@@ -133,7 +133,7 @@ namespace ROBOLab.API.Controllers
 
         //return first job with false value done flag
         // GET: api/device-jobs/device/{id}/flase-done-flag
-        [HttpGet("device/{deviceId}/flase-done-flag")]
+        [HttpGet("device/{deviceId}/false-done-flag")]
         public async Task<ActionResult<ViewDeviceJobDTO>> GetDeviceJobFalseDoneFlag(int deviceId)
         {
             List<DeviceJob> deviceJobs = await _context.DeviceJobs.Where(deviceJob => deviceJob.Done == false).Include(d => d.Device).Include(j => j.Job).Where(deviceJob => deviceJob.Device.Id == deviceId).Include(d => d.Device.DeviceType).Include(d => d.Job.DeviceType).ToListAsync();

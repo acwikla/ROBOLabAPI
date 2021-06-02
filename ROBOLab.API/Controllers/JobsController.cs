@@ -138,7 +138,7 @@ namespace ROBOLab.API.Controllers
 
         // POST: api/jobs
         [HttpPost]
-        public async Task<ActionResult<JobDTO>> PostJob(AddJobDTO jobDTO)
+        public async Task<ActionResult<AddJobDTO>> PostJob(AddJobDTO jobDTO)
         {
             // get dev type
             var deviceType = await _context.DeviceTypes
@@ -153,11 +153,11 @@ namespace ROBOLab.API.Controllers
             // set dev type
             var job = _mapper.Map<Job>(jobDTO);
             job.DeviceType = deviceType;
-            _context.Jobs.Add(job);                 // brakowalo tej linii
+            _context.Jobs.Add(job);// brakowalo tej linii
             await _context.SaveChangesAsync();
 
-            var jobToViewDTO = _mapper.Map<JobDTO>(job);
-            return CreatedAtAction(nameof(GetJob), new { id = jobToViewDTO.Id }, jobToViewDTO);
+            var jobToViewDTO = _mapper.Map<AddJobDTO>(job);
+            return CreatedAtAction(nameof(GetJob), new { id = job.Id }, jobDTO);
         }
 
         // DELETE: api/jobs/5
