@@ -43,7 +43,7 @@ namespace ROBOLab.API.Migrations
                         .Annotation("Sqlite:Autoincrement", true),
                     Name = table.Column<string>(type: "TEXT", nullable: false),
                     Description = table.Column<string>(type: "TEXT", nullable: false),
-                    Properties = table.Column<string>(type: "TEXT", nullable: false),
+                    Properties = table.Column<string>(type: "TEXT", nullable: true),
                     DeviceTypeId = table.Column<int>(type: "INTEGER", nullable: false)
                 },
                 constraints: table =>
@@ -144,7 +144,7 @@ namespace ROBOLab.API.Migrations
                     Body = table.Column<string>(type: "TEXT", nullable: false),
                     DeviceTypeId = table.Column<int>(type: "INTEGER", nullable: false),
                     IsMode = table.Column<bool>(type: "INTEGER", nullable: false),
-                    ModeId = table.Column<int>(type: "INTEGER", nullable: false)
+                    ModeId = table.Column<int>(type: "INTEGER", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -160,7 +160,7 @@ namespace ROBOLab.API.Migrations
                         column: x => x.ModeId,
                         principalTable: "Modes",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateTable(
@@ -206,7 +206,7 @@ namespace ROBOLab.API.Migrations
             migrationBuilder.InsertData(
                 table: "DeviceTypes",
                 columns: new[] { "Id", "Name" },
-                values: new object[] { 2, "Device type test" });
+                values: new object[] { 2, "RoboArm(Arexx RA-1-PRO)" });
 
             migrationBuilder.InsertData(
                 table: "Users",
@@ -226,7 +226,12 @@ namespace ROBOLab.API.Migrations
             migrationBuilder.InsertData(
                 table: "Devices",
                 columns: new[] { "Id", "DeviceTypeId", "Name", "UserId" },
-                values: new object[] { 2, 1, "Test device 2 (SmartTerra)", 2 });
+                values: new object[] { 2, 2, "RoboArm1", 1 });
+
+            migrationBuilder.InsertData(
+                table: "Devices",
+                columns: new[] { "Id", "DeviceTypeId", "Name", "UserId" },
+                values: new object[] { 3, 1, "Test device 2 (SmartTerra)", 2 });
 
             migrationBuilder.InsertData(
                 table: "Jobs",
@@ -244,14 +249,34 @@ namespace ROBOLab.API.Migrations
                 values: new object[] { 3, "Turn on the water pump for given period of time.", 1, "TurnOnWaterPump", "" });
 
             migrationBuilder.InsertData(
-                table: "DeviceJobs",
-                columns: new[] { "Id", "Body", "CreatedDate", "DeviceId", "Done", "ExecutionTime", "JobId" },
-                values: new object[] { 1, "#FF6611", new DateTime(2021, 4, 25, 22, 25, 27, 391, DateTimeKind.Local).AddTicks(2580), 1, false, null, 1 });
+                table: "Jobs",
+                columns: new[] { "Id", "Description", "DeviceTypeId", "Name", "Properties" },
+                values: new object[] { 4, "Move the teddy bear to a specific place.", 2, "MoveTeddyBear", "" });
+
+            migrationBuilder.InsertData(
+                table: "Jobs",
+                columns: new[] { "Id", "Description", "DeviceTypeId", "Name", "Properties" },
+                values: new object[] { 5, "Pour water into the cube for given period of time.", 2, "FillCubeWithWater", "" });
+
+            migrationBuilder.InsertData(
+                table: "Jobs",
+                columns: new[] { "Id", "Description", "DeviceTypeId", "Name", "Properties" },
+                values: new object[] { 6, "Run the provided sequence of angles.", 2, "RunAnySequence", "" });
+
+            migrationBuilder.InsertData(
+                table: "Properties",
+                columns: new[] { "Id", "Body", "DeviceTypeId", "IsMode", "ModeId", "Name" },
+                values: new object[] { 1, "type: int, min: 0, max: 180", 2, false, null, "Angle Of First Channel" });
 
             migrationBuilder.InsertData(
                 table: "DeviceJobs",
                 columns: new[] { "Id", "Body", "CreatedDate", "DeviceId", "Done", "ExecutionTime", "JobId" },
-                values: new object[] { 2, "", new DateTime(2021, 4, 25, 22, 25, 27, 409, DateTimeKind.Local).AddTicks(5370), 1, false, null, 2 });
+                values: new object[] { 1, "#FF6611", new DateTime(2021, 6, 3, 22, 26, 48, 727, DateTimeKind.Local).AddTicks(445), 1, false, null, 1 });
+
+            migrationBuilder.InsertData(
+                table: "DeviceJobs",
+                columns: new[] { "Id", "Body", "CreatedDate", "DeviceId", "Done", "ExecutionTime", "JobId" },
+                values: new object[] { 2, "", new DateTime(2021, 6, 3, 22, 26, 48, 729, DateTimeKind.Local).AddTicks(4058), 1, false, null, 2 });
 
             migrationBuilder.CreateIndex(
                 name: "IX_DeviceJobs_DeviceId",

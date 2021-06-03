@@ -9,8 +9,8 @@ using ROBOLab.API;
 namespace ROBOLab.API.Migrations
 {
     [DbContext(typeof(ROBOLabDbContext))]
-    [Migration("20210602170258_UpdateJobModel")]
-    partial class UpdateJobModel
+    [Migration("20210603202918_UpdatePropertyModelNullableModeId")]
+    partial class UpdatePropertyModelNullableModeId
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -53,6 +53,13 @@ namespace ROBOLab.API.Migrations
                         new
                         {
                             Id = 2,
+                            DeviceTypeId = 2,
+                            Name = "RoboArm1",
+                            UserId = 1
+                        },
+                        new
+                        {
+                            Id = 3,
                             DeviceTypeId = 1,
                             Name = "Test device 2 (SmartTerra)",
                             UserId = 2
@@ -97,7 +104,7 @@ namespace ROBOLab.API.Migrations
                         {
                             Id = 1,
                             Body = "#FF6611",
-                            CreatedDate = new DateTime(2021, 6, 2, 19, 2, 57, 988, DateTimeKind.Local).AddTicks(651),
+                            CreatedDate = new DateTime(2021, 6, 3, 22, 29, 17, 984, DateTimeKind.Local).AddTicks(661),
                             DeviceId = 1,
                             Done = false,
                             JobId = 1
@@ -106,7 +113,7 @@ namespace ROBOLab.API.Migrations
                         {
                             Id = 2,
                             Body = "",
-                            CreatedDate = new DateTime(2021, 6, 2, 19, 2, 57, 992, DateTimeKind.Local).AddTicks(367),
+                            CreatedDate = new DateTime(2021, 6, 3, 22, 29, 17, 986, DateTimeKind.Local).AddTicks(6885),
                             DeviceId = 1,
                             Done = false,
                             JobId = 2
@@ -136,7 +143,7 @@ namespace ROBOLab.API.Migrations
                         new
                         {
                             Id = 2,
-                            Name = "Device type test"
+                            Name = "RoboArm(Arexx RA-1-PRO)"
                         });
                 });
 
@@ -190,6 +197,30 @@ namespace ROBOLab.API.Migrations
                             DeviceTypeId = 1,
                             Name = "TurnOnWaterPump",
                             Properties = ""
+                        },
+                        new
+                        {
+                            Id = 4,
+                            Description = "Move the teddy bear to a specific place.",
+                            DeviceTypeId = 2,
+                            Name = "MoveTeddyBear",
+                            Properties = ""
+                        },
+                        new
+                        {
+                            Id = 5,
+                            Description = "Pour water into the cube for given period of time.",
+                            DeviceTypeId = 2,
+                            Name = "FillCubeWithWater",
+                            Properties = ""
+                        },
+                        new
+                        {
+                            Id = 6,
+                            Description = "Run the provided sequence of angles.",
+                            DeviceTypeId = 2,
+                            Name = "RunAnySequence",
+                            Properties = ""
                         });
                 });
 
@@ -229,7 +260,7 @@ namespace ROBOLab.API.Migrations
                     b.Property<bool>("IsMode")
                         .HasColumnType("INTEGER");
 
-                    b.Property<int>("ModeId")
+                    b.Property<int?>("ModeId")
                         .HasColumnType("INTEGER");
 
                     b.Property<string>("Name")
@@ -243,6 +274,16 @@ namespace ROBOLab.API.Migrations
                     b.HasIndex("ModeId");
 
                     b.ToTable("Properties");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            Body = "type: int, min: 0, max: 180",
+                            DeviceTypeId = 2,
+                            IsMode = false,
+                            Name = "Angle Of First Channel"
+                        });
                 });
 
             modelBuilder.Entity("ROBOLab.Core.Models.User", b =>
@@ -389,9 +430,7 @@ namespace ROBOLab.API.Migrations
 
                     b.HasOne("ROBOLab.Core.Models.Mode", "Mode")
                         .WithMany("Properties")
-                        .HasForeignKey("ModeId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("ModeId");
 
                     b.Navigation("DeviceType");
 

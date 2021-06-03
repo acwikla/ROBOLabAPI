@@ -26,7 +26,7 @@ namespace ROBOLab.Core.Models
         [DefaultValue(false)]
         public bool IsMode { get; set; }
 
-        public int ModeId { get; set; }
+        public int? ModeId { get; set; }
 
         public virtual Mode Mode { get; set; }
 

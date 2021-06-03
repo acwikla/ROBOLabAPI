@@ -46,6 +46,59 @@ namespace ROBOLab.API
                 roboArmDevType
             });
 
+            // properties
+
+            var roboArmProp2 = new
+            {
+                Id = 2,
+                Name = "Angle Of Second Channel",
+                Body = "type: int, min: 0, max: 180",
+                DeviceTypeId = roboArmDevType.Id,
+                IsMode = false
+            };
+
+            modelBuilder.Entity<Property>().HasData(new Property []
+            {
+                new Property{
+                    Id = 1,
+                    Name = "Angle Of First Channel",
+                    Body = "type: int, min: 0, max: 180",
+                    DeviceTypeId = roboArmDevType.Id
+                },
+                new Property{
+                    Id = 2,
+                    Name = "Angle Of Second Channel",
+                    Body = "type: int, min: 0, max: 180",
+                    DeviceTypeId = roboArmDevType.Id
+                },
+                new Property{
+                    Id = 3,
+                    Name = "Angle Of Third Channel",
+                    Body = "type: int, min: 0, max: 180",
+                    DeviceTypeId = roboArmDevType.Id
+                },
+                new Property{
+                    Id = 4,
+                    Name = "Angle Of Fourth Channel",
+                    Body = "type: int, min: 0, max: 180",
+                    DeviceTypeId = roboArmDevType.Id
+
+                },
+                new Property{
+                    Id = 5,
+                    Name = "Angle Of Fifth Channel",
+                    Body = "type: int, min: 0, max: 180",
+                    DeviceTypeId = roboArmDevType.Id
+
+                },
+                new Property{
+                    Id = 6,
+                    Name = "Angle Of Sixth Channel",
+                    Body = "type: int, min: 0, max: 180",
+                    DeviceTypeId = roboArmDevType.Id
+
+                }
+            });
 
             // jobs
 

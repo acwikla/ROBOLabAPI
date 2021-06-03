@@ -2,15 +2,17 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using ROBOLab.API;
 
 namespace ROBOLab.API.Migrations
 {
     [DbContext(typeof(ROBOLabDbContext))]
-    partial class ROBOLabDbContextModelSnapshot : ModelSnapshot
+    [Migration("20210603202649_InitialCreate")]
+    partial class InitialCreate
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -102,7 +104,7 @@ namespace ROBOLab.API.Migrations
                         {
                             Id = 1,
                             Body = "#FF6611",
-                            CreatedDate = new DateTime(2021, 6, 3, 22, 35, 53, 25, DateTimeKind.Local).AddTicks(7045),
+                            CreatedDate = new DateTime(2021, 6, 3, 22, 26, 48, 727, DateTimeKind.Local).AddTicks(445),
                             DeviceId = 1,
                             Done = false,
                             JobId = 1
@@ -111,7 +113,7 @@ namespace ROBOLab.API.Migrations
                         {
                             Id = 2,
                             Body = "",
-                            CreatedDate = new DateTime(2021, 6, 3, 22, 35, 53, 28, DateTimeKind.Local).AddTicks(5592),
+                            CreatedDate = new DateTime(2021, 6, 3, 22, 26, 48, 729, DateTimeKind.Local).AddTicks(4058),
                             DeviceId = 1,
                             Done = false,
                             JobId = 2
@@ -281,46 +283,6 @@ namespace ROBOLab.API.Migrations
                             DeviceTypeId = 2,
                             IsMode = false,
                             Name = "Angle Of First Channel"
-                        },
-                        new
-                        {
-                            Id = 2,
-                            Body = "type: int, min: 0, max: 180",
-                            DeviceTypeId = 2,
-                            IsMode = false,
-                            Name = "Angle Of Second Channel"
-                        },
-                        new
-                        {
-                            Id = 3,
-                            Body = "type: int, min: 0, max: 180",
-                            DeviceTypeId = 2,
-                            IsMode = false,
-                            Name = "Angle Of Third Channel"
-                        },
-                        new
-                        {
-                            Id = 4,
-                            Body = "type: int, min: 0, max: 180",
-                            DeviceTypeId = 2,
-                            IsMode = false,
-                            Name = "Angle Of Fourth Channel"
-                        },
-                        new
-                        {
-                            Id = 5,
-                            Body = "type: int, min: 0, max: 180",
-                            DeviceTypeId = 2,
-                            IsMode = false,
-                            Name = "Angle Of Fifth Channel"
-                        },
-                        new
-                        {
-                            Id = 6,
-                            Body = "type: int, min: 0, max: 180",
-                            DeviceTypeId = 2,
-                            IsMode = false,
-                            Name = "Angle Of Sixth Channel"
                         });
                 });
 
@@ -466,13 +428,11 @@ namespace ROBOLab.API.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("ROBOLab.Core.Models.Mode", "Mode")
+                    b.HasOne("ROBOLab.Core.Models.Mode", null)
                         .WithMany("Properties")
                         .HasForeignKey("ModeId");
 
                     b.Navigation("DeviceType");
-
-                    b.Navigation("Mode");
                 });
 
             modelBuilder.Entity("ROBOLab.Core.Models.Value", b =>

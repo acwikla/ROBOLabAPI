@@ -9,8 +9,8 @@ using ROBOLab.API;
 namespace ROBOLab.API.Migrations
 {
     [DbContext(typeof(ROBOLabDbContext))]
-    [Migration("20210603180236_AddNewBasicData")]
-    partial class AddNewBasicData
+    [Migration("20210603203553_AddBasicPropertyData")]
+    partial class AddBasicPropertyData
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -104,7 +104,7 @@ namespace ROBOLab.API.Migrations
                         {
                             Id = 1,
                             Body = "#FF6611",
-                            CreatedDate = new DateTime(2021, 6, 3, 20, 2, 35, 886, DateTimeKind.Local).AddTicks(5027),
+                            CreatedDate = new DateTime(2021, 6, 3, 22, 35, 53, 25, DateTimeKind.Local).AddTicks(7045),
                             DeviceId = 1,
                             Done = false,
                             JobId = 1
@@ -113,7 +113,7 @@ namespace ROBOLab.API.Migrations
                         {
                             Id = 2,
                             Body = "",
-                            CreatedDate = new DateTime(2021, 6, 3, 20, 2, 35, 890, DateTimeKind.Local).AddTicks(8951),
+                            CreatedDate = new DateTime(2021, 6, 3, 22, 35, 53, 28, DateTimeKind.Local).AddTicks(5592),
                             DeviceId = 1,
                             Done = false,
                             JobId = 2
@@ -260,7 +260,7 @@ namespace ROBOLab.API.Migrations
                     b.Property<bool>("IsMode")
                         .HasColumnType("INTEGER");
 
-                    b.Property<int>("ModeId")
+                    b.Property<int?>("ModeId")
                         .HasColumnType("INTEGER");
 
                     b.Property<string>("Name")
@@ -274,6 +274,56 @@ namespace ROBOLab.API.Migrations
                     b.HasIndex("ModeId");
 
                     b.ToTable("Properties");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            Body = "type: int, min: 0, max: 180",
+                            DeviceTypeId = 2,
+                            IsMode = false,
+                            Name = "Angle Of First Channel"
+                        },
+                        new
+                        {
+                            Id = 2,
+                            Body = "type: int, min: 0, max: 180",
+                            DeviceTypeId = 2,
+                            IsMode = false,
+                            Name = "Angle Of Second Channel"
+                        },
+                        new
+                        {
+                            Id = 3,
+                            Body = "type: int, min: 0, max: 180",
+                            DeviceTypeId = 2,
+                            IsMode = false,
+                            Name = "Angle Of Third Channel"
+                        },
+                        new
+                        {
+                            Id = 4,
+                            Body = "type: int, min: 0, max: 180",
+                            DeviceTypeId = 2,
+                            IsMode = false,
+                            Name = "Angle Of Fourth Channel"
+                        },
+                        new
+                        {
+                            Id = 5,
+                            Body = "type: int, min: 0, max: 180",
+                            DeviceTypeId = 2,
+                            IsMode = false,
+                            Name = "Angle Of Fifth Channel"
+                        },
+                        new
+                        {
+                            Id = 6,
+                            Body = "type: int, min: 0, max: 180",
+                            DeviceTypeId = 2,
+                            IsMode = false,
+                            Name = "Angle Of Sixth Channel"
+                        });
                 });
 
             modelBuilder.Entity("ROBOLab.Core.Models.User", b =>
@@ -420,9 +470,7 @@ namespace ROBOLab.API.Migrations
 
                     b.HasOne("ROBOLab.Core.Models.Mode", "Mode")
                         .WithMany("Properties")
-                        .HasForeignKey("ModeId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("ModeId");
 
                     b.Navigation("DeviceType");
 
