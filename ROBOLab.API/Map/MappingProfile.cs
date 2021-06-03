@@ -47,6 +47,9 @@ namespace ROBOLab.API.Map
             //Property:
             CreateMap<Property, AddPropertyDTO>().ReverseMap();
             CreateMap<Property, ViewPropertyDTO>().ReverseMap();
+
+            //Value:
+            CreateMap<Value, ViewDeviceValueDTO>().ReverseMap();
         }
     }
 }

@@ -2,15 +2,17 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using ROBOLab.API;
 
 namespace ROBOLab.API.Migrations
 {
     [DbContext(typeof(ROBOLabDbContext))]
-    partial class ROBOLabDbContextModelSnapshot : ModelSnapshot
+    [Migration("20210603223054_ChangePropAndDevIdToNullable")]
+    partial class ChangePropAndDevIdToNullable
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -102,7 +104,7 @@ namespace ROBOLab.API.Migrations
                         {
                             Id = 1,
                             Body = "#FF6611",
-                            CreatedDate = new DateTime(2021, 6, 4, 0, 35, 13, 827, DateTimeKind.Local).AddTicks(2179),
+                            CreatedDate = new DateTime(2021, 6, 4, 0, 30, 53, 871, DateTimeKind.Local).AddTicks(1883),
                             DeviceId = 1,
                             Done = false,
                             JobId = 1
@@ -111,7 +113,7 @@ namespace ROBOLab.API.Migrations
                         {
                             Id = 2,
                             Body = "",
-                            CreatedDate = new DateTime(2021, 6, 4, 0, 35, 13, 831, DateTimeKind.Local).AddTicks(895),
+                            CreatedDate = new DateTime(2021, 6, 4, 0, 30, 53, 878, DateTimeKind.Local).AddTicks(69),
                             DeviceId = 1,
                             Done = false,
                             JobId = 2
@@ -374,13 +376,15 @@ namespace ROBOLab.API.Migrations
                         .ValueGeneratedOnAddOrUpdate()
                         .HasColumnType("TEXT");
 
-                    b.Property<int>("DeviceId")
+                    b.Property<int?>("DeviceId")
+                        .IsRequired()
                         .HasColumnType("INTEGER");
 
-                    b.Property<int?>("JobId")
+                    b.Property<int>("JobId")
                         .HasColumnType("INTEGER");
 
-                    b.Property<int>("PropertyId")
+                    b.Property<int?>("PropertyId")
+                        .IsRequired()
                         .HasColumnType("INTEGER");
 
                     b.Property<string>("Val")
@@ -485,7 +489,9 @@ namespace ROBOLab.API.Migrations
 
                     b.HasOne("ROBOLab.Core.Models.Job", "Job")
                         .WithMany()
-                        .HasForeignKey("JobId");
+                        .HasForeignKey("JobId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.HasOne("ROBOLab.Core.Models.Property", "Property")
                         .WithMany("Values")

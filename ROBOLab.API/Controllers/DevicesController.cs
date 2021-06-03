@@ -62,6 +62,21 @@ namespace ROBOLab.API.Controllers
             return Ok(deviceDTO);
         }
 
+        // GET: api/devices/value/5
+        [HttpGet("value/{id}")]
+        public async Task<ActionResult<ViewDeviceValueDTO>> GetDeviceValue(int id)
+        {
+            var value = await _context.Values.Include(v => v.Device).Include(v => v.Property).Where(v => v.Id == id).FirstOrDefaultAsync();
+
+            if (value == null)
+            {
+                return NotFound($"There is no value for given id: {id}.");
+            }
+
+            ViewDeviceValueDTO viewValueDTO = _mapper.Map<ViewDeviceValueDTO>(value);
+            return Ok(viewValueDTO);
+        }
+
         // PUT: api/devices/5
         [HttpPut("{id}")]
         public async Task<IActionResult> PutDevice(int id, AddDeviceDTO deviceDTO)
@@ -103,42 +118,38 @@ namespace ROBOLab.API.Controllers
         //TODO: dodac metode, ktora pobiera wszystkie value dla konkretnego device
         //TODO: dodac metode, ktora pobiera wartosci dla danego urzadzenia, dla konkretnego property 
 
-        // POST: api/devices/{id}/values
-        [HttpPost("{id}/values")]
-        public async Task<ActionResult<Device>> PostNewValueForDevice(int id, AddPropertyValueDTO propertyValueDTO)
+        // POST: api/devices/{id}/add-values-by-property-name
+        [HttpPost("{id}/add-values-by-property-name")]
+        public async Task<ActionResult<Device>> PostNewValueForDeviceByPropName(int id, AddPropertyValueDTO propertyValueDTO)
         {
-            //pobierz property z dev type i values, device z dev type i z values
-            var device = await _context.Devices.Include(d => d.DeviceType).Include(d => d.Values).Where(d => d.Id == id).FirstOrDefaultAsync();
+            var device = await _context.Devices.Include(d => d.DeviceType).Where(d => d.Id == id).FirstOrDefaultAsync();
             if (device == null)
             {
                 return NotFound($"There is no device for given id: {id}.");
             }
 
             //search by property name
-            var property = await _context.Properties.Include(p => p.DeviceType).Where(p => p.DeviceType.Name == device.DeviceType.Name).Include(p => p.Values).Where(p=>p.Name==propertyValueDTO.Property.Name).FirstOrDefaultAsync();
+            var property = await _context.Properties.Include(p => p.DeviceType).Where(p=>p.Name==propertyValueDTO.PropertyName).FirstOrDefaultAsync();
             if (property == null)
             {
-                //Nie istnieje takie property o podanej nazwie z pasujacym device type, dla podanego device
-                return BadRequest($"There is no property named : {propertyValueDTO.Property.Name} with matching device type for device with given id: {id}.");
+                return BadRequest($"There is no property named : {propertyValueDTO.PropertyName} with matching device type for device with given id: {id}.");
             }
 
-            //sprawdz czy dev type w property zgadza się z dev type w device
-            //na wszelki wypadek
-            if (property.DeviceTypeId == device.DeviceType.Id)
+            //check if devtype in property and device are equal
+            if (property.DeviceTypeId != device.DeviceType.Id)
             {
                 return BadRequest($"Device types in property and device do not match.");
             }
 
-            //znajdz value
-            var value = device.Values.Where(v => v.PropertyId == property.Id).Where(v=>v.DeviceId==id).FirstOrDefault();
-            if (value==null)
+            var newValue = new Value
             {
-                return BadRequest($"There is no value with matching poperty for device with given id: {id}");
-            }
-
-            //dodaj  values, dodaj values do listy z property, dodaj values do listy w device type
-            //dodaj automatyczne generowanie daty 
-            Value newValue = _mapper.Map<Value>(propertyValueDTO);
+                Val = propertyValueDTO.Val,
+                DateTime = DateTime.Now,
+                PropertyId = property.Id,
+                Property = property,
+                DeviceId = device.Id,
+                Device = device
+            };
             await _context.Values.AddAsync(newValue);
             await _context.SaveChangesAsync();
 
@@ -146,7 +157,50 @@ namespace ROBOLab.API.Controllers
             property.Values.Add(newValue);
 
             ViewDeviceValueDTO valueDTO = _mapper.Map<ViewDeviceValueDTO>(newValue);
-            return CreatedAtAction("GetValues", new { id = valueDTO.Id }, valueDTO);
+            return CreatedAtAction(nameof(GetDeviceValue), new { id = valueDTO.Id }, valueDTO);
+        }
+
+        // POST: api/devices/{id}/add-values-by-property-id
+        [HttpPost("{id}/add-values-by-property-id")]
+        public async Task<ActionResult<ViewDeviceValueDTO>> PostNewValueForDeviceByPropId(int id, AddPropertyValueDTO propertyValueDTO)
+        {
+            var device = await _context.Devices.Include(d => d.DeviceType).Where(d => d.Id == id).FirstOrDefaultAsync();
+            if (device == null)
+            {
+                return NotFound($"There is no device for given id: {id}.");
+            }
+
+            //search by property id
+            var property = await _context.Properties.Include(p => p.DeviceType).Where(p => p.Id == propertyValueDTO.PropertyId).FirstOrDefaultAsync();
+            if (property == null)
+            {
+                return BadRequest($"There is no property for given id: {propertyValueDTO.PropertyId}.");
+            }
+
+            //check if devtype in property and device are equal
+            if (property.DeviceTypeId != device.DeviceType.Id)
+            {
+                return BadRequest($"Device types in property and device do not match.");
+            }
+
+            var newValue = new Value
+            {
+                Val = propertyValueDTO.Val,
+                DateTime = DateTime.Now,
+                PropertyId = property.Id,
+                Property = property,
+                DeviceId = device.Id,
+                Device = device
+            };
+            await _context.Values.AddAsync(newValue);
+            await _context.SaveChangesAsync();
+
+            device.Values.Add(newValue);
+            property.Values.Add(newValue);
+
+            ViewDeviceValueDTO valueDTO = _mapper.Map<ViewDeviceValueDTO>(newValue);
+            return CreatedAtAction(nameof(GetDeviceValue), new { id = valueDTO.Id }, valueDTO);
+            //return CreatedAtAction("GetValue", new { id = valueDTO.Id }, valueDTO);
         }
 
         // DELETE: api/devices/5

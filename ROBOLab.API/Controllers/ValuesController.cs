@@ -7,18 +7,22 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using ROBOLab.Core.Models;
 using ROBOLab.API;
+using ROBOLab.Core.DTO;
+using AutoMapper;
 
 namespace ROBOLab.API.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/value")]
     [ApiController]
     public class ValuesController : ControllerBase
     {
         private readonly ROBOLabDbContext _context;
+        private readonly IMapper _mapper;
 
-        public ValuesController(ROBOLabDbContext context)
+        public ValuesController(ROBOLabDbContext context, IMapper mapper)
         {
             _context = context;
+            _mapper = mapper;
         }
 
         // GET: api/Values
@@ -28,18 +32,19 @@ namespace ROBOLab.API.Controllers
             return await _context.Values.ToListAsync();
         }
 
-        // GET: api/Values/5
+        // GET: api/value/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<Value>> GetValue(int id)
+        public async Task<ActionResult<ViewDeviceValueDTO>> GetValue(int id)
         {
-            var value = await _context.Values.FindAsync(id);
+            var value = await _context.Values.Include(v => v.Device).Include(v => v.Property).Where(v => v.Id == id).FirstOrDefaultAsync();
 
             if (value == null)
             {
-                return NotFound();
+                return NotFound($"There is no value for given id: {id}.");
             }
 
-            return value;
+            ViewDeviceValueDTO viewValueDTO = _mapper.Map<ViewDeviceValueDTO>(value);
+            return Ok(viewValueDTO);
         }
 
         // PUT: api/Values/5

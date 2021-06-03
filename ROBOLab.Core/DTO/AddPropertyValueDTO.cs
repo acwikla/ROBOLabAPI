@@ -9,17 +9,11 @@ namespace ROBOLab.Core.DTO
 {
     public class AddPropertyValueDTO
     {
-        public int Id { get; set; }
+        public int PropertyId { get; set; }
+
+        public string PropertyName { get; set; }
 
         [Required]
         public string Val { get; set; }
-
-        [DatabaseGenerated(DatabaseGeneratedOption.Computed)]
-        public DateTime DateTime { get; set; }
-
-        [Required]
-        public PropertyNameDTO Property { get; set; }
-
-
     }
 }

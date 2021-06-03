@@ -39,7 +39,7 @@ namespace ROBOLab.API.Controllers
             List<ViewPropertyDTO> popertiesToViewDTO = new List<ViewPropertyDTO>();
             foreach (Property p in property)
             {
-                ViewPropertyDTO propertyToViewDTO = _mapper.Map<ViewPropertyDTO>(property);
+                ViewPropertyDTO propertyToViewDTO = _mapper.Map<ViewPropertyDTO>(p);
                 popertiesToViewDTO.Add(propertyToViewDTO);
             }
             

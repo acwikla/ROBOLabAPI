@@ -264,7 +264,7 @@ namespace ROBOLab.API.Controllers
         }
 
         // POST: api/device-jobs/device/{deviceId}/job/{jobId}
-        [HttpPost("device-jobs/device/{deviceId}/job/{jobId}")]
+        [HttpPost("device/{deviceId}/job/{jobId}")]
         public async Task<ActionResult<ViewDeviceJobDTO>> PostDeviceJob(int deviceId, int jobId, AddDeviceJobDTO deviceJob)
         {
             //without include device type in job and device
