@@ -34,16 +34,16 @@ namespace ROBOLab.API
                 Id = 1,
                 Name = "SmartTerra"
             };
-            var testDevType = new DeviceType
+            var roboArmDevType = new DeviceType
             {
                 Id = 2,
-                Name = "Device type test"
+                Name = "RoboArm(Arexx RA-1-PRO)"
             };
 
             modelBuilder.Entity<DeviceType>().HasData(new DeviceType[]
             {
                 smartTerraDevType,
-                testDevType
+                roboArmDevType
             });
 
 
@@ -75,12 +75,40 @@ namespace ROBOLab.API
                 Properties = "",
                 Description = "Turn on the water pump for given period of time."
             };
+            //--------------------
+            var jobMoveTeddyBear = new
+            {
+                Id = 4,
+                Name = "MoveTeddyBear",
+                DeviceTypeId = roboArmDevType.Id,
+                Properties = "",
+                Description = "Move the teddy bear to a specific place."
+            };
+            var jobFillCubeWithWater = new
+            {
+                Id = 5,
+                Name = "FillCubeWithWater",
+                DeviceTypeId = roboArmDevType.Id,
+                Properties = "",
+                Description = "Pour water into the cube for given period of time."
+            };
+            var jobRunAnySequence = new
+            {
+                Id = 6,
+                Name = "RunAnySequence",
+                DeviceTypeId = roboArmDevType.Id,
+                Properties = "",
+                Description = "Run the provided sequence of angles."
+            };
 
             modelBuilder.Entity<Job>().HasData(new object[]
             {
                 jobTurnOnLED,
                 jobTurnOffLED,
-                jobTurnOnWaterPump
+                jobTurnOnWaterPump,
+                jobMoveTeddyBear,
+                jobFillCubeWithWater,
+                jobRunAnySequence
             });
 
 
@@ -118,10 +146,17 @@ namespace ROBOLab.API
                 Name = "Test device 1 (SmartTerra)",
                 UserId = user1.Id,
             };
+            var roboArmDev1 = new Device
+            {
+                Id = 2,
+                DeviceTypeId = roboArmDevType.Id,
+                Name = "RoboArm1",
+                UserId = user1.Id,
+            };
 
             var smartTerraDev2 = new Device
             {
-                Id = 2,
+                Id = 3,
                 DeviceTypeId = smartTerraDevType.Id,
                 Name = "Test device 2 (SmartTerra)",
                 UserId = user2.Id,
@@ -130,7 +165,8 @@ namespace ROBOLab.API
             modelBuilder.Entity<Device>().HasData(new Device[]
             {
                 smartTerraDev1,
-                smartTerraDev2,
+                roboArmDev1,
+                smartTerraDev2
             });
 
 
