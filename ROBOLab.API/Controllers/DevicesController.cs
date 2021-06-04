@@ -62,19 +62,33 @@ namespace ROBOLab.API.Controllers
             return Ok(deviceDTO);
         }
 
-        // GET: api/devices/value/5
-        [HttpGet("value/{id}")]
-        public async Task<ActionResult<ViewDeviceValueDTO>> GetDeviceValue(int id)
+        // GET: api/devices/values/5
+        [HttpGet("values/{value_id}")]
+        public async Task<ActionResult<ViewDeviceValueDTO>> GetDeviceValue(int value_id)
         {
-            var value = await _context.Values.Include(v => v.Device).Include(v => v.Property).Where(v => v.Id == id).FirstOrDefaultAsync();
+            var value = await _context.Values.Include(v => v.Device).Include(v => v.Property).Where(v => v.Id == value_id).FirstOrDefaultAsync();
 
             if (value == null)
             {
-                return NotFound($"There is no value for given id: {id}.");
+                return NotFound($"There is no value for given id: {value_id}.");
             }
 
             ViewDeviceValueDTO viewValueDTO = _mapper.Map<ViewDeviceValueDTO>(value);
             return Ok(viewValueDTO);
+        }
+
+        // GET: api/devices/5/values/take-last/100
+        [HttpGet("{id}/values/take-last/{amount}")]
+        public async Task<ActionResult<IEnumerable<ViewDeviceValueDTO>>> GetDeviceLastValue(int id, int amount)
+        {
+            IEnumerable<Value> values = await _context.Values.Include(v => v.Device).Include(v => v.Property).Where(v => v.DeviceId == id).ToListAsync();
+
+            if (values == null)
+            {
+                return NotFound($"There is no values for given device id: {id}.");
+            }
+
+            return _mapper.Map<List<ViewDeviceValueDTO>>(values.TakeLast(amount));
         }
 
         // PUT: api/devices/5
@@ -157,7 +171,7 @@ namespace ROBOLab.API.Controllers
             property.Values.Add(newValue);
 
             ViewDeviceValueDTO valueDTO = _mapper.Map<ViewDeviceValueDTO>(newValue);
-            return CreatedAtAction(nameof(GetDeviceValue), new { id = valueDTO.Id }, valueDTO);
+            return CreatedAtAction(nameof(GetDeviceValue), new { value_id = valueDTO.Id }, valueDTO);
         }
 
         // POST: api/devices/{id}/add-values-by-property-id
@@ -199,7 +213,7 @@ namespace ROBOLab.API.Controllers
             property.Values.Add(newValue);
 
             ViewDeviceValueDTO valueDTO = _mapper.Map<ViewDeviceValueDTO>(newValue);
-            return CreatedAtAction(nameof(GetDeviceValue), new { id = valueDTO.Id }, valueDTO);
+            return CreatedAtAction(nameof(GetDeviceValue), new { value_id = valueDTO.Id }, valueDTO);
             //return CreatedAtAction("GetValue", new { id = valueDTO.Id }, valueDTO);
         }
 
