@@ -81,6 +81,11 @@ namespace ROBOLab.API.Controllers
         [HttpGet("{id}/values/take-last/{amount}")]
         public async Task<ActionResult<IEnumerable<ViewDeviceValueDTO>>> GetDeviceLastValue(int id, int amount)
         {
+            if (amount > 10000)
+            {
+                amount = 10000;
+            }
+
             IEnumerable<Value> values = await _context.Values.Include(v => v.Device).Include(v => v.Property).Where(v => v.DeviceId == id)
                 .OrderByDescending(v => v.DateTime).Take(amount).ToListAsync();
 
@@ -90,11 +95,6 @@ namespace ROBOLab.API.Controllers
             if (values == null)
             {
                 return NotFound($"There is no values for given device id: {id}.");
-            }
-
-            if (amount > 10000)
-            { 
-                amount = 10000; 
             }
 
             return _mapper.Map<List<ViewDeviceValueDTO>>(values);
