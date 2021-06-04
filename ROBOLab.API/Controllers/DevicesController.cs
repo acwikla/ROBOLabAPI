@@ -129,7 +129,6 @@ namespace ROBOLab.API.Controllers
             return NoContent();
         }
 
-        //TODO: dodac metode, ktora pobiera wszystkie value dla konkretnego device
         //TODO: dodac metode, ktora pobiera wartosci dla danego urzadzenia, dla konkretnego property 
 
         // POST: api/devices/{id}/add-values-by-property-name
@@ -142,18 +141,28 @@ namespace ROBOLab.API.Controllers
                 return NotFound($"There is no device for given id: {id}.");
             }
 
+            //DB: moze byc wiele propertisow o tej samej nazwie dla kilku urzadzen,
+            // dlatego podczas podbierania propery nalezy od razu filtrowac po device type
+
             //search by property name
-            var property = await _context.Properties.Include(p => p.DeviceType).Where(p=>p.Name==propertyValueDTO.PropertyName).FirstOrDefaultAsync();
+            var property = await _context.Properties.Include(p => p.DeviceType)
+                .Where(p => p.Name == propertyValueDTO.PropertyName)
+                .Where(p => p.DeviceTypeId == device.DeviceTypeId)           // <---- tego brakowalo
+                .FirstOrDefaultAsync();
             if (property == null)
             {
                 return BadRequest($"There is no property named : {propertyValueDTO.PropertyName} with matching device type for device with given id: {id}.");
             }
 
+            //DB i wtedy to jest zbedne...
+
+            // natomiast funkcja PostNewValueForDeviceByPropId jest OK :)
+
             //check if devtype in property and device are equal
-            if (property.DeviceTypeId != device.DeviceType.Id)
+            /*if (property.DeviceTypeId != device.DeviceType.Id)
             {
                 return BadRequest($"Device types in property and device do not match.");
-            }
+            }*/
 
             var newValue = new Value
             {
@@ -167,8 +176,9 @@ namespace ROBOLab.API.Controllers
             await _context.Values.AddAsync(newValue);
             await _context.SaveChangesAsync();
 
-            device.Values.Add(newValue);
-            property.Values.Add(newValue);
+            //DB: zakomentowalem, sprawdz czy nadal dziala (czy dane zapisuja sie do bazy)
+            //device.Values.Add(newValue);
+            //property.Values.Add(newValue);
 
             ViewDeviceValueDTO valueDTO = _mapper.Map<ViewDeviceValueDTO>(newValue);
             return CreatedAtAction(nameof(GetDeviceValue), new { value_id = valueDTO.Id }, valueDTO);
@@ -209,8 +219,9 @@ namespace ROBOLab.API.Controllers
             await _context.Values.AddAsync(newValue);
             await _context.SaveChangesAsync();
 
-            device.Values.Add(newValue);
-            property.Values.Add(newValue);
+            //DB: zakomentowalem, sprawdz czy nadal dziala (czy dane zapisuja sie do bazy)
+            //device.Values.Add(newValue);
+            //property.Values.Add(newValue);
 
             ViewDeviceValueDTO valueDTO = _mapper.Map<ViewDeviceValueDTO>(newValue);
             return CreatedAtAction(nameof(GetDeviceValue), new { value_id = valueDTO.Id }, valueDTO);
