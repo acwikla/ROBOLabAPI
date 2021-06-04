@@ -81,7 +81,8 @@ namespace ROBOLab.API.Controllers
         [HttpGet("{id}/values/take-last/{amount}")]
         public async Task<ActionResult<IEnumerable<ViewDeviceValueDTO>>> GetDeviceLastValue(int id, int amount)
         {
-            IEnumerable<Value> values = await _context.Values.Include(v => v.Device).Include(v => v.Property).Where(v => v.DeviceId == id).ToListAsync();
+            IEnumerable<Value> values = await _context.Values.Include(v => v.Device).Include(v => v.Property).Where(v => v.DeviceId == id)
+                .OrderByDescending(v => v.DateTime).Take(amount).ToListAsync();
 
             //DB jesli takelast jest po toListAsync to: z bazy pobiora sie wszystkie wartosci, a dopiero pozniej z nich zwrocisz amount, i tak jest zle
             //to baza ma zwrocic ograniczona ilosc rekordow a wiec: takelast PRZED to list
@@ -96,7 +97,7 @@ namespace ROBOLab.API.Controllers
                 amount = 10000; 
             }
 
-            return _mapper.Map<List<ViewDeviceValueDTO>>(values.TakeLast(amount));
+            return _mapper.Map<List<ViewDeviceValueDTO>>(values);
         }
 
         // PUT: api/devices/5
