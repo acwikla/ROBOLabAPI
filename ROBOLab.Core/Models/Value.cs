@@ -32,8 +32,8 @@ namespace ROBOLab.Core.Models
         //DB: zamiast Job ma byc DeviceJob (zobacz na tą pikną fotę ze schematem bazy)
         // Chodzo o to ze chcesz znac konkretny DeviceJob w ramach ktorego zapisano te statystyki
 
-        public int? JobId { get; set; }
+        public int? DeviceJobId { get; set; }
 
-        public virtual Job Job { get; set; }
+        public virtual DeviceJob DeviceJob { get; set; }
     }
 }
