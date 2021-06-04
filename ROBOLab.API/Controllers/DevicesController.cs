@@ -219,7 +219,6 @@ namespace ROBOLab.API.Controllers
             var newValue = new Value
             {
                 Val = propertyValueDTO.Val,
-                DateTime = DateTime.Now,
                 PropertyId = property.Id,
                 Property = property,
                 DeviceId = device.Id,

@@ -173,21 +173,21 @@ namespace ROBOLab.API.Migrations
                     DateTime = table.Column<DateTime>(type: "TEXT", nullable: false),
                     PropertyId = table.Column<int>(type: "INTEGER", nullable: false),
                     DeviceId = table.Column<int>(type: "INTEGER", nullable: false),
-                    JobId = table.Column<int>(type: "INTEGER", nullable: false)
+                    DeviceJobId = table.Column<int>(type: "INTEGER", nullable: true)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Values", x => x.Id);
                     table.ForeignKey(
+                        name: "FK_Values_DeviceJobs_DeviceJobId",
+                        column: x => x.DeviceJobId,
+                        principalTable: "DeviceJobs",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
                         name: "FK_Values_Devices_DeviceId",
                         column: x => x.DeviceId,
                         principalTable: "Devices",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_Values_Jobs_JobId",
-                        column: x => x.JobId,
-                        principalTable: "Jobs",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
@@ -269,14 +269,39 @@ namespace ROBOLab.API.Migrations
                 values: new object[] { 1, "type: int, min: 0, max: 180", 2, false, null, "Angle Of First Channel" });
 
             migrationBuilder.InsertData(
-                table: "DeviceJobs",
-                columns: new[] { "Id", "Body", "CreatedDate", "DeviceId", "Done", "ExecutionTime", "JobId" },
-                values: new object[] { 1, "#FF6611", new DateTime(2021, 6, 3, 22, 26, 48, 727, DateTimeKind.Local).AddTicks(445), 1, false, null, 1 });
+                table: "Properties",
+                columns: new[] { "Id", "Body", "DeviceTypeId", "IsMode", "ModeId", "Name" },
+                values: new object[] { 2, "type: int, min: 0, max: 180", 2, false, null, "Angle Of Second Channel" });
+
+            migrationBuilder.InsertData(
+                table: "Properties",
+                columns: new[] { "Id", "Body", "DeviceTypeId", "IsMode", "ModeId", "Name" },
+                values: new object[] { 3, "type: int, min: 0, max: 180", 2, false, null, "Angle Of Third Channel" });
+
+            migrationBuilder.InsertData(
+                table: "Properties",
+                columns: new[] { "Id", "Body", "DeviceTypeId", "IsMode", "ModeId", "Name" },
+                values: new object[] { 4, "type: int, min: 0, max: 180", 2, false, null, "Angle Of Fourth Channel" });
+
+            migrationBuilder.InsertData(
+                table: "Properties",
+                columns: new[] { "Id", "Body", "DeviceTypeId", "IsMode", "ModeId", "Name" },
+                values: new object[] { 5, "type: int, min: 0, max: 180", 2, false, null, "Angle Of Fifth Channel" });
+
+            migrationBuilder.InsertData(
+                table: "Properties",
+                columns: new[] { "Id", "Body", "DeviceTypeId", "IsMode", "ModeId", "Name" },
+                values: new object[] { 6, "type: int, min: 0, max: 180", 2, false, null, "Angle Of Sixth Channel" });
 
             migrationBuilder.InsertData(
                 table: "DeviceJobs",
                 columns: new[] { "Id", "Body", "CreatedDate", "DeviceId", "Done", "ExecutionTime", "JobId" },
-                values: new object[] { 2, "", new DateTime(2021, 6, 3, 22, 26, 48, 729, DateTimeKind.Local).AddTicks(4058), 1, false, null, 2 });
+                values: new object[] { 1, "#FF6611", new DateTime(2021, 6, 4, 21, 59, 21, 943, DateTimeKind.Local).AddTicks(2283), 1, false, null, 1 });
+
+            migrationBuilder.InsertData(
+                table: "DeviceJobs",
+                columns: new[] { "Id", "Body", "CreatedDate", "DeviceId", "Done", "ExecutionTime", "JobId" },
+                values: new object[] { 2, "", new DateTime(2021, 6, 4, 21, 59, 21, 945, DateTimeKind.Local).AddTicks(6007), 1, false, null, 2 });
 
             migrationBuilder.CreateIndex(
                 name: "IX_DeviceJobs_DeviceId",
@@ -324,9 +349,9 @@ namespace ROBOLab.API.Migrations
                 column: "DeviceId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Values_JobId",
+                name: "IX_Values_DeviceJobId",
                 table: "Values",
-                column: "JobId");
+                column: "DeviceJobId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Values_PropertyId",
@@ -337,16 +362,16 @@ namespace ROBOLab.API.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "DeviceJobs");
-
-            migrationBuilder.DropTable(
                 name: "Values");
 
             migrationBuilder.DropTable(
-                name: "Jobs");
+                name: "DeviceJobs");
 
             migrationBuilder.DropTable(
                 name: "Properties");
+
+            migrationBuilder.DropTable(
+                name: "Jobs");
 
             migrationBuilder.DropTable(
                 name: "Modes");

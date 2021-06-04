@@ -14,8 +14,8 @@ namespace ROBOLab.Core.Models
         [Required]
         public string Val { get; set; }
 
-        [DatabaseGenerated(DatabaseGeneratedOption.Computed)]
-        public DateTime? DateTime { get; set; }
+        //[DatabaseGenerated(DatabaseGeneratedOption.Computed)]
+        public DateTime DateTime { get; set; }
 
         [Required]
         public int PropertyId { get; set; }
@@ -35,5 +35,10 @@ namespace ROBOLab.Core.Models
         public int? DeviceJobId { get; set; }
 
         public virtual DeviceJob DeviceJob { get; set; }
+
+        public Value()
+        {
+            this.DateTime = DateTime.Now;
+        }
     }
 }

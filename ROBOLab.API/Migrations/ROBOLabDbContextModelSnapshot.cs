@@ -102,7 +102,7 @@ namespace ROBOLab.API.Migrations
                         {
                             Id = 1,
                             Body = "#FF6611",
-                            CreatedDate = new DateTime(2021, 6, 4, 20, 51, 13, 713, DateTimeKind.Local).AddTicks(4380),
+                            CreatedDate = new DateTime(2021, 6, 4, 21, 59, 21, 943, DateTimeKind.Local).AddTicks(2283),
                             DeviceId = 1,
                             Done = false,
                             JobId = 1
@@ -111,7 +111,7 @@ namespace ROBOLab.API.Migrations
                         {
                             Id = 2,
                             Body = "",
-                            CreatedDate = new DateTime(2021, 6, 4, 20, 51, 13, 715, DateTimeKind.Local).AddTicks(7606),
+                            CreatedDate = new DateTime(2021, 6, 4, 21, 59, 21, 945, DateTimeKind.Local).AddTicks(6007),
                             DeviceId = 1,
                             Done = false,
                             JobId = 2
@@ -370,8 +370,7 @@ namespace ROBOLab.API.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
-                    b.Property<DateTime?>("DateTime")
-                        .ValueGeneratedOnAddOrUpdate()
+                    b.Property<DateTime>("DateTime")
                         .HasColumnType("TEXT");
 
                     b.Property<int>("DeviceId")
