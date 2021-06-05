@@ -9,6 +9,8 @@ using Microsoft.EntityFrameworkCore;
 using ROBOLab.Core.DTO;
 using ROBOLab.Core.Models;
 using ROBOLab.API;
+using ClosedXML.Excel;
+using System.IO;
 
 namespace ROBOLab.API.Controllers
 {
@@ -129,6 +131,86 @@ namespace ROBOLab.API.Controllers
             }
 
             return deviceJobsDTO;
+        }
+
+        // GET: api/device-jobs/values/5
+        [HttpGet("values/{value_id}")]
+        public async Task<ActionResult<ViewDeviceJobValueDTO>> GetDeviceJobValue(int value_id)
+        {
+            var value = await _context.Values.Include(v => v.Device).Include(v => v.Property).Include(v => v.DeviceJob).Where(v => v.Id == value_id).FirstOrDefaultAsync();
+
+            if (value == null)
+            {
+                return NotFound($"There is no value for given id: {value_id}.");
+            }
+
+            ViewDeviceJobValueDTO viewValueDTO = _mapper.Map<ViewDeviceJobValueDTO>(value);
+            return Ok(viewValueDTO);
+        }
+
+        // GET: api/device-jobs/5/get-all-values
+        [HttpGet("{id}/get-all-job-values")]
+        public async Task<ActionResult<IEnumerable<ViewDeviceJobValueDTO>>> GetAllDeviceJobValues(int id)
+        {
+            var values = await _context.Values.Include(v => v.Device).Include(v => v.Property).Include(v => v.DeviceJob).Where(v => v.DeviceJobId == id).ToListAsync();
+
+            if (values == null)
+            {
+                return NotFound($"There is no values for device job with given id: {id}.");
+            }
+
+            List<ViewDeviceJobValueDTO> viewValuesDTO = _mapper.Map<List<ViewDeviceJobValueDTO>>(values);
+            return Ok(viewValuesDTO);
+        }
+
+        // GET: api/device-jobs/5/export-last-values/100
+        [HttpGet("{id}/export-all-job-values")]
+        public IActionResult ExportLastDeviceJobValues(int id)
+        {
+            var values = _context.Values.Include(v => v.Device).Include(v => v.Property).Include(v => v.DeviceJob).Where(v => v.DeviceJobId == id).ToList();
+
+            if (values == null)
+            {
+                return NotFound($"There is no values for device job with given id:: {id}.");
+            }
+
+            using (var workbook = new XLWorkbook())
+            {
+                var worksheet = workbook.Worksheets.Add("Device_Job_Values");
+                var currentRow = 1;
+                worksheet.Cell(currentRow, 1).Value = "Value";
+                worksheet.Cell(currentRow, 2).Value = "DateTime";
+                worksheet.Cell(currentRow, 3).Value = "Device Name";
+                worksheet.Cell(currentRow, 4).Value = "Device ID";
+                worksheet.Cell(currentRow, 5).Value = "Property Name";
+                worksheet.Cell(currentRow, 6).Value = "Property ID";
+                worksheet.Cell(currentRow, 7).Value = "Job Name";
+                worksheet.Cell(currentRow, 8).Value = "DeviceJob ID";
+
+                foreach (var v in values)
+                {
+                    currentRow++;
+                    worksheet.Cell(currentRow, 1).Value = v.Val;
+                    worksheet.Cell(currentRow, 2).Value = v.DateTime;
+                    worksheet.Cell(currentRow, 3).Value = v.Device.Name;
+                    worksheet.Cell(currentRow, 4).Value = v.DeviceId;
+                    worksheet.Cell(currentRow, 5).Value = v.Property.Name;
+                    worksheet.Cell(currentRow, 6).Value = v.PropertyId;
+                    worksheet.Cell(currentRow, 7).Value = v.DeviceJob.Job.Name;
+                    worksheet.Cell(currentRow, 8).Value = v.DeviceJobId;
+                }
+
+                using (var stream = new MemoryStream())
+                {
+                    workbook.SaveAs(stream);
+                    var content = stream.ToArray();
+
+                    return File(
+                        content,
+                        "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+                        "dev_job_values.xlsx");
+                }
+            }
         }
 
         //return first job with false value done flag
@@ -310,6 +392,46 @@ namespace ROBOLab.API.Controllers
             deviceJobDTO.Job = jobDTO;
 
             return CreatedAtAction("GetDeviceJob", new { id = deviceJobDTO.Id }, deviceJobDTO);
+        }
+
+        // POST: api/device-jobs/{id}/add-values-by-property-id
+        [HttpPost("{id}/add-values-by-property-id")]
+        public async Task<ActionResult<ViewDeviceValueDTO>> PostNewValueForDeviceJobByPropId(int id, AddPropertyValueDTO propertyValueDTO)
+        {
+            var deviceJob = await _context.DeviceJobs.Include(d => d.Job).Include(d =>d.Device).Where(d => d.Id == id).FirstOrDefaultAsync();
+            if (deviceJob == null)
+            {
+                return NotFound($"There is no device job for given id: {id}.");
+            }
+
+            //search by property id
+            var property = await _context.Properties.Include(p => p.DeviceType).Where(p => p.Id == propertyValueDTO.PropertyId).FirstOrDefaultAsync();
+            if (property == null)
+            {
+                return BadRequest($"There is no property for given id: {propertyValueDTO.PropertyId}.");
+            }
+
+            //check if devtype in property and device job are equal
+            if (property.DeviceTypeId != deviceJob.Job.DeviceType.Id)
+            {
+                return BadRequest($"Device types in property and device do not match.");
+            }
+
+            var newValue = new Value
+            {
+                Val = propertyValueDTO.Val,
+                PropertyId = property.Id,
+                Property = property,
+                DeviceId = deviceJob.DeviceId,
+                Device = deviceJob.Device,
+                DeviceJobId = deviceJob.Id,
+                DeviceJob = deviceJob
+            };
+            await _context.Values.AddAsync(newValue);
+            await _context.SaveChangesAsync();
+
+            ViewDeviceJobValueDTO valueDTO = _mapper.Map<ViewDeviceJobValueDTO>(newValue);
+            return CreatedAtAction(nameof(GetDeviceJobValue), new { value_id = valueDTO.Id }, valueDTO);
         }
 
         // DELETE: api/device-jobs/5

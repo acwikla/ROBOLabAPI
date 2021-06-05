@@ -50,6 +50,7 @@ namespace ROBOLab.API.Map
 
             //Value:
             CreateMap<Value, ViewDeviceValueDTO>().ReverseMap();
+            CreateMap<Value, ViewDeviceJobValueDTO>().ReverseMap();
         }
     }
 }

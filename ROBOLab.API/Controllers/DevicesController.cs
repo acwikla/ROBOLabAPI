@@ -9,6 +9,8 @@ using ROBOLab.Core.Models;
 using ROBOLab.Core.DTO;
 using ROBOLab.API;
 using AutoMapper;
+using ClosedXML.Excel;
+using System.IO;
 
 namespace ROBOLab.API.Controllers
 {
@@ -78,9 +80,14 @@ namespace ROBOLab.API.Controllers
         }
 
         // GET: api/devices/5/values/take-last/100
-        [HttpGet("{id}/values/take-last/{amount}")]
-        public async Task<ActionResult<IEnumerable<ViewDeviceValueDTO>>> GetDeviceLastValue(int id, int amount)
+        [HttpGet("{id}/take-last-values/{amount}")]
+        public async Task<ActionResult<IEnumerable<ViewDeviceValueDTO>>> GetDeviceLastValues(int id, int amount)
         {
+            if (amount > 10000)
+            {
+                amount = 10000;
+            }
+
             IEnumerable<Value> values = await _context.Values.Include(v => v.Device).Include(v => v.Property).Where(v => v.DeviceId == id)
                 .OrderByDescending(v => v.DateTime).Take(amount).ToListAsync();
 
@@ -92,12 +99,61 @@ namespace ROBOLab.API.Controllers
                 return NotFound($"There is no values for given device id: {id}.");
             }
 
+            return _mapper.Map<List<ViewDeviceValueDTO>>(values);
+        }
+
+        // GET: api/devices/5/export-last-values/100
+        [HttpGet("{id}/export-last-values/{amount}")]
+        public IActionResult ExportDeviceLastValues(int id, int amount)
+        {
             if (amount > 10000)
-            { 
-                amount = 10000; 
+            {
+                amount = 10000;
             }
 
-            return _mapper.Map<List<ViewDeviceValueDTO>>(values);
+            IEnumerable<Value> values = _context.Values.Include(v => v.Device).Include(v => v.Property).Where(v => v.DeviceId == id)
+                .OrderByDescending(v => v.DateTime).Take(amount).ToList();
+
+            if (values == null)
+            {
+                return NotFound($"There is no values for given device id: {id}.");
+            }
+
+            using (var workbook = new XLWorkbook())
+            {
+                var worksheet = workbook.Worksheets.Add("Device_Values");
+                var currentRow = 1;
+                worksheet.Cell(currentRow, 1).Value = "Value";
+                worksheet.Cell(currentRow, 2).Value = "DateTime";
+                worksheet.Cell(currentRow, 3).Value = "Device Name";
+                worksheet.Cell(currentRow, 4).Value = "Device ID";
+                worksheet.Cell(currentRow, 5).Value = "Property Name";
+                worksheet.Cell(currentRow, 6).Value = "Property ID";
+                //worksheet.Cell(currentRow, 7).Value = "DeviceJobId";
+
+                foreach (var v in values)
+                {
+                    currentRow++;
+                    worksheet.Cell(currentRow, 1).Value = v.Val;
+                    worksheet.Cell(currentRow, 2).Value = v.DateTime;
+                    worksheet.Cell(currentRow, 3).Value = v.Device.Name;
+                    worksheet.Cell(currentRow, 4).Value = v.DeviceId;
+                    worksheet.Cell(currentRow, 5).Value = v.Property.Name;
+                    worksheet.Cell(currentRow, 6).Value = v.PropertyId;
+                    //worksheet.Cell(currentRow, 7).Value = v.DeviceJobId;
+                }
+
+                using (var stream = new MemoryStream())
+                {
+                    workbook.SaveAs(stream);
+                    var content = stream.ToArray();
+
+                    return File(
+                        content,
+                        "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+                        "values.xlsx");
+                }
+            }
         }
 
         // PUT: api/devices/5
