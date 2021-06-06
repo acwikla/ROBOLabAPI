@@ -15,7 +15,7 @@ int smart_terra_device_id = 1002;
 //ROBOLab:
 //local ROBOLabAPI:
 String ROBOLab_IP = "192.168.0.164:5000";
-int robo_arm_device_id = 3;
+int robo_arm_device_id = 2;
 
 //const char* ssid = "Creative";
 //const char* password = "Cre@tive";
@@ -84,9 +84,9 @@ void loop() {
   if (WiFi.status() == WL_CONNECTED){
       //get_latest_device_property_id();
       Serial.println("initial:");
-      turn_on_servo(angle_set_initial_pose, 10, 0);
+      //turn_on_servo(angle_set_initial_pose, 10, 0);
       delay(2000);
-      check_device_job_data(); 
+      //check_device_job_data(); 
    }
 }
 
@@ -140,11 +140,8 @@ void turn_on_servo(int angle_set [], int num_of_el, int pouring_time_millisec){
     else{
       delay(1000);
     }
-    //Serial.print("channel: ");
-    //Serial.println(angle_set[i]);
-    //Serial.print("angle: ");
-    //Serial.println(angle_set[i+1]);
-    //Serial.println();
+    
+    send_angle_data_by_prop_id(angle_set[i]+1, angle_set[i+1]);
   }
 }
 
@@ -249,18 +246,45 @@ void run_any_sequence(String sequence_of_angles){
   }
 }
 
+//roboLab send data:
+void send_angle_data_by_prop_id(int prop_id, int value){
+  
+  String data = "{\"propertyId\":" + String(prop_id) + " , \"val\": \"" + String(value) + "\"}";
+  
+  HTTPClient http;    
+  http.begin("http://"+ String(ROBOLab_IP)+"/api/devices/"+ String(robo_arm_device_id)+"/add-values-by-property-id");
+  Serial.print("[send_angle_data_by_prop_id] request url: ");
+  Serial.println("http://"+ String(ROBOLab_IP)+"/api/devices/"+ String(robo_arm_device_id)+"/add-values-by-property-id");
+  //specify content-type header
+  http.addHeader("Content-Type", "application/json");  
+  
+  int httpCode = http.POST(data);
+  Serial.print("[send_angle_data_by_prop_id] data: ");
+  Serial.println(data);   
+  String payload = http.getString(); 
 
+  Serial.print("[send_angle_data_by_prop_id] payload: ");
+  Serial.println(payload);
+
+  http.end();
+}
+
+String BoolToString(bool b)
+{
+  return b ? (String)"true" : (String)"false";
+}
+
+//roboLab change job done value:
 void set_job_done_property(int dj_id, bool done_value){
   HTTPClient http;
-  http.begin("http://"+ String(ROBOLab_IP)+"/api/device-jobs/"+ String(dj_id)+"done-flag-value");
+  http.begin("http://"+ String(ROBOLab_IP)+"/api/device-jobs/"+ String(dj_id)+"/done-flag-value");
   http.addHeader("Content-Type", "application/json-patch+json");
- 
-  int httpCode = http.PATCH("{\"done\": "+ String(done_value)+ " }");
-  String http_value = http.getString();
+  int httpCode = http.PATCH("{\"done\": "+ BoolToString(done_value) + " }");
   
-  Serial.print("[set_job_done_property] http_value: ");
-  Serial.println(http_value);
-      
+  Serial.print("[set_job_done_property] http_code: ");
+  Serial.println(httpCode);
+  Serial.print("[set_job_done_property] reques_body: ");
+  Serial.println("{\"done\": "+ BoolToString(done_value) + " }");
   http.end();
 }
 
@@ -306,13 +330,11 @@ void check_device_job_data(){
   HTTPClient http;
   http.begin("http://"+ String(ROBOLab_IP)+"/api/device-jobs/device/"+ String(robo_arm_device_id)+"/false-done-flag");
   int httpCode = http.GET();
-  for(int i = 0; i< http.headers(); i++){
-  Serial.println(http.header(i));
-  }
+  
   String http_value = http.getString();
   Serial.println("httpCode:");
   Serial.println(httpCode);
-  Serial.println(http.header("location"));
+  
   if (httpCode > 0)
     {  
       Serial.println("raw string:");
