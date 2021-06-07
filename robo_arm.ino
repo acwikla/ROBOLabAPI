@@ -16,6 +16,7 @@ int smart_terra_device_id = 1002;
 //local ROBOLabAPI:
 String ROBOLab_IP = "192.168.0.164:5000";
 int robo_arm_device_id = 2;
+int dev_job_id = 0;
 
 //const char* ssid = "Creative";
 //const char* password = "Cre@tive";
@@ -84,9 +85,10 @@ void loop() {
   if (WiFi.status() == WL_CONNECTED){
       //get_latest_device_property_id();
       Serial.println("initial:");
-      //turn_on_servo(angle_set_initial_pose, 10, 0);
+      dev_job_id = 0;
+      turn_on_servo(angle_set_initial_pose, 10, 0);
       delay(2000);
-      //check_device_job_data(); 
+      check_device_job_data(); 
    }
 }
 
@@ -113,7 +115,7 @@ bool check_valid_angle_set_value(int channel, double angle){
 }
 
 void turn_on_servo(int angle_set [], int num_of_el, int pouring_time_millisec){
-  
+  Serial.println("turn_on_servo");
   //check if size of angleSet is even number
   if(num_of_el%2==1){
     Serial.println("Invalid size of angleSet.");
@@ -140,8 +142,9 @@ void turn_on_servo(int angle_set [], int num_of_el, int pouring_time_millisec){
     else{
       delay(1000);
     }
-    
-    send_angle_data_by_prop_id(angle_set[i]+1, angle_set[i+1]);
+    if(dev_job_id != 0){
+      send_angle_data_by_prop_id(angle_set[i]+1, angle_set[i+1]);
+    }
   }
 }
 
@@ -237,11 +240,11 @@ void run_any_sequence(String sequence_of_angles){
     
     if(index_of_open_bracket != -1 && index_of_close_bracket != -1){
       String set_of_angles = sequence_of_angles.substring(index_of_open_bracket, index_of_close_bracket+1);
-      //int* int_array = convert_to_int_array(set_of_angles);
+      int* int_array = convert_to_int_array(set_of_angles);
       Serial.println("final set_of_angles");
       Serial.println(set_of_angles);
       index_of_open_bracket = -1; index_of_close_bracket = -1;
-      //turn_on_servo(int_array, number_of_elements, 0);
+      turn_on_servo(int_array, number_of_elements, 0);
     }
   }
 }
@@ -251,20 +254,25 @@ void send_angle_data_by_prop_id(int prop_id, int value){
   
   String data = "{\"propertyId\":" + String(prop_id) + " , \"val\": \"" + String(value) + "\"}";
   
-  HTTPClient http;    
-  http.begin("http://"+ String(ROBOLab_IP)+"/api/devices/"+ String(robo_arm_device_id)+"/add-values-by-property-id");
+  HTTPClient http; 
+  
+  //send dev prop value:
+  //http.begin("http://"+ String(ROBOLab_IP)+"/api/devices/"+ String(robo_arm_device_id)+"/add-values-by-property-id");
+  
+  //send dev job prop value:
+  http.begin("http://"+ String(ROBOLab_IP)+"/api/device-jobs/"+ String(dev_job_id)+"/add-values-by-property-id");
   Serial.print("[send_angle_data_by_prop_id] request url: ");
-  Serial.println("http://"+ String(ROBOLab_IP)+"/api/devices/"+ String(robo_arm_device_id)+"/add-values-by-property-id");
+  Serial.println("http://"+ String(ROBOLab_IP)+"/api/device-jobs/"+ String(dev_job_id)+"/add-values-by-property-id");
   //specify content-type header
   http.addHeader("Content-Type", "application/json");  
   
   int httpCode = http.POST(data);
   Serial.print("[send_angle_data_by_prop_id] data: ");
   Serial.println(data);   
-  String payload = http.getString(); 
+  //String payload = http.getString(); 
 
-  Serial.print("[send_angle_data_by_prop_id] payload: ");
-  Serial.println(payload);
+  //Serial.print("[send_angle_data_by_prop_id] payload: ");
+  //Serial.println(payload);
 
   http.end();
 }
@@ -360,11 +368,15 @@ void check_device_job_data(){
         return;
       }
           
-      int device_job_id= doc["id"];
+      const char* job_dev_id = doc["id"];
+      String id = (String) job_dev_id;
+      dev_job_id = doc["id"];
       const char* job_type = doc["job"]["deviceTypeName"];
       const char* job_name = doc["job"]["name"];
       const char* job_body = doc["body"];
       
+      Serial.print("dev_job_id: ");
+      Serial.println((String)dev_job_id);
       Serial.print("job_type: ");
       Serial.println((String)job_type);
       Serial.print("job_name: ");
@@ -381,7 +393,7 @@ void check_device_job_data(){
         return;
       }
       
-      if((String)job_type=="ROBOTIC ARM"){
+      if((String)job_type=="RoboArm(Arexx RA-1-PRO)"){
         
         if((String)job_name=="MoveTeddyBear"){
             //read_as_json_array(doc);<--- metoda Daniela
@@ -401,7 +413,7 @@ void check_device_job_data(){
             delay(2000);
 
             bool job_done_value = true;
-            set_job_done_property(device_job_id, job_done_value);
+            set_job_done_property(dev_job_id, job_done_value);
           }
 
           if((String)job_name=="FillCubeWithWater"){
@@ -414,7 +426,7 @@ void check_device_job_data(){
             delay(2000);
 
             bool job_done_value = true;
-            set_job_done_property(device_job_id, job_done_value);
+            set_job_done_property(dev_job_id, job_done_value);
           }
 
           if((String)job_name=="RunAnySequence"){
@@ -427,7 +439,7 @@ void check_device_job_data(){
             delay(2000);
 
             bool job_done_value = true;
-            set_job_done_property(device_job_id, job_done_value);
+            set_job_done_property(dev_job_id, job_done_value);
           }
       }
     }
