@@ -29,7 +29,8 @@ namespace ROBOLab.API
         {
             services.AddCors(options =>
             {
-                options.AddPolicy("CorsPolicy", builder => builder.AllowAnyOrigin().AllowAnyHeader().AllowCredentials().Build());
+                options.AddPolicy("CorsPolicy", builder => builder.AllowAnyOrigin().AllowAnyHeader().Build());
+                //.AllowCredentials().Build());
             });
 
             services.AddControllers();
@@ -74,6 +75,8 @@ namespace ROBOLab.API
             //app.UseHttpsRedirection();
 
             app.UseRouting();
+
+            app.UseCors("CorsPolicy");
 
             app.UseAuthorization();
 
