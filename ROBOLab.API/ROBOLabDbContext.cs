@@ -28,7 +28,6 @@ namespace ROBOLab.API
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             // device types
-
             var smartTerraDevType = new DeviceType
             {
                 Id = 1,
@@ -39,24 +38,21 @@ namespace ROBOLab.API
                 Id = 2,
                 Name = "RoboArm(Arexx RA-1-PRO)"
             };
+            //roboLab
+            var dobotMagicianV2 = new DeviceType
+            {
+                Id = 3,
+                Name = "Dobot Magician V2"
+            };
 
             modelBuilder.Entity<DeviceType>().HasData(new DeviceType[]
             {
                 smartTerraDevType,
-                roboArmDevType
+                roboArmDevType,
+                dobotMagicianV2
             });
 
             // properties
-
-            var roboArmProp2 = new
-            {
-                Id = 2,
-                Name = "Angle Of Second Channel",
-                Body = "type: int, min: 0, max: 180",
-                DeviceTypeId = roboArmDevType.Id,
-                IsMode = false
-            };
-
             modelBuilder.Entity<Property>().HasData(new Property []
             {
                 new Property{
@@ -64,44 +60,42 @@ namespace ROBOLab.API
                     Name = "Angle Of First Channel",
                     Body = "type: int, min: 0, max: 180",
                     DeviceTypeId = roboArmDevType.Id
-                },
-                new Property{
+                },new Property{
                     Id = 2,
                     Name = "Angle Of Second Channel",
                     Body = "type: int, min: 0, max: 180",
                     DeviceTypeId = roboArmDevType.Id
-                },
-                new Property{
+                },new Property{
                     Id = 3,
                     Name = "Angle Of Third Channel",
                     Body = "type: int, min: 0, max: 180",
                     DeviceTypeId = roboArmDevType.Id
-                },
-                new Property{
+                },new Property{
                     Id = 4,
                     Name = "Angle Of Fourth Channel",
                     Body = "type: int, min: 0, max: 180",
                     DeviceTypeId = roboArmDevType.Id
-
-                },
-                new Property{
+                },new Property{
                     Id = 5,
                     Name = "Angle Of Fifth Channel",
                     Body = "type: int, min: 0, max: 180",
                     DeviceTypeId = roboArmDevType.Id
-
-                },
-                new Property{
+                },new Property{
                     Id = 6,
                     Name = "Angle Of Sixth Channel",
                     Body = "type: int, min: 0, max: 180",
                     DeviceTypeId = roboArmDevType.Id
-
+                },
+                //roboLab
+                new Property{
+                    Id = 7,
+                    Name = "Temperature",
+                    Body = "type: double, min: 0, max: 200",
+                    DeviceTypeId = dobotMagicianV2.Id
                 }
             });
 
             // jobs
-
             var jobTurnOnLED = new
             {
                 Id = 1,
@@ -110,7 +104,6 @@ namespace ROBOLab.API
                 Properties = "",
                 Description = "Turn on the LED strip and set color of the LEDs ."
             };
-
             var jobTurnOffLED = new
             {
                 Id = 2,
@@ -119,7 +112,6 @@ namespace ROBOLab.API
                 Properties = "",
                 Description = "Turn off the LED strip."
             };
-
             var jobTurnOnWaterPump = new
             {
                 Id = 3,
@@ -166,7 +158,6 @@ namespace ROBOLab.API
 
 
             // users
-
             var user1 = new User
             {
                 Id = 1,
@@ -174,7 +165,6 @@ namespace ROBOLab.API
                 Login = "ola",
                 Password = "pass1"
             };
-
             var user2 = new User
             {
                 Id = 2,
@@ -182,16 +172,24 @@ namespace ROBOLab.API
                 Login = "daniel",
                 Password = "pass2"
             };
+            //roboLab
+            var user3 = new User
+            {
+                Id = 3,
+                Email = "roboLab.email@gmail.com",
+                Login = "RoboLab User",
+                Password = "pass3"
+            };
 
             modelBuilder.Entity<User>().HasData(new User[]
             {
                 user1,
-                user2
+                user2,
+                user3
             });
 
 
             // devices
-
             var smartTerraDev1 = new Device
             {
                 Id = 1,
@@ -206,7 +204,6 @@ namespace ROBOLab.API
                 Name = "RoboArm1",
                 UserId = user1.Id,
             };
-
             var smartTerraDev2 = new Device
             {
                 Id = 3,
@@ -214,17 +211,25 @@ namespace ROBOLab.API
                 Name = "Test device 2 (SmartTerra)",
                 UserId = user2.Id,
             };
+            //robolab
+            var dobotMagicianDev = new Device
+            {
+                Id = 4,
+                DeviceTypeId = dobotMagicianV2.Id,
+                Name = "Test device 2 (SmartTerra)",
+                UserId = user3.Id,
+            };
 
             modelBuilder.Entity<Device>().HasData(new Device[]
             {
                 smartTerraDev1,
                 roboArmDev1,
-                smartTerraDev2
+                smartTerraDev2,
+                dobotMagicianDev
             });
 
 
             // device jobs
-
             modelBuilder.Entity<DeviceJob>().HasData(new DeviceJob[]
             {
                 // led on

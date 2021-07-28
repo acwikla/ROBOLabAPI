@@ -61,6 +61,13 @@ namespace ROBOLab.API.Migrations
                             DeviceTypeId = 1,
                             Name = "Test device 2 (SmartTerra)",
                             UserId = 2
+                        },
+                        new
+                        {
+                            Id = 4,
+                            DeviceTypeId = 3,
+                            Name = "Test device 2 (SmartTerra)",
+                            UserId = 3
                         });
                 });
 
@@ -102,7 +109,7 @@ namespace ROBOLab.API.Migrations
                         {
                             Id = 1,
                             Body = "#FF6611",
-                            CreatedDate = new DateTime(2021, 6, 4, 21, 59, 21, 943, DateTimeKind.Local).AddTicks(2283),
+                            CreatedDate = new DateTime(2021, 7, 28, 3, 15, 12, 395, DateTimeKind.Local).AddTicks(9304),
                             DeviceId = 1,
                             Done = false,
                             JobId = 1
@@ -111,7 +118,7 @@ namespace ROBOLab.API.Migrations
                         {
                             Id = 2,
                             Body = "",
-                            CreatedDate = new DateTime(2021, 6, 4, 21, 59, 21, 945, DateTimeKind.Local).AddTicks(6007),
+                            CreatedDate = new DateTime(2021, 7, 28, 3, 15, 12, 399, DateTimeKind.Local).AddTicks(4206),
                             DeviceId = 1,
                             Done = false,
                             JobId = 2
@@ -142,6 +149,11 @@ namespace ROBOLab.API.Migrations
                         {
                             Id = 2,
                             Name = "RoboArm(Arexx RA-1-PRO)"
+                        },
+                        new
+                        {
+                            Id = 3,
+                            Name = "Dobot Magician V2"
                         });
                 });
 
@@ -321,6 +333,14 @@ namespace ROBOLab.API.Migrations
                             DeviceTypeId = 2,
                             IsMode = false,
                             Name = "Angle Of Sixth Channel"
+                        },
+                        new
+                        {
+                            Id = 7,
+                            Body = "type: double, min: 0, max: 200",
+                            DeviceTypeId = 3,
+                            IsMode = false,
+                            Name = "Temperature"
                         });
                 });
 
@@ -361,6 +381,13 @@ namespace ROBOLab.API.Migrations
                             Email = "daniel.email@gmail.com",
                             Login = "daniel",
                             Password = "pass2"
+                        },
+                        new
+                        {
+                            Id = 3,
+                            Email = "roboLab.email@gmail.com",
+                            Login = "RoboLab User",
+                            Password = "pass3"
                         });
                 });
 
