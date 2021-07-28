@@ -216,7 +216,7 @@ namespace ROBOLab.API
             {
                 Id = 4,
                 DeviceTypeId = dobotMagicianV2.Id,
-                Name = "Test device 2 (SmartTerra)",
+                Name = "Dobot Magician(RoboArm)",
                 UserId = user3.Id,
             };
 
