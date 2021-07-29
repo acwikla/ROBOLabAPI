@@ -48,6 +48,20 @@ namespace ROBOLab.API.Controllers
             return _mapper.Map<DeviceTypeDTO>(deviceType);
         }
 
+        // GET: api/device-types/properties
+        [HttpGet("{id}/properties")]
+        public async Task<ActionResult<IEnumerable<ViewPropertyDTO>>> GetDeviceTypeProperties(int id)
+        {
+            var deviceTypeProperties = await _context.Properties.Include(p=>p.DeviceType).Where(p=> p.DeviceTypeId == id).ToListAsync();
+
+            if (deviceTypeProperties == null)
+            {
+                return NotFound($"There is no properties for device type with given id: {id}.");
+            }
+
+            return _mapper.Map<List<ViewPropertyDTO>>(deviceTypeProperties);
+        }
+
         // GET: api/device-types/{devTypeId}/devices/user/{userId}
         [HttpGet("{devTypeId}/devices/user/{userId}")]
         public async Task<ActionResult<IEnumerable<ViewDeviceDTO>>> GetAllDevicesByDeviceType(int devTypeId, int userId)

@@ -163,7 +163,7 @@ namespace ROBOLab.API.Controllers
             return Ok(viewValuesDTO);
         }
 
-        // GET: api/device-jobs/5/export-last-values/100
+        // GET: api/device-jobs/5/export-all-job-values
         [HttpGet("{id}/export-all-job-values")]
         public IActionResult ExportLastDeviceJobValues(int id)
         {
