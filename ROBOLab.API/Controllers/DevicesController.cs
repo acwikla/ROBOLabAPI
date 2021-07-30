@@ -66,13 +66,13 @@ namespace ROBOLab.API.Controllers
 
         // GET: api/devices/values/5
         [HttpGet("values/{value_id}")]
-        public async Task<ActionResult<ViewDeviceValueDTO>> GetDeviceValue(int value_id)
+        public async Task<ActionResult<ViewDeviceValueDTO>> GetDeviceValue(int valueId)
         {
-            var value = await _context.Values.Include(v => v.Device).Include(v => v.Property).Where(v => v.Id == value_id).FirstOrDefaultAsync();
+            var value = await _context.Values.Include(v => v.Device).Include(v => v.Property).Where(v => v.Id == valueId).FirstOrDefaultAsync();
 
             if (value == null)
             {
-                return NotFound($"There is no value for given id: {value_id}.");
+                return NotFound($"There is no value for given id: {valueId}.");
             }
 
             ViewDeviceValueDTO viewValueDTO = _mapper.Map<ViewDeviceValueDTO>(value);
@@ -206,28 +206,41 @@ namespace ROBOLab.API.Controllers
                 return NotFound($"There is no device for given id: {id}.");
             }
 
-            //DB: moze byc wiele propertisow o tej samej nazwie dla kilku urzadzen,
-            // dlatego podczas podbierania propery nalezy od razu filtrowac po device type
-
-            //search by property name
-            var property = await _context.Properties.Include(p => p.DeviceType)
-                .Where(p => p.Name == propertyValueDTO.PropertyName)
-                .Where(p => p.DeviceTypeId == device.DeviceTypeId)           // <---- tego brakowalo
-                .FirstOrDefaultAsync();
-            if (property == null)
+            Property property;
+            if (propertyValueDTO.DeviceJobId != 0)
             {
-                return BadRequest($"There is no property named : {propertyValueDTO.PropertyName} with matching device type for device with given id: {id}.");
+                var deviceJob = await _context.DeviceJobs.Include(d => d.Job).Include(d => d.Device).Where(d => d.Id == propertyValueDTO.DeviceJobId).FirstOrDefaultAsync();
+                if (deviceJob == null)
+                {
+                    return NotFound($"There is no device job for given id: {propertyValueDTO.DeviceJobId}.");
+                }
+
+                if (deviceJob.DeviceId != device.Id)
+                {
+                    return NotFound($"No device job with id: {propertyValueDTO.DeviceJobId} was ordered for device with id: {device.Id}.");
+                }
+
+                property = await _context.Properties.Include(p => p.DeviceType)
+                    .Where(p => p.Name == propertyValueDTO.PropertyName)
+                    .Where(p => p.DeviceTypeId == deviceJob.Job.DeviceType.Id)
+                    .FirstOrDefaultAsync();
+                if (property == null)
+                {
+                    return BadRequest($"There is no property named : {propertyValueDTO.PropertyName} with matching device type for device job with given id: {propertyValueDTO.DeviceJobId}.");
+                }
             }
-
-            //DB i wtedy to jest zbedne...
-
-            // natomiast funkcja PostNewValueForDeviceByPropId jest OK :)
-
-            //check if devtype in property and device are equal
-            /*if (property.DeviceTypeId != device.DeviceType.Id)
+            else
             {
-                return BadRequest($"Device types in property and device do not match.");
-            }*/
+                //DB: moze byc wiele propertisow o tej samej nazwie dla kilku urzadzen
+                property = await _context.Properties.Include(p => p.DeviceType)
+                .Where(p => p.Name == propertyValueDTO.PropertyName)
+                .Where(p => p.DeviceTypeId == device.DeviceTypeId)          
+                .FirstOrDefaultAsync();
+                if (property == null)
+                {
+                    return BadRequest($"There is no property named : {propertyValueDTO.PropertyName} with matching device type for device with given id: {id}.");
+                }
+            }
 
             var newValue = new Value
             {
@@ -240,10 +253,6 @@ namespace ROBOLab.API.Controllers
             };
             await _context.Values.AddAsync(newValue);
             await _context.SaveChangesAsync();
-
-            //DB: zakomentowalem, sprawdz czy nadal dziala (czy dane zapisuja sie do bazy)
-            //device.Values.Add(newValue);
-            //property.Values.Add(newValue);
 
             ViewDeviceValueDTO valueDTO = _mapper.Map<ViewDeviceValueDTO>(newValue);
             return CreatedAtAction(nameof(GetDeviceValue), new { value_id = valueDTO.Id }, valueDTO);
@@ -259,22 +268,46 @@ namespace ROBOLab.API.Controllers
                 return NotFound($"There is no device for given id: {id}.");
             }
 
-            //search by property id
-            var property = await _context.Properties.Include(p => p.DeviceType).Where(p => p.Id == propertyValueDTO.PropertyId).FirstOrDefaultAsync();
-            if (property == null)
+            Property property;
+            if (propertyValueDTO.DeviceJobId != 0)
             {
-                return BadRequest($"There is no property for given id: {propertyValueDTO.PropertyId}.");
-            }
+                var deviceJob = await _context.DeviceJobs.Include(d => d.Job).Include(d => d.Device).Where(d => d.Id == propertyValueDTO.DeviceJobId).FirstOrDefaultAsync();
+                if (deviceJob == null)
+                {
+                    return NotFound($"There is no device job for given id: {propertyValueDTO.DeviceJobId}.");
+                }
 
-            //check if devtype in property and device are equal
-            if (property.DeviceTypeId != device.DeviceType.Id)
+                if (deviceJob.DeviceId != device.Id)
+                {
+                    return NotFound($"No device job with id: {propertyValueDTO.DeviceJobId} was ordered for device with id: {device.Id}.");
+                }
+
+                property = await _context.Properties.Include(p => p.DeviceType)
+                    .Where(p => p.Id == propertyValueDTO.PropertyId)
+                    .Where(p => p.DeviceTypeId == deviceJob.Job.DeviceType.Id)
+                    .FirstOrDefaultAsync();
+                if (property == null)
+                {
+                    return BadRequest($"There is no property with id : {propertyValueDTO.PropertyId} with matching device type for device job with given id: {propertyValueDTO.DeviceJobId}.");
+                }
+            }
+            else
             {
-                return BadRequest($"Device types in property and device do not match.");
+                //DB: moze byc wiele propertisow o tej samej nazwie dla kilku urzadzen
+                property = await _context.Properties.Include(p => p.DeviceType)
+                .Where(p => p.Id == propertyValueDTO.PropertyId)
+                .Where(p => p.DeviceTypeId == device.DeviceTypeId)
+                .FirstOrDefaultAsync();
+                if (property == null)
+                {
+                    return BadRequest($"There is no property with id : {propertyValueDTO.PropertyId} with matching device type for device with given id: {id}.");
+                }
             }
 
             var newValue = new Value
             {
                 Val = propertyValueDTO.Val,
+                DateTime = DateTime.Now,
                 PropertyId = property.Id,
                 Property = property,
                 DeviceId = device.Id,
@@ -283,13 +316,8 @@ namespace ROBOLab.API.Controllers
             await _context.Values.AddAsync(newValue);
             await _context.SaveChangesAsync();
 
-            //DB: zakomentowalem, sprawdz czy nadal dziala (czy dane zapisuja sie do bazy)
-            //device.Values.Add(newValue);
-            //property.Values.Add(newValue);
-
             ViewDeviceValueDTO valueDTO = _mapper.Map<ViewDeviceValueDTO>(newValue);
             return CreatedAtAction(nameof(GetDeviceValue), new { value_id = valueDTO.Id }, valueDTO);
-            //return CreatedAtAction("GetValue", new { id = valueDTO.Id }, valueDTO);
         }
 
         // DELETE: api/devices/5

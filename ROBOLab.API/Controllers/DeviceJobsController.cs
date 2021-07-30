@@ -394,46 +394,6 @@ namespace ROBOLab.API.Controllers
             return CreatedAtAction("GetDeviceJob", new { id = deviceJobDTO.Id }, deviceJobDTO);
         }
 
-        // POST: api/device-jobs/{id}/add-values-by-property-id
-        [HttpPost("{id}/add-values-by-property-id")]
-        public async Task<ActionResult<ViewDeviceValueDTO>> PostNewValueForDeviceJobByPropId(int id, AddPropertyValueDTO propertyValueDTO)
-        {
-            var deviceJob = await _context.DeviceJobs.Include(d => d.Job).Include(d =>d.Device).Where(d => d.Id == id).FirstOrDefaultAsync();
-            if (deviceJob == null)
-            {
-                return NotFound($"There is no device job for given id: {id}.");
-            }
-
-            //search by property id
-            var property = await _context.Properties.Include(p => p.DeviceType).Where(p => p.Id == propertyValueDTO.PropertyId).FirstOrDefaultAsync();
-            if (property == null)
-            {
-                return BadRequest($"There is no property for given id: {propertyValueDTO.PropertyId}.");
-            }
-
-            //check if devtype in property and device job are equal
-            if (property.DeviceTypeId != deviceJob.Job.DeviceType.Id)
-            {
-                return BadRequest($"Device types in property and device do not match.");
-            }
-
-            var newValue = new Value
-            {
-                Val = propertyValueDTO.Val,
-                PropertyId = property.Id,
-                Property = property,
-                DeviceId = deviceJob.DeviceId,
-                Device = deviceJob.Device,
-                DeviceJobId = deviceJob.Id,
-                DeviceJob = deviceJob
-            };
-            await _context.Values.AddAsync(newValue);
-            await _context.SaveChangesAsync();
-
-            ViewDeviceJobValueDTO valueDTO = _mapper.Map<ViewDeviceJobValueDTO>(newValue);
-            return CreatedAtAction(nameof(GetDeviceJobValue), new { value_id = valueDTO.Id }, valueDTO);
-        }
-
         // DELETE: api/device-jobs/5
         [HttpDelete("{id}")]
         public async Task<ActionResult<ViewDeviceJobDTO>> DeleteDeviceJob(int id)

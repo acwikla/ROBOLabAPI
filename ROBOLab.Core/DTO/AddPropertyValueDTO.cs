@@ -13,6 +13,8 @@ namespace ROBOLab.Core.DTO
 
         public string PropertyName { get; set; }
 
+        public int DeviceJobId { get; set;}
+
         [Required]
         public string Val { get; set; }
     }
