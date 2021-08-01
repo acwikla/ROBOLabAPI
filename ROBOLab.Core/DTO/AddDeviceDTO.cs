@@ -9,8 +9,6 @@ namespace ROBOLab.Core.DTO
 {
     public class AddDeviceDTO
     {
-        public int Id { get; set; }
-
         [Required]
         public string DeviceName { get; set; }
     }

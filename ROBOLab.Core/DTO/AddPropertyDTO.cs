@@ -9,8 +9,6 @@ namespace ROBOLab.Core.DTO
 {
     public class AddPropertyDTO
     {
-        public int Id { get; set; }
-
         [Required]
         public string Name { get; set; }
 

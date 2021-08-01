@@ -9,8 +9,6 @@ namespace ROBOLab.Core.DTO
 {
     public class AddDeviceJobDTO
     {
-        public int Id { get; set; }
-
         [Required]
         public DateTime? ExecutionTime { get; set; }      
 
