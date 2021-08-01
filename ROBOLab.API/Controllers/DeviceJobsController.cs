@@ -104,7 +104,7 @@ namespace ROBOLab.API.Controllers
         }
 
         // GET: api/device-jobs/device/{deviceId}
-        [HttpGet("/device/{deviceId}")]
+        [HttpGet("device/{deviceId}")]
         public async Task<ActionResult<IEnumerable<ViewDeviceJobDTO>>> GetDeviceJobForDevice(int deviceId)
         {
             List<DeviceJob> deviceJobs = await _context.DeviceJobs.Include(d => d.Device).Include(j => j.Job).Where(deviceJob => deviceJob.Device.Id == deviceId).Include(d => d.Device.DeviceType).Include(d => d.Job.DeviceType).ToListAsync();
@@ -134,14 +134,18 @@ namespace ROBOLab.API.Controllers
         }
 
         // GET: api/device-jobs/values/5
-        [HttpGet("values/{value_id}")]
-        public async Task<ActionResult<ViewDeviceJobValueDTO>> GetDeviceJobValue(int value_id)
+        [HttpGet("values/{valueId}")]
+        public async Task<ActionResult<ViewDeviceJobValueDTO>> GetDeviceJobValue(int valueId)
         {
-            var value = await _context.Values.Include(v => v.Device).Include(v => v.Property).Include(v => v.DeviceJob).Where(v => v.Id == value_id).FirstOrDefaultAsync();
+            var value = await _context.Values.Include(v => v.Device).Include(v => v.Property).Include(v => v.DeviceJob).Where(v => v.Id == valueId).FirstOrDefaultAsync();
+            if (value.DeviceJob == null)
+            {
+                return NotFound($"There is no value with given id: {valueId} for any device job.");
+            }
 
             if (value == null)
             {
-                return NotFound($"There is no value for given id: {value_id}.");
+                return NotFound($"There is no value for given id: {valueId}.");
             }
 
             ViewDeviceJobValueDTO viewValueDTO = _mapper.Map<ViewDeviceJobValueDTO>(value);

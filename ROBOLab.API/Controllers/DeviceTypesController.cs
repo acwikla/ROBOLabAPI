@@ -54,7 +54,7 @@ namespace ROBOLab.API.Controllers
         {
             var deviceTypeProperties = await _context.Properties.Include(p=>p.DeviceType).Where(p=> p.DeviceTypeId == id).ToListAsync();
 
-            if (deviceTypeProperties == null)
+            if (deviceTypeProperties.Count == 0)
             {
                 return NotFound($"There is no properties for device type with given id: {id}.");
             }

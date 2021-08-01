@@ -65,7 +65,7 @@ namespace ROBOLab.API.Controllers
         }
 
         // GET: api/devices/values/5
-        [HttpGet("values/{value_id}")]
+        [HttpGet("values/{valueId}")]
         public async Task<ActionResult<ViewDeviceValueDTO>> GetDeviceValue(int valueId)
         {
             var value = await _context.Values.Include(v => v.Device).Include(v => v.Property).Where(v => v.Id == valueId).FirstOrDefaultAsync();
@@ -88,7 +88,11 @@ namespace ROBOLab.API.Controllers
                 amount = 10000;
             }
 
-            IEnumerable<Value> values = await _context.Values.Include(v => v.Device).Include(v => v.Property).Where(v => v.DeviceId == id)
+            IEnumerable<Value> values = await _context.Values
+                .Include(v => v.Device)
+                .Include(v => v.Property)
+                .Where(v => v.DeviceId == id)
+                .Where(v=>v.DeviceJob==null)
                 .OrderByDescending(v => v.DateTime).Take(amount).ToListAsync();
 
             //DB jesli takelast jest po toListAsync to: z bazy pobiora sie wszystkie wartosci, a dopiero pozniej z nich zwrocisz amount, i tak jest zle
@@ -111,7 +115,11 @@ namespace ROBOLab.API.Controllers
                 amount = 10000;
             }
 
-            IEnumerable<Value> values = _context.Values.Include(v => v.Device).Include(v => v.Property).Where(v => v.DeviceId == id)
+            IEnumerable<Value> values = _context.Values
+                .Include(v => v.Device)
+                .Include(v => v.Property)
+                .Where(v => v.DeviceId == id)
+                .Where(v => v.DeviceJob == null)
                 .OrderByDescending(v => v.DateTime).Take(amount).ToList();
 
             if (values == null)
@@ -206,6 +214,7 @@ namespace ROBOLab.API.Controllers
                 return NotFound($"There is no device for given id: {id}.");
             }
 
+            Value newValue;
             Property property;
             if (propertyValueDTO.DeviceJobId != 0)
             {
@@ -222,40 +231,62 @@ namespace ROBOLab.API.Controllers
 
                 property = await _context.Properties.Include(p => p.DeviceType)
                     .Where(p => p.Name == propertyValueDTO.PropertyName)
-                    .Where(p => p.DeviceTypeId == deviceJob.Job.DeviceType.Id)
+                    .Where(p => p.DeviceTypeId == device.DeviceTypeId)//nie jestem pewna czy nie powinno byc: deviceJob.Job.DeviceType.Id, ale to raczej to samo a mniejsze zapytanie
                     .FirstOrDefaultAsync();
                 if (property == null)
                 {
-                    return BadRequest($"There is no property named : {propertyValueDTO.PropertyName} with matching device type for device job with given id: {propertyValueDTO.DeviceJobId}.");
+                    return BadRequest($"There is no property named : {propertyValueDTO.PropertyName} with matching device type for device with given id: {id}.");
                 }
+
+                newValue = new Value
+                {
+                    Val = propertyValueDTO.Val,
+                    DateTime = DateTime.Now,
+                    PropertyId = property.Id,
+                    Property = property,
+                    DeviceId = device.Id,
+                    Device = device,
+                    DeviceJob = deviceJob,
+                    DeviceJobId = deviceJob.Id
+                };
             }
             else
             {
                 //DB: moze byc wiele propertisow o tej samej nazwie dla kilku urzadzen
                 property = await _context.Properties.Include(p => p.DeviceType)
                 .Where(p => p.Name == propertyValueDTO.PropertyName)
-                .Where(p => p.DeviceTypeId == device.DeviceTypeId)          
+                .Where(p => p.DeviceTypeId == device.DeviceTypeId)
                 .FirstOrDefaultAsync();
                 if (property == null)
                 {
                     return BadRequest($"There is no property named : {propertyValueDTO.PropertyName} with matching device type for device with given id: {id}.");
                 }
+
+                newValue = new Value
+                {
+                    Val = propertyValueDTO.Val,
+                    DateTime = DateTime.Now,
+                    PropertyId = property.Id,
+                    Property = property,
+                    DeviceId = device.Id,
+                    Device = device
+                };
             }
 
-            var newValue = new Value
-            {
-                Val = propertyValueDTO.Val,
-                DateTime = DateTime.Now,
-                PropertyId = property.Id,
-                Property = property,
-                DeviceId = device.Id,
-                Device = device
-            };
+
             await _context.Values.AddAsync(newValue);
             await _context.SaveChangesAsync();
 
-            ViewDeviceValueDTO valueDTO = _mapper.Map<ViewDeviceValueDTO>(newValue);
-            return CreatedAtAction(nameof(GetDeviceValue), new { value_id = valueDTO.Id }, valueDTO);
+            ViewDeviceValueDTO valueDTO;
+            if (propertyValueDTO.DeviceJobId != 0)
+            {
+                valueDTO = _mapper.Map<ViewDeviceJobValueDTO>(newValue);
+            }
+            else
+            {
+                valueDTO = _mapper.Map<ViewDeviceValueDTO>(newValue);
+            }
+            return CreatedAtAction(nameof(GetDeviceValue), new { valueId = valueDTO.Id }, valueDTO); ;
         }
 
         // POST: api/devices/{id}/add-values-by-property-id
@@ -268,6 +299,7 @@ namespace ROBOLab.API.Controllers
                 return NotFound($"There is no device for given id: {id}.");
             }
 
+            Value newValue;
             Property property;
             if (propertyValueDTO.DeviceJobId != 0)
             {
@@ -284,12 +316,24 @@ namespace ROBOLab.API.Controllers
 
                 property = await _context.Properties.Include(p => p.DeviceType)
                     .Where(p => p.Id == propertyValueDTO.PropertyId)
-                    .Where(p => p.DeviceTypeId == deviceJob.Job.DeviceType.Id)
+                    .Where(p => p.DeviceTypeId == device.DeviceTypeId)//nie jestem pewna czy nie powinno byc: deviceJob.Job.DeviceType.Id, ale to raczej to samo a mniejsze zapytanie
                     .FirstOrDefaultAsync();
                 if (property == null)
                 {
-                    return BadRequest($"There is no property with id : {propertyValueDTO.PropertyId} with matching device type for device job with given id: {propertyValueDTO.DeviceJobId}.");
+                    return BadRequest($"There is no property with id : {propertyValueDTO.PropertyId} with matching device type for device with given id: {id}.");
                 }
+                
+                newValue = new Value
+                {
+                    Val = propertyValueDTO.Val,
+                    DateTime = DateTime.Now,
+                    PropertyId = property.Id,
+                    Property = property,
+                    DeviceId = device.Id,
+                    Device = device,
+                    DeviceJob = deviceJob,
+                    DeviceJobId = deviceJob.Id
+                };
             }
             else
             {
@@ -302,22 +346,32 @@ namespace ROBOLab.API.Controllers
                 {
                     return BadRequest($"There is no property with id : {propertyValueDTO.PropertyId} with matching device type for device with given id: {id}.");
                 }
+
+                newValue = new Value
+                {
+                    Val = propertyValueDTO.Val,
+                    DateTime = DateTime.Now,
+                    PropertyId = property.Id,
+                    Property = property,
+                    DeviceId = device.Id,
+                    Device = device
+                };
             }
 
-            var newValue = new Value
-            {
-                Val = propertyValueDTO.Val,
-                DateTime = DateTime.Now,
-                PropertyId = property.Id,
-                Property = property,
-                DeviceId = device.Id,
-                Device = device
-            };
+            
             await _context.Values.AddAsync(newValue);
             await _context.SaveChangesAsync();
 
-            ViewDeviceValueDTO valueDTO = _mapper.Map<ViewDeviceValueDTO>(newValue);
-            return CreatedAtAction(nameof(GetDeviceValue), new { value_id = valueDTO.Id }, valueDTO);
+            ViewDeviceValueDTO valueDTO;
+            if (propertyValueDTO.DeviceJobId != 0)
+            {
+                valueDTO = _mapper.Map<ViewDeviceJobValueDTO>(newValue);
+            }
+            else
+            {
+                valueDTO = _mapper.Map<ViewDeviceValueDTO>(newValue);
+            }
+                return CreatedAtAction(nameof(GetDeviceValue), new { valueId = valueDTO.Id }, valueDTO);
         }
 
         // DELETE: api/devices/5
