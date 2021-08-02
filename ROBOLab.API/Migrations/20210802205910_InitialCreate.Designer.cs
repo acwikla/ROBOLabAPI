@@ -9,8 +9,8 @@ using ROBOLab.API;
 namespace ROBOLab.API.Migrations
 {
     [DbContext(typeof(ROBOLabDbContext))]
-    [Migration("20210728220640_FixRoboLabDevName")]
-    partial class FixRoboLabDevName
+    [Migration("20210802205910_InitialCreate")]
+    partial class InitialCreate
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -66,9 +66,16 @@ namespace ROBOLab.API.Migrations
                         },
                         new
                         {
-                            Id = 4,
+                            Id = 100,
                             DeviceTypeId = 3,
-                            Name = "Dobot Magician(RoboArm)",
+                            Name = "Dobot Magician V2 (RoboArm)",
+                            UserId = 3
+                        },
+                        new
+                        {
+                            Id = 120,
+                            DeviceTypeId = 4,
+                            Name = "ROBOLab Press",
                             UserId = 3
                         });
                 });
@@ -111,7 +118,7 @@ namespace ROBOLab.API.Migrations
                         {
                             Id = 1,
                             Body = "#FF6611",
-                            CreatedDate = new DateTime(2021, 7, 29, 0, 6, 40, 169, DateTimeKind.Local).AddTicks(3428),
+                            CreatedDate = new DateTime(2021, 8, 2, 22, 59, 10, 67, DateTimeKind.Local).AddTicks(6617),
                             DeviceId = 1,
                             Done = false,
                             JobId = 1
@@ -120,10 +127,37 @@ namespace ROBOLab.API.Migrations
                         {
                             Id = 2,
                             Body = "",
-                            CreatedDate = new DateTime(2021, 7, 29, 0, 6, 40, 173, DateTimeKind.Local).AddTicks(3460),
+                            CreatedDate = new DateTime(2021, 8, 2, 22, 59, 10, 70, DateTimeKind.Local).AddTicks(881),
                             DeviceId = 1,
                             Done = false,
                             JobId = 2
+                        },
+                        new
+                        {
+                            Id = 3,
+                            Body = "",
+                            CreatedDate = new DateTime(2021, 8, 2, 22, 59, 10, 70, DateTimeKind.Local).AddTicks(921),
+                            DeviceId = 100,
+                            Done = false,
+                            JobId = 100
+                        },
+                        new
+                        {
+                            Id = 4,
+                            Body = "",
+                            CreatedDate = new DateTime(2021, 8, 2, 22, 59, 10, 70, DateTimeKind.Local).AddTicks(927),
+                            DeviceId = 120,
+                            Done = false,
+                            JobId = 120
+                        },
+                        new
+                        {
+                            Id = 5,
+                            Body = "",
+                            CreatedDate = new DateTime(2021, 8, 2, 22, 59, 10, 70, DateTimeKind.Local).AddTicks(930),
+                            DeviceId = 120,
+                            Done = false,
+                            JobId = 121
                         });
                 });
 
@@ -156,6 +190,11 @@ namespace ROBOLab.API.Migrations
                         {
                             Id = 3,
                             Name = "Dobot Magician V2"
+                        },
+                        new
+                        {
+                            Id = 4,
+                            Name = "ROBOLab Press"
                         });
                 });
 
@@ -232,6 +271,30 @@ namespace ROBOLab.API.Migrations
                             Description = "Run the provided sequence of angles.",
                             DeviceTypeId = 2,
                             Name = "RunAnySequence",
+                            Properties = ""
+                        },
+                        new
+                        {
+                            Id = 100,
+                            Description = "Put the sample on the press.",
+                            DeviceTypeId = 3,
+                            Name = "Put the sample on the press",
+                            Properties = ""
+                        },
+                        new
+                        {
+                            Id = 120,
+                            Description = "Squeeze the sample.",
+                            DeviceTypeId = 4,
+                            Name = "Squeeze The Sample",
+                            Properties = ""
+                        },
+                        new
+                        {
+                            Id = 121,
+                            Description = "Release the sample.",
+                            DeviceTypeId = 4,
+                            Name = "Release The Sample",
                             Properties = ""
                         });
                 });
@@ -338,11 +401,19 @@ namespace ROBOLab.API.Migrations
                         },
                         new
                         {
-                            Id = 7,
-                            Body = "type: double, min: 0, max: 200",
+                            Id = 100,
+                            Body = "type: float, min: null, max: null",
                             DeviceTypeId = 3,
                             IsMode = false,
-                            Name = "Temperature"
+                            Name = "Angle"
+                        },
+                        new
+                        {
+                            Id = 120,
+                            Body = "type: float, min: 0, max: 10000000",
+                            DeviceTypeId = 4,
+                            IsMode = false,
+                            Name = "Pressure force"
                         });
                 });
 

@@ -39,23 +39,23 @@ namespace ROBOLab.API
                 Name = "RoboArm(Arexx RA-1-PRO)"
             };
             //roboLab
-            var dobotMagicianV2 = new DeviceType
+            var dobotMagicianV2DevType = new DeviceType
             {
                 Id = 3,
                 Name = "Dobot Magician V2"
             };
-            var press = new DeviceType
+            var roboLabPressDevType = new DeviceType
             {
                 Id = 4,
-                Name = "Press"
+                Name = "ROBOLab Press"
             };
 
             modelBuilder.Entity<DeviceType>().HasData(new DeviceType[]
             {
                 smartTerraDevType,
                 roboArmDevType,
-                dobotMagicianV2,
-                press
+                dobotMagicianV2DevType,
+                roboLabPressDevType
             });
 
             // properties
@@ -92,13 +92,18 @@ namespace ROBOLab.API
                     Body = "type: int, min: 0, max: 180",
                     DeviceTypeId = roboArmDevType.Id
                 },
-                //roboLab
                 new Property{
-                    Id = 7,
-                    Name = "Temperature",
-                    Body = "type: double, min: 0, max: 200",
-                    DeviceTypeId = dobotMagicianV2.Id
-                }
+                    Id = 100,
+                    Name = "Angle",
+                    Body = "type: float, min: null, max: null",
+                    DeviceTypeId = dobotMagicianV2DevType.Id,
+                },
+                new Property{
+                    Id = 120,
+                    Name = "Pressure force",
+                    Body = "type: float, min: 0, max: 10000000",
+                    DeviceTypeId = roboLabPressDevType.Id,
+                },
             });
 
             // jobs
@@ -152,27 +157,27 @@ namespace ROBOLab.API
                 Description = "Run the provided sequence of angles."
             };
             //-------RoboLab------
-            var jobMoveTheSample = new
+            var jobMagicanPutTheSampleOnThePress = new
             {
-                Id = 7,
-                Name = "Move The Sample",
-                DeviceTypeId = dobotMagicianV2.Id,
+                Id = 100,
+                Name = "Put the sample on the press",
+                DeviceTypeId = dobotMagicianV2DevType.Id,
                 Properties = "",
                 Description = "Put the sample on the press."
             };
-            var jobSqueezeTheSample = new
+            var jobPressSqueezeTheSample = new
             {
-                Id = 8,
+                Id = 120,
                 Name = "Squeeze The Sample",
-                DeviceTypeId = dobotMagicianV2.Id,
+                DeviceTypeId = roboLabPressDevType.Id,
                 Properties = "",
                 Description = "Squeeze the sample."
             };
-            var jobReleaseTheSample = new
+            var jobPressReleaseTheSample = new
             {
-                Id = 9,
+                Id = 121,
                 Name = "Release The Sample",
-                DeviceTypeId = dobotMagicianV2.Id,
+                DeviceTypeId = roboLabPressDevType.Id,
                 Properties = "",
                 Description = "Release the sample."
             };
@@ -185,9 +190,9 @@ namespace ROBOLab.API
                 jobMoveTeddyBear,
                 jobFillCubeWithWater,
                 jobRunAnySequence,
-                jobMoveTheSample,
-                jobSqueezeTheSample,
-                jobReleaseTheSample
+                jobMagicanPutTheSampleOnThePress,
+                jobPressSqueezeTheSample,
+                jobPressReleaseTheSample
             });
 
 
@@ -248,16 +253,16 @@ namespace ROBOLab.API
             //robolab
             var dobotMagicianDev = new Device
             {
-                Id = 4,
-                DeviceTypeId = dobotMagicianV2.Id,
-                Name = "Dobot Magician(RoboArm)",
+                Id = 100,
+                DeviceTypeId = dobotMagicianV2DevType.Id,
+                Name = "Dobot Magician V2 (RoboArm)",
                 UserId = user3.Id,
             };
-            var pressDev = new Device
+            var roboLabPressDev = new Device
             {
-                Id = 5,
-                DeviceTypeId = press.Id,
-                Name = "Press",
+                Id = 120,
+                DeviceTypeId = roboLabPressDevType.Id,
+                Name = "ROBOLab Press",
                 UserId = user3.Id,
             };
 
@@ -267,14 +272,14 @@ namespace ROBOLab.API
                 roboArmDev1,
                 smartTerraDev2,
                 dobotMagicianDev,
-                pressDev
+                roboLabPressDev
             });
 
 
             // device jobs
             modelBuilder.Entity<DeviceJob>().HasData(new DeviceJob[]
             {
-                // led on
+                // smart terra: led on
                 new DeviceJob
                 {
                     Id = 1,
@@ -286,13 +291,49 @@ namespace ROBOLab.API
                     Body = "#FF6611",
                 },
 
-                // led off
+                // smart terra: led off
                 new DeviceJob
                 {
                     Id = 2,
                     CreatedDate = DateTime.Now,
                     DeviceId = smartTerraDev1.Id,
                     JobId = jobTurnOffLED.Id,
+                    Done = false,
+                    ExecutionTime = null,
+                    Body = "",
+                },
+
+                // magician arm v2: put the sample on the press
+                new DeviceJob
+                {
+                    Id = 3,
+                    CreatedDate = DateTime.Now,
+                    DeviceId = dobotMagicianDev.Id,
+                    JobId = jobMagicanPutTheSampleOnThePress.Id,
+                    Done = false,
+                    ExecutionTime = null,
+                    Body = "",
+                },
+
+                // robo lab press: squeeze the sample
+                new DeviceJob
+                {
+                    Id = 4,
+                    CreatedDate = DateTime.Now,
+                    DeviceId = roboLabPressDev.Id,
+                    JobId = jobPressSqueezeTheSample.Id,
+                    Done = false,
+                    ExecutionTime = null,
+                    Body = "",
+                },
+
+                // robo lab press: release the sample
+                new DeviceJob
+                {
+                    Id = 5,
+                    CreatedDate = DateTime.Now,
+                    DeviceId = roboLabPressDev.Id,
+                    JobId = jobPressReleaseTheSample.Id,
                     Done = false,
                     ExecutionTime = null,
                     Body = "",

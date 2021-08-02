@@ -214,6 +214,11 @@ namespace ROBOLab.API.Migrations
                 values: new object[] { 3, "Dobot Magician V2" });
 
             migrationBuilder.InsertData(
+                table: "DeviceTypes",
+                columns: new[] { "Id", "Name" },
+                values: new object[] { 4, "ROBOLab Press" });
+
+            migrationBuilder.InsertData(
                 table: "Users",
                 columns: new[] { "Id", "Email", "Login", "Password" },
                 values: new object[] { 1, "buuu.email@gmail.com", "ola", "pass1" });
@@ -231,7 +236,12 @@ namespace ROBOLab.API.Migrations
             migrationBuilder.InsertData(
                 table: "Devices",
                 columns: new[] { "Id", "DeviceTypeId", "Name", "UserId" },
-                values: new object[] { 4, 3, "Test device 2 (SmartTerra)", 3 });
+                values: new object[] { 120, 4, "ROBOLab Press", 3 });
+
+            migrationBuilder.InsertData(
+                table: "Devices",
+                columns: new[] { "Id", "DeviceTypeId", "Name", "UserId" },
+                values: new object[] { 3, 1, "Test device 2 (SmartTerra)", 2 });
 
             migrationBuilder.InsertData(
                 table: "Devices",
@@ -246,7 +256,27 @@ namespace ROBOLab.API.Migrations
             migrationBuilder.InsertData(
                 table: "Devices",
                 columns: new[] { "Id", "DeviceTypeId", "Name", "UserId" },
-                values: new object[] { 3, 1, "Test device 2 (SmartTerra)", 2 });
+                values: new object[] { 100, 3, "Dobot Magician V2 (RoboArm)", 3 });
+
+            migrationBuilder.InsertData(
+                table: "Jobs",
+                columns: new[] { "Id", "Description", "DeviceTypeId", "Name", "Properties" },
+                values: new object[] { 121, "Release the sample.", 4, "Release The Sample", "" });
+
+            migrationBuilder.InsertData(
+                table: "Jobs",
+                columns: new[] { "Id", "Description", "DeviceTypeId", "Name", "Properties" },
+                values: new object[] { 120, "Squeeze the sample.", 4, "Squeeze The Sample", "" });
+
+            migrationBuilder.InsertData(
+                table: "Jobs",
+                columns: new[] { "Id", "Description", "DeviceTypeId", "Name", "Properties" },
+                values: new object[] { 100, "Put the sample on the press.", 3, "Put the sample on the press", "" });
+
+            migrationBuilder.InsertData(
+                table: "Jobs",
+                columns: new[] { "Id", "Description", "DeviceTypeId", "Name", "Properties" },
+                values: new object[] { 1, "Turn on the LED strip and set color of the LEDs .", 1, "TurnOnLED", "" });
 
             migrationBuilder.InsertData(
                 table: "Jobs",
@@ -256,7 +286,7 @@ namespace ROBOLab.API.Migrations
             migrationBuilder.InsertData(
                 table: "Jobs",
                 columns: new[] { "Id", "Description", "DeviceTypeId", "Name", "Properties" },
-                values: new object[] { 1, "Turn on the LED strip and set color of the LEDs .", 1, "TurnOnLED", "" });
+                values: new object[] { 5, "Pour water into the cube for given period of time.", 2, "FillCubeWithWater", "" });
 
             migrationBuilder.InsertData(
                 table: "Jobs",
@@ -274,14 +304,9 @@ namespace ROBOLab.API.Migrations
                 values: new object[] { 2, "Turn off the LED strip.", 1, "TurnOffLED", "" });
 
             migrationBuilder.InsertData(
-                table: "Jobs",
-                columns: new[] { "Id", "Description", "DeviceTypeId", "Name", "Properties" },
-                values: new object[] { 5, "Pour water into the cube for given period of time.", 2, "FillCubeWithWater", "" });
-
-            migrationBuilder.InsertData(
                 table: "Properties",
                 columns: new[] { "Id", "Body", "DeviceTypeId", "IsMode", "ModeId", "Name" },
-                values: new object[] { 1, "type: int, min: 0, max: 180", 2, false, null, "Angle Of First Channel" });
+                values: new object[] { 4, "type: int, min: 0, max: 180", 2, false, null, "Angle Of Fourth Channel" });
 
             migrationBuilder.InsertData(
                 table: "Properties",
@@ -291,22 +316,22 @@ namespace ROBOLab.API.Migrations
             migrationBuilder.InsertData(
                 table: "Properties",
                 columns: new[] { "Id", "Body", "DeviceTypeId", "IsMode", "ModeId", "Name" },
-                values: new object[] { 4, "type: int, min: 0, max: 180", 2, false, null, "Angle Of Fourth Channel" });
-
-            migrationBuilder.InsertData(
-                table: "Properties",
-                columns: new[] { "Id", "Body", "DeviceTypeId", "IsMode", "ModeId", "Name" },
-                values: new object[] { 5, "type: int, min: 0, max: 180", 2, false, null, "Angle Of Fifth Channel" });
-
-            migrationBuilder.InsertData(
-                table: "Properties",
-                columns: new[] { "Id", "Body", "DeviceTypeId", "IsMode", "ModeId", "Name" },
                 values: new object[] { 6, "type: int, min: 0, max: 180", 2, false, null, "Angle Of Sixth Channel" });
 
             migrationBuilder.InsertData(
                 table: "Properties",
                 columns: new[] { "Id", "Body", "DeviceTypeId", "IsMode", "ModeId", "Name" },
-                values: new object[] { 7, "type: double, min: 0, max: 200", 3, false, null, "Temperature" });
+                values: new object[] { 1, "type: int, min: 0, max: 180", 2, false, null, "Angle Of First Channel" });
+
+            migrationBuilder.InsertData(
+                table: "Properties",
+                columns: new[] { "Id", "Body", "DeviceTypeId", "IsMode", "ModeId", "Name" },
+                values: new object[] { 100, "type: float, min: null, max: null", 3, false, null, "Angle" });
+
+            migrationBuilder.InsertData(
+                table: "Properties",
+                columns: new[] { "Id", "Body", "DeviceTypeId", "IsMode", "ModeId", "Name" },
+                values: new object[] { 120, "type: float, min: 0, max: 10000000", 4, false, null, "Pressure force" });
 
             migrationBuilder.InsertData(
                 table: "Properties",
@@ -314,14 +339,34 @@ namespace ROBOLab.API.Migrations
                 values: new object[] { 3, "type: int, min: 0, max: 180", 2, false, null, "Angle Of Third Channel" });
 
             migrationBuilder.InsertData(
-                table: "DeviceJobs",
-                columns: new[] { "Id", "Body", "CreatedDate", "DeviceId", "Done", "ExecutionTime", "JobId" },
-                values: new object[] { 1, "#FF6611", new DateTime(2021, 7, 28, 3, 15, 12, 395, DateTimeKind.Local).AddTicks(9304), 1, false, null, 1 });
+                table: "Properties",
+                columns: new[] { "Id", "Body", "DeviceTypeId", "IsMode", "ModeId", "Name" },
+                values: new object[] { 5, "type: int, min: 0, max: 180", 2, false, null, "Angle Of Fifth Channel" });
 
             migrationBuilder.InsertData(
                 table: "DeviceJobs",
                 columns: new[] { "Id", "Body", "CreatedDate", "DeviceId", "Done", "ExecutionTime", "JobId" },
-                values: new object[] { 2, "", new DateTime(2021, 7, 28, 3, 15, 12, 399, DateTimeKind.Local).AddTicks(4206), 1, false, null, 2 });
+                values: new object[] { 1, "#FF6611", new DateTime(2021, 8, 2, 22, 59, 10, 67, DateTimeKind.Local).AddTicks(6617), 1, false, null, 1 });
+
+            migrationBuilder.InsertData(
+                table: "DeviceJobs",
+                columns: new[] { "Id", "Body", "CreatedDate", "DeviceId", "Done", "ExecutionTime", "JobId" },
+                values: new object[] { 2, "", new DateTime(2021, 8, 2, 22, 59, 10, 70, DateTimeKind.Local).AddTicks(881), 1, false, null, 2 });
+
+            migrationBuilder.InsertData(
+                table: "DeviceJobs",
+                columns: new[] { "Id", "Body", "CreatedDate", "DeviceId", "Done", "ExecutionTime", "JobId" },
+                values: new object[] { 3, "", new DateTime(2021, 8, 2, 22, 59, 10, 70, DateTimeKind.Local).AddTicks(921), 100, false, null, 100 });
+
+            migrationBuilder.InsertData(
+                table: "DeviceJobs",
+                columns: new[] { "Id", "Body", "CreatedDate", "DeviceId", "Done", "ExecutionTime", "JobId" },
+                values: new object[] { 4, "", new DateTime(2021, 8, 2, 22, 59, 10, 70, DateTimeKind.Local).AddTicks(927), 120, false, null, 120 });
+
+            migrationBuilder.InsertData(
+                table: "DeviceJobs",
+                columns: new[] { "Id", "Body", "CreatedDate", "DeviceId", "Done", "ExecutionTime", "JobId" },
+                values: new object[] { 5, "", new DateTime(2021, 8, 2, 22, 59, 10, 70, DateTimeKind.Local).AddTicks(930), 120, false, null, 121 });
 
             migrationBuilder.CreateIndex(
                 name: "IX_DeviceJobs_DeviceId",

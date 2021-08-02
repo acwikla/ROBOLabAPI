@@ -64,16 +64,16 @@ namespace ROBOLab.API.Migrations
                         },
                         new
                         {
-                            Id = 4,
+                            Id = 100,
                             DeviceTypeId = 3,
-                            Name = "Dobot Magician(RoboArm)",
+                            Name = "Dobot Magician V2 (RoboArm)",
                             UserId = 3
                         },
                         new
                         {
-                            Id = 5,
+                            Id = 120,
                             DeviceTypeId = 4,
-                            Name = "Press",
+                            Name = "ROBOLab Press",
                             UserId = 3
                         });
                 });
@@ -116,7 +116,7 @@ namespace ROBOLab.API.Migrations
                         {
                             Id = 1,
                             Body = "#FF6611",
-                            CreatedDate = new DateTime(2021, 8, 2, 15, 24, 17, 38, DateTimeKind.Local).AddTicks(282),
+                            CreatedDate = new DateTime(2021, 8, 2, 22, 59, 10, 67, DateTimeKind.Local).AddTicks(6617),
                             DeviceId = 1,
                             Done = false,
                             JobId = 1
@@ -125,10 +125,37 @@ namespace ROBOLab.API.Migrations
                         {
                             Id = 2,
                             Body = "",
-                            CreatedDate = new DateTime(2021, 8, 2, 15, 24, 17, 40, DateTimeKind.Local).AddTicks(7517),
+                            CreatedDate = new DateTime(2021, 8, 2, 22, 59, 10, 70, DateTimeKind.Local).AddTicks(881),
                             DeviceId = 1,
                             Done = false,
                             JobId = 2
+                        },
+                        new
+                        {
+                            Id = 3,
+                            Body = "",
+                            CreatedDate = new DateTime(2021, 8, 2, 22, 59, 10, 70, DateTimeKind.Local).AddTicks(921),
+                            DeviceId = 100,
+                            Done = false,
+                            JobId = 100
+                        },
+                        new
+                        {
+                            Id = 4,
+                            Body = "",
+                            CreatedDate = new DateTime(2021, 8, 2, 22, 59, 10, 70, DateTimeKind.Local).AddTicks(927),
+                            DeviceId = 120,
+                            Done = false,
+                            JobId = 120
+                        },
+                        new
+                        {
+                            Id = 5,
+                            Body = "",
+                            CreatedDate = new DateTime(2021, 8, 2, 22, 59, 10, 70, DateTimeKind.Local).AddTicks(930),
+                            DeviceId = 120,
+                            Done = false,
+                            JobId = 121
                         });
                 });
 
@@ -165,7 +192,7 @@ namespace ROBOLab.API.Migrations
                         new
                         {
                             Id = 4,
-                            Name = "Press"
+                            Name = "ROBOLab Press"
                         });
                 });
 
@@ -246,25 +273,25 @@ namespace ROBOLab.API.Migrations
                         },
                         new
                         {
-                            Id = 7,
+                            Id = 100,
                             Description = "Put the sample on the press.",
                             DeviceTypeId = 3,
-                            Name = "Move The Sample",
+                            Name = "Put the sample on the press",
                             Properties = ""
                         },
                         new
                         {
-                            Id = 8,
+                            Id = 120,
                             Description = "Squeeze the sample.",
-                            DeviceTypeId = 3,
+                            DeviceTypeId = 4,
                             Name = "Squeeze The Sample",
                             Properties = ""
                         },
                         new
                         {
-                            Id = 9,
+                            Id = 121,
                             Description = "Release the sample.",
-                            DeviceTypeId = 3,
+                            DeviceTypeId = 4,
                             Name = "Release The Sample",
                             Properties = ""
                         });
@@ -372,11 +399,19 @@ namespace ROBOLab.API.Migrations
                         },
                         new
                         {
-                            Id = 7,
-                            Body = "type: double, min: 0, max: 200",
+                            Id = 100,
+                            Body = "type: float, min: null, max: null",
                             DeviceTypeId = 3,
                             IsMode = false,
-                            Name = "Temperature"
+                            Name = "Angle"
+                        },
+                        new
+                        {
+                            Id = 120,
+                            Body = "type: float, min: 0, max: 10000000",
+                            DeviceTypeId = 4,
+                            IsMode = false,
+                            Name = "Pressure force"
                         });
                 });
 
