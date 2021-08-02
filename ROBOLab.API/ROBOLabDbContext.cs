@@ -44,12 +44,18 @@ namespace ROBOLab.API
                 Id = 3,
                 Name = "Dobot Magician V2"
             };
+            var press = new DeviceType
+            {
+                Id = 4,
+                Name = "Press"
+            };
 
             modelBuilder.Entity<DeviceType>().HasData(new DeviceType[]
             {
                 smartTerraDevType,
                 roboArmDevType,
-                dobotMagicianV2
+                dobotMagicianV2,
+                press
             });
 
             // properties
@@ -145,6 +151,31 @@ namespace ROBOLab.API
                 Properties = "",
                 Description = "Run the provided sequence of angles."
             };
+            //-------RoboLab------
+            var jobMoveTheSample = new
+            {
+                Id = 7,
+                Name = "Move The Sample",
+                DeviceTypeId = dobotMagicianV2.Id,
+                Properties = "",
+                Description = "Put the sample on the press."
+            };
+            var jobSqueezeTheSample = new
+            {
+                Id = 8,
+                Name = "Squeeze The Sample",
+                DeviceTypeId = dobotMagicianV2.Id,
+                Properties = "",
+                Description = "Squeeze the sample."
+            };
+            var jobReleaseTheSample = new
+            {
+                Id = 9,
+                Name = "Release The Sample",
+                DeviceTypeId = dobotMagicianV2.Id,
+                Properties = "",
+                Description = "Release the sample."
+            };
 
             modelBuilder.Entity<Job>().HasData(new object[]
             {
@@ -153,7 +184,10 @@ namespace ROBOLab.API
                 jobTurnOnWaterPump,
                 jobMoveTeddyBear,
                 jobFillCubeWithWater,
-                jobRunAnySequence
+                jobRunAnySequence,
+                jobMoveTheSample,
+                jobSqueezeTheSample,
+                jobReleaseTheSample
             });
 
 
@@ -219,13 +253,21 @@ namespace ROBOLab.API
                 Name = "Dobot Magician(RoboArm)",
                 UserId = user3.Id,
             };
+            var pressDev = new Device
+            {
+                Id = 5,
+                DeviceTypeId = press.Id,
+                Name = "Press",
+                UserId = user3.Id,
+            };
 
             modelBuilder.Entity<Device>().HasData(new Device[]
             {
                 smartTerraDev1,
                 roboArmDev1,
                 smartTerraDev2,
-                dobotMagicianDev
+                dobotMagicianDev,
+                pressDev
             });
 
 
