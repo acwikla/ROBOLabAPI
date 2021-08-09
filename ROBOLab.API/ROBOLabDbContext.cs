@@ -101,8 +101,51 @@ namespace ROBOLab.API
                 new Property{
                     Id = 120,
                     Name = "Pressure force",
-                    Body = "type: float, min: 0, max: 10000000",
+                    Body = "type: float, min: 0, max: 200",
                     DeviceTypeId = roboLabPressDevType.Id,
+                },
+                //------DobotMagician------
+                new Property{
+                    Id = 121,
+                    Name = "X",
+                    Body = "type: float",
+                    DeviceTypeId = dobotMagicianV2DevType.Id,
+                },
+                new Property{
+                    Id = 122,
+                    Name = "Y",
+                    Body = "type: float",
+                    DeviceTypeId = dobotMagicianV2DevType.Id,
+                },
+                new Property{
+                    Id = 123,
+                    Name = "Z",
+                    Body = "type: float",
+                    DeviceTypeId = dobotMagicianV2DevType.Id,
+                },
+                new Property{
+                    Id = 124,
+                    Name = "R",
+                    Body = "type: float",
+                    DeviceTypeId = dobotMagicianV2DevType.Id,
+                },
+                new Property{
+                    Id = 125,
+                    Name = "First Angle",
+                    Body = "type: float",
+                    DeviceTypeId = dobotMagicianV2DevType.Id,
+                },
+                new Property{
+                    Id = 126,
+                    Name = "Second Angle",
+                    Body = "type: float",
+                    DeviceTypeId = dobotMagicianV2DevType.Id,
+                },
+                new Property{
+                    Id = 127,
+                    Name = "Third Angle",
+                    Body = "type: float",
+                    DeviceTypeId = dobotMagicianV2DevType.Id,
                 },
             });
 
@@ -162,7 +205,7 @@ namespace ROBOLab.API
                 Id = 100,
                 Name = "Put the sample on the press",
                 DeviceTypeId = dobotMagicianV2DevType.Id,
-                Properties = "",
+                Properties = "X, type: float; Y, type: float; Z, type: float",
                 Description = "Put the sample on the press."
             };
             var jobPressSqueezeTheSample = new
@@ -181,6 +224,14 @@ namespace ROBOLab.API
                 Properties = "",
                 Description = "Release the sample."
             };
+            var jobPresscalibration = new
+            {
+                Id = 122,
+                Name = "Press calibration",
+                DeviceTypeId = roboLabPressDevType.Id,
+                Properties = "stampHeight, type: float, min: 0, max: 6",
+                Description = "Press calibration."
+            };
 
             modelBuilder.Entity<Job>().HasData(new object[]
             {
@@ -192,7 +243,8 @@ namespace ROBOLab.API
                 jobRunAnySequence,
                 jobMagicanPutTheSampleOnThePress,
                 jobPressSqueezeTheSample,
-                jobPressReleaseTheSample
+                jobPressReleaseTheSample,
+                jobPresscalibration
             });
 
 
