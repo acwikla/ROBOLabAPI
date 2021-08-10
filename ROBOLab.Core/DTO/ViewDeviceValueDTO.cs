@@ -25,17 +25,22 @@ namespace ROBOLab.Core.DTO
         [Required]
         public int DeviceId { get; set; }
 
+        //[Required]
+        //public ViewDeviceDTO Device { get; set; }
+
         [Required]
-        public ViewDeviceDTO Device { get; set; }
+        public int DeviceJobId { get; set; }
+
+        //[Required]
+        //public virtual ViewDeviceJobDTO DeviceJob { get; set; }
     }
 
     public class ViewDeviceJobValueDTO : ViewDeviceValueDTO
     {
-        [Required]
-        public int DeviceJobId { get; set; }
+        //[Required]
+        //public int DeviceJobId { get; set; }
 
-        [Required]
-        public virtual ViewDeviceJobDTO DeviceJob { get; set; }
+        //[Required]
+        //public virtual ViewDeviceJobDTO DeviceJob { get; set; }
     }
-
-    }
+}

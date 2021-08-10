@@ -202,176 +202,86 @@ namespace ROBOLab.API.Controllers
             return NoContent();
         }
 
-        //TODO: dodac metode, ktora pobiera wartosci dla danego urzadzenia, dla konkretnego property 
-
         // POST: api/devices/{id}/add-values-by-property-name
         [HttpPost("{id}/add-values-by-property-name")]
-        public async Task<ActionResult<Device>> PostNewValueForDeviceByPropName(int id, AddPropertyValueDTO propertyValueDTO)
+        public async Task<ActionResult<ViewDeviceValueDTO>> PostNewValueForDeviceByPropName(int devId, AddPropertyValueDTO propertyValueDTO)
         {
-            var device = await _context.Devices.Include(d => d.DeviceType).Where(d => d.Id == id).FirstOrDefaultAsync();
+            // get device
+            var device = await _context.Devices.Include(d => d.DeviceType).Where(d => d.Id == devId).FirstOrDefaultAsync();
             if (device == null)
             {
-                return NotFound($"There is no device for given id: {id}.");
+                return NotFound($"There is no device for given id: {devId}.");
             }
 
-            Value newValue;
-            Property property;
-            if (propertyValueDTO.DeviceJobId != 0)
-            {
-                var deviceJob = await _context.DeviceJobs.Include(d => d.Job).Include(d => d.Device).Where(d => d.Id == propertyValueDTO.DeviceJobId).FirstOrDefaultAsync();
-                if (deviceJob == null)
-                {
-                    return NotFound($"There is no device job for given id: {propertyValueDTO.DeviceJobId}.");
-                }
-
-                if (deviceJob.DeviceId != device.Id)
-                {
-                    return NotFound($"No device job with id: {propertyValueDTO.DeviceJobId} was ordered for device with id: {device.Id}.");
-                }
-
-                property = await _context.Properties.Include(p => p.DeviceType)
+            // get property by name
+            var property = await _context.Properties.Include(p => p.DeviceType)
                     .Where(p => p.Name == propertyValueDTO.PropertyName)
                     .Where(p => p.DeviceTypeId == device.DeviceTypeId)//nie jestem pewna czy nie powinno byc: deviceJob.Job.DeviceType.Id, ale to raczej to samo a mniejsze zapytanie
                     .FirstOrDefaultAsync();
-                if (property == null)
-                {
-                    return BadRequest($"There is no property named : {propertyValueDTO.PropertyName} with matching device type for device with given id: {id}.");
-                }
-
-                newValue = new Value
-                {
-                    Val = propertyValueDTO.Val,
-                    DateTime = DateTime.Now,
-                    PropertyId = property.Id,
-                    Property = property,
-                    DeviceId = device.Id,
-                    Device = device,
-                    DeviceJob = deviceJob,
-                    DeviceJobId = deviceJob.Id
-                };
-            }
-            else
+            if (property == null)
             {
-                //DB: moze byc wiele propertisow o tej samej nazwie dla kilku urzadzen
-                property = await _context.Properties.Include(p => p.DeviceType)
-                .Where(p => p.Name == propertyValueDTO.PropertyName)
-                .Where(p => p.DeviceTypeId == device.DeviceTypeId)
-                .FirstOrDefaultAsync();
-                if (property == null)
-                {
-                    return BadRequest($"There is no property named : {propertyValueDTO.PropertyName} with matching device type for device with given id: {id}.");
-                }
-
-                newValue = new Value
-                {
-                    Val = propertyValueDTO.Val,
-                    DateTime = DateTime.Now,
-                    PropertyId = property.Id,
-                    Property = property,
-                    DeviceId = device.Id,
-                    Device = device
-                };
+                return BadRequest($"There is no property named : {propertyValueDTO.PropertyName} with matching device type for device with given id: {devId}.");
             }
 
-
-            await _context.Values.AddAsync(newValue);
-            await _context.SaveChangesAsync();
-
-            ViewDeviceValueDTO valueDTO;
-            if (propertyValueDTO.DeviceJobId != 0)
-            {
-                valueDTO = _mapper.Map<ViewDeviceJobValueDTO>(newValue);
-            }
-            else
-            {
-                valueDTO = _mapper.Map<ViewDeviceValueDTO>(newValue);
-            }
-            return CreatedAtAction(nameof(GetDeviceValue), new { valueId = valueDTO.Id }, valueDTO); ;
+            return await this.PostNewValueForDevice(device, property, propertyValueDTO.DeviceJobId, propertyValueDTO.Val);
         }
 
         // POST: api/devices/{id}/add-values-by-property-id
         [HttpPost("{id}/add-values-by-property-id")]
-        public async Task<ActionResult<ViewDeviceValueDTO>> PostNewValueForDeviceByPropId(int id, AddPropertyValueDTO propertyValueDTO)
+        public async Task<ActionResult<ViewDeviceValueDTO>> PostNewValueForDeviceByPropId(int devId, AddPropertyValueDTO propertyValueDTO)
         {
-            var device = await _context.Devices.Include(d => d.DeviceType).Where(d => d.Id == id).FirstOrDefaultAsync();
+            // get device
+            var device = await _context.Devices.Include(d => d.DeviceType).Where(d => d.Id == devId).FirstOrDefaultAsync();
             if (device == null)
             {
-                return NotFound($"There is no device for given id: {id}.");
+                return NotFound($"There is no device for given id: {devId}.");
             }
 
-            Value newValue;
-            Property property;
-            if (propertyValueDTO.DeviceJobId != 0)
+            // get property by id
+            var property = await _context.Properties.Include(p => p.DeviceType)
+                    .Where(p => p.Id == propertyValueDTO.PropertyId)
+                    .Where(p => p.DeviceTypeId == device.DeviceTypeId)//nie jestem pewna czy nie powinno byc: deviceJob.Job.DeviceType.Id, ale to raczej to samo a mniejsze zapytanie
+                    .FirstOrDefaultAsync();
+            if (property == null)
             {
-                var deviceJob = await _context.DeviceJobs.Include(d => d.Job).Include(d => d.Device).Where(d => d.Id == propertyValueDTO.DeviceJobId).FirstOrDefaultAsync();
+                return BadRequest($"There is no property with id : {propertyValueDTO.PropertyId} with matching device type for device with given id: {devId}.");
+            }
+
+            return await this.PostNewValueForDevice(device, property, propertyValueDTO.DeviceJobId, propertyValueDTO.Val);
+        }
+
+        private async Task<ActionResult<ViewDeviceValueDTO>> PostNewValueForDevice(Device device, Property property, int? devJobId, string value)
+        {
+            // check: is device job id correct ?
+            if (devJobId != 0)
+            {
+                var deviceJob = await _context.DeviceJobs.Include(d => d.Job).Include(d => d.Device)
+                    .Where(d => d.Id == devJobId).FirstOrDefaultAsync();
                 if (deviceJob == null)
                 {
-                    return NotFound($"There is no device job for given id: {propertyValueDTO.DeviceJobId}.");
+                    return NotFound($"There is no device job for given id: {devJobId}.");
                 }
 
                 if (deviceJob.DeviceId != device.Id)
                 {
-                    return NotFound($"No device job with id: {propertyValueDTO.DeviceJobId} was ordered for device with id: {device.Id}.");
+                    return NotFound($"No device job with id: {devJobId} was ordered for device with id: {device.Id}.");
                 }
-
-                property = await _context.Properties.Include(p => p.DeviceType)
-                    .Where(p => p.Id == propertyValueDTO.PropertyId)
-                    .Where(p => p.DeviceTypeId == device.DeviceTypeId)//nie jestem pewna czy nie powinno byc: deviceJob.Job.DeviceType.Id, ale to raczej to samo a mniejsze zapytanie
-                    .FirstOrDefaultAsync();
-                if (property == null)
-                {
-                    return BadRequest($"There is no property with id : {propertyValueDTO.PropertyId} with matching device type for device with given id: {id}.");
-                }
-                
-                newValue = new Value
-                {
-                    Val = propertyValueDTO.Val,
-                    DateTime = DateTime.Now,
-                    PropertyId = property.Id,
-                    Property = property,
-                    DeviceId = device.Id,
-                    Device = device,
-                    DeviceJob = deviceJob,
-                    DeviceJobId = deviceJob.Id
-                };
             }
-            else
+
+            // add new value 
+            var newValue = new Value
             {
-                //DB: moze byc wiele propertisow o tej samej nazwie dla kilku urzadzen
-                property = await _context.Properties.Include(p => p.DeviceType)
-                .Where(p => p.Id == propertyValueDTO.PropertyId)
-                .Where(p => p.DeviceTypeId == device.DeviceTypeId)
-                .FirstOrDefaultAsync();
-                if (property == null)
-                {
-                    return BadRequest($"There is no property with id : {propertyValueDTO.PropertyId} with matching device type for device with given id: {id}.");
-                }
-
-                newValue = new Value
-                {
-                    Val = propertyValueDTO.Val,
-                    DateTime = DateTime.Now,
-                    PropertyId = property.Id,
-                    Property = property,
-                    DeviceId = device.Id,
-                    Device = device
-                };
-            }
-
-            
+                Val = value,
+                DateTime = DateTime.Now,
+                PropertyId = property.Id,
+                DeviceId = device.Id,
+                DeviceJobId = devJobId,
+            };
             await _context.Values.AddAsync(newValue);
             await _context.SaveChangesAsync();
 
-            ViewDeviceValueDTO valueDTO;
-            if (propertyValueDTO.DeviceJobId != 0)
-            {
-                valueDTO = _mapper.Map<ViewDeviceJobValueDTO>(newValue);
-            }
-            else
-            {
-                valueDTO = _mapper.Map<ViewDeviceValueDTO>(newValue);
-            }
-                return CreatedAtAction(nameof(GetDeviceValue), new { valueId = valueDTO.Id }, valueDTO);
+            var valueDTO = _mapper.Map<ViewDeviceValueDTO>(newValue);
+            return CreatedAtAction(nameof(GetDeviceValue), new { valueId = valueDTO.Id }, valueDTO);
         }
 
         // DELETE: api/devices/5
