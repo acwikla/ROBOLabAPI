@@ -33,13 +33,13 @@ namespace ROBOLab.API
                 Id = 1,
                 Name = "SmartTerra"
             };
-            var roboArmDevType = new DeviceType
+            var roboArmArexxDevType = new DeviceType
             {
                 Id = 2,
                 Name = "RoboArm(Arexx RA-1-PRO)"
             };
             //roboLab
-            var dobotMagicianV2DevType = new DeviceType
+            var roboArmDobotMagicianV2DevType = new DeviceType
             {
                 Id = 3,
                 Name = "Dobot Magician V2"
@@ -53,8 +53,8 @@ namespace ROBOLab.API
             modelBuilder.Entity<DeviceType>().HasData(new DeviceType[]
             {
                 smartTerraDevType,
-                roboArmDevType,
-                dobotMagicianV2DevType,
+                roboArmArexxDevType,
+                roboArmDobotMagicianV2DevType,
                 roboLabPressDevType
             });
 
@@ -65,39 +65,34 @@ namespace ROBOLab.API
                     Id = 1,
                     Name = "Angle Of First Channel",
                     Body = "type: int, min: 0, max: 180",
-                    DeviceTypeId = roboArmDevType.Id
+                    DeviceTypeId = roboArmArexxDevType.Id
                 },new Property{
                     Id = 2,
                     Name = "Angle Of Second Channel",
                     Body = "type: int, min: 0, max: 180",
-                    DeviceTypeId = roboArmDevType.Id
+                    DeviceTypeId = roboArmArexxDevType.Id
                 },new Property{
                     Id = 3,
                     Name = "Angle Of Third Channel",
                     Body = "type: int, min: 0, max: 180",
-                    DeviceTypeId = roboArmDevType.Id
+                    DeviceTypeId = roboArmArexxDevType.Id
                 },new Property{
                     Id = 4,
                     Name = "Angle Of Fourth Channel",
                     Body = "type: int, min: 0, max: 180",
-                    DeviceTypeId = roboArmDevType.Id
+                    DeviceTypeId = roboArmArexxDevType.Id
                 },new Property{
                     Id = 5,
                     Name = "Angle Of Fifth Channel",
                     Body = "type: int, min: 0, max: 180",
-                    DeviceTypeId = roboArmDevType.Id
+                    DeviceTypeId = roboArmArexxDevType.Id
                 },new Property{
                     Id = 6,
                     Name = "Angle Of Sixth Channel",
                     Body = "type: int, min: 0, max: 180",
-                    DeviceTypeId = roboArmDevType.Id
+                    DeviceTypeId = roboArmArexxDevType.Id
                 },
-                new Property{
-                    Id = 100,
-                    Name = "Angle",
-                    Body = "type: float, min: null, max: null",
-                    DeviceTypeId = dobotMagicianV2DevType.Id,
-                },
+                //------RoboLab press------
                 new Property{
                     Id = 120,
                     Name = "Pressure force",
@@ -106,46 +101,46 @@ namespace ROBOLab.API
                 },
                 //------DobotMagician------
                 new Property{
-                    Id = 121,
+                    Id = 100,
                     Name = "X",
                     Body = "type: float",
-                    DeviceTypeId = dobotMagicianV2DevType.Id,
+                    DeviceTypeId = roboArmDobotMagicianV2DevType.Id,
                 },
                 new Property{
-                    Id = 122,
+                    Id = 101,
                     Name = "Y",
                     Body = "type: float",
-                    DeviceTypeId = dobotMagicianV2DevType.Id,
+                    DeviceTypeId = roboArmDobotMagicianV2DevType.Id,
                 },
                 new Property{
-                    Id = 123,
+                    Id = 102,
                     Name = "Z",
                     Body = "type: float",
-                    DeviceTypeId = dobotMagicianV2DevType.Id,
+                    DeviceTypeId = roboArmDobotMagicianV2DevType.Id,
                 },
                 new Property{
-                    Id = 124,
+                    Id = 103,
                     Name = "R",
                     Body = "type: float",
-                    DeviceTypeId = dobotMagicianV2DevType.Id,
+                    DeviceTypeId = roboArmDobotMagicianV2DevType.Id,
                 },
                 new Property{
-                    Id = 125,
-                    Name = "First Angle",
+                    Id = 104,
+                    Name = "Angle 1",
                     Body = "type: float",
-                    DeviceTypeId = dobotMagicianV2DevType.Id,
+                    DeviceTypeId = roboArmDobotMagicianV2DevType.Id,
                 },
                 new Property{
-                    Id = 126,
-                    Name = "Second Angle",
+                    Id = 105,
+                    Name = "Angle 2",
                     Body = "type: float",
-                    DeviceTypeId = dobotMagicianV2DevType.Id,
+                    DeviceTypeId = roboArmDobotMagicianV2DevType.Id,
                 },
                 new Property{
-                    Id = 127,
-                    Name = "Third Angle",
+                    Id = 106,
+                    Name = "Angle 3",
                     Body = "type: float",
-                    DeviceTypeId = dobotMagicianV2DevType.Id,
+                    DeviceTypeId = roboArmDobotMagicianV2DevType.Id,
                 },
             });
 
@@ -179,7 +174,7 @@ namespace ROBOLab.API
             {
                 Id = 4,
                 Name = "MoveTeddyBear",
-                DeviceTypeId = roboArmDevType.Id,
+                DeviceTypeId = roboArmArexxDevType.Id,
                 Properties = "",
                 Description = "Move the teddy bear to a specific place."
             };
@@ -187,7 +182,7 @@ namespace ROBOLab.API
             {
                 Id = 5,
                 Name = "FillCubeWithWater",
-                DeviceTypeId = roboArmDevType.Id,
+                DeviceTypeId = roboArmArexxDevType.Id,
                 Properties = "",
                 Description = "Pour water into the cube for given period of time."
             };
@@ -195,20 +190,20 @@ namespace ROBOLab.API
             {
                 Id = 6,
                 Name = "RunAnySequence",
-                DeviceTypeId = roboArmDevType.Id,
+                DeviceTypeId = roboArmArexxDevType.Id,
                 Properties = "",
                 Description = "Run the provided sequence of angles."
             };
             //-------RoboLab------
-            var jobMagicanPutTheSampleOnThePress = new
+            var jobMagicanPutTheSampleOnThePress = new          // arm
             {
                 Id = 100,
                 Name = "Put the sample on the press",
-                DeviceTypeId = dobotMagicianV2DevType.Id,
-                Properties = "X, type: float; Y, type: float; Z, type: float",
+                DeviceTypeId = roboArmDobotMagicianV2DevType.Id,
+                Properties = "name: X, type: float; name: Y, type: float; name: Z, type: float",
                 Description = "Put the sample on the press."
             };
-            var jobPressSqueezeTheSample = new
+            var jobPressSqueezeTheSample = new                  // press
             {
                 Id = 120,
                 Name = "Squeeze The Sample",
@@ -224,12 +219,12 @@ namespace ROBOLab.API
                 Properties = "",
                 Description = "Release the sample."
             };
-            var jobPresscalibration = new
+            var jobPressCalibration = new
             {
                 Id = 122,
                 Name = "Press calibration",
                 DeviceTypeId = roboLabPressDevType.Id,
-                Properties = "stampHeight, type: float, min: 0, max: 6",
+                Properties = "name: stampHeight, type: float, min: 0, max: 6",
                 Description = "Press calibration."
             };
 
@@ -244,7 +239,7 @@ namespace ROBOLab.API
                 jobMagicanPutTheSampleOnThePress,
                 jobPressSqueezeTheSample,
                 jobPressReleaseTheSample,
-                jobPresscalibration
+                jobPressCalibration
             });
 
 
@@ -291,7 +286,7 @@ namespace ROBOLab.API
             var roboArmDev1 = new Device
             {
                 Id = 2,
-                DeviceTypeId = roboArmDevType.Id,
+                DeviceTypeId = roboArmArexxDevType.Id,
                 Name = "RoboArm1",
                 UserId = user1.Id,
             };
@@ -306,7 +301,7 @@ namespace ROBOLab.API
             var dobotMagicianDev = new Device
             {
                 Id = 100,
-                DeviceTypeId = dobotMagicianV2DevType.Id,
+                DeviceTypeId = roboArmDobotMagicianV2DevType.Id,
                 Name = "Dobot Magician V2 (RoboArm)",
                 UserId = user3.Id,
             };
