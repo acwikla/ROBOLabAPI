@@ -204,13 +204,13 @@ namespace ROBOLab.API.Controllers
 
         // POST: api/devices/{id}/add-values-by-property-name
         [HttpPost("{id}/add-values-by-property-name")]
-        public async Task<ActionResult<ViewDeviceValueDTO>> PostNewValueForDeviceByPropName(int devId, AddPropertyValueDTO propertyValueDTO)
+        public async Task<ActionResult<ViewDeviceValueDTO>> PostNewValueForDeviceByPropName(int id, AddPropertyValueDTO propertyValueDTO)
         {
             // get device
-            var device = await _context.Devices.Include(d => d.DeviceType).Where(d => d.Id == devId).FirstOrDefaultAsync();
+            var device = await _context.Devices.Include(d => d.DeviceType).Where(d => d.Id == id).FirstOrDefaultAsync();
             if (device == null)
             {
-                return NotFound($"There is no device for given id: {devId}.");
+                return NotFound($"There is no device for given id: {id}.");
             }
 
             // get property by name
@@ -220,7 +220,7 @@ namespace ROBOLab.API.Controllers
                     .FirstOrDefaultAsync();
             if (property == null)
             {
-                return BadRequest($"There is no property named : {propertyValueDTO.PropertyName} with matching device type for device with given id: {devId}.");
+                return BadRequest($"There is no property named : {propertyValueDTO.PropertyName} with matching device type for device with given id: {id}.");
             }
 
             return await this.PostNewValueForDevice(device, property, propertyValueDTO.DeviceJobId, propertyValueDTO.Val);
@@ -228,23 +228,23 @@ namespace ROBOLab.API.Controllers
 
         // POST: api/devices/{id}/add-values-by-property-id
         [HttpPost("{id}/add-values-by-property-id")]
-        public async Task<ActionResult<ViewDeviceValueDTO>> PostNewValueForDeviceByPropId(int devId, AddPropertyValueDTO propertyValueDTO)
+        public async Task<ActionResult<ViewDeviceValueDTO>> PostNewValueForDeviceByPropId(int id, AddPropertyValueDTO propertyValueDTO)
         {
             // get device
-            var device = await _context.Devices.Include(d => d.DeviceType).Where(d => d.Id == devId).FirstOrDefaultAsync();
+            var device = await _context.Devices.Include(d => d.DeviceType).Where(d => d.Id == id).FirstOrDefaultAsync();
             if (device == null)
             {
-                return NotFound($"There is no device for given id: {devId}.");
+                return NotFound($"There is no device for given id: {id}.");
             }
 
             // get property by id
             var property = await _context.Properties.Include(p => p.DeviceType)
                     .Where(p => p.Id == propertyValueDTO.PropertyId)
-                    .Where(p => p.DeviceTypeId == device.DeviceTypeId)//nie jestem pewna czy nie powinno byc: deviceJob.Job.DeviceType.Id, ale to raczej to samo a mniejsze zapytanie
+                    .Where(p => p.DeviceTypeId == device.DeviceTypeId)
                     .FirstOrDefaultAsync();
             if (property == null)
             {
-                return BadRequest($"There is no property with id : {propertyValueDTO.PropertyId} with matching device type for device with given id: {devId}.");
+                return BadRequest($"There is no property with id : {propertyValueDTO.PropertyId} with matching device type for device with given id: {id}.");
             }
 
             return await this.PostNewValueForDevice(device, property, propertyValueDTO.DeviceJobId, propertyValueDTO.Val);
