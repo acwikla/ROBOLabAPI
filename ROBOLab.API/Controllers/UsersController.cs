@@ -196,7 +196,7 @@ namespace ROBOLab.API.Controllers
 
         // POST: api/users/1/device
         [HttpPost("{userId}/device")]
-        public async Task<ActionResult<ViewDeviceDTO>> PostDevice(int userId, DeviceTypeDTO deviceTypeDTO, AddDeviceDTO deviceDTO)
+        public async Task<ActionResult<ViewDeviceDTO>> PostDevice(int userId, int deviceTypeId, AddDeviceDTO deviceDTO)
         {
             var user = await _context.Users.FindAsync(userId);
             if (user == null)
@@ -205,10 +205,10 @@ namespace ROBOLab.API.Controllers
             }
 
             //search by name
-            var deviceType = await _context.DeviceTypes.Where(deviceJobs => deviceJobs.Name == deviceTypeDTO.Name).FirstOrDefaultAsync();
+            var deviceType = await _context.DeviceTypes.Where(deviceType => deviceType.Id == deviceTypeId).FirstOrDefaultAsync();
             if (deviceType == null)
             {
-                return NotFound($"There is no device type for given name: {deviceTypeDTO.Name}.");
+                return NotFound($"There is no device type for given id: {deviceTypeId}.");
             }
 
             Device newDevice = _mapper.Map<Device>(deviceDTO);
