@@ -152,6 +152,29 @@ namespace ROBOLab.API.Controllers
             return Ok(viewValueDTO);
         }
 
+        // GET: api/get-last-status-changes/100
+        [HttpGet("get-last-status-changes/{amount}")]
+        public async Task<ActionResult<IEnumerable<ViewDeviceJobDTO>>> GetLatestDeviceStatusHistory(int amount)
+        {
+            if (amount > 10000)
+            {
+                amount = 10000;
+            }
+
+            IEnumerable<DeviceJob> deviceJobsStatus = await _context.DeviceJobs
+                .OrderByDescending(d => d.StatusChanged).Take(amount).ToListAsync();
+
+            //DB jesli takelast jest po toListAsync to: z bazy pobiora sie wszystkie wartosci, a dopiero pozniej z nich zwrocisz amount, i tak jest zle
+            //to baza ma zwrocic ograniczona ilosc rekordow a wiec: takelast PRZED to list
+
+            if (deviceJobsStatus == null)
+            {
+                return NotFound($"There is no device jobs.");
+            }
+
+            return _mapper.Map<List<ViewDeviceJobDTO>>(deviceJobsStatus);
+        }
+
         // GET: api/device-jobs/5/get-all-values
         [HttpGet("{id}/get-all-job-values")]
         public async Task<ActionResult<IEnumerable<ViewDeviceJobValueDTO>>> GetAllDeviceJobValues(int id)
