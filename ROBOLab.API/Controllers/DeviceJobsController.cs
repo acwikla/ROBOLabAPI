@@ -327,6 +327,11 @@ namespace ROBOLab.API.Controllers
             }
 
             deviceJobToUpdate.Done = DoneFlag.Done;
+            if (DoneFlag.Done == true)
+            {
+                deviceJobToUpdate.Status = 1024;
+                deviceJobToUpdate.StatusChanged = DateTime.Now;
+            }
 
             _context.Entry(deviceJobToUpdate).State = EntityState.Modified;
 
@@ -379,6 +384,9 @@ namespace ROBOLab.API.Controllers
 
             var newDeviceJob = new DeviceJob()
             {
+                Status =0,
+                StatusChanged = DateTime.Now,
+                CreatedDate = DateTime.Now,
                 ExecutionTime = deviceJob.ExecutionTime,
                 Body = deviceJob.Body,
                 Device = device,

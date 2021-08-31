@@ -23,6 +23,9 @@ namespace ROBOLab.Core.Models
         [Required]
         public string Body { get; set; }
 
+        public int? Status { get; set; }
+        public DateTime? StatusChanged { get; set; }          // Date, when job was added to database
+
         [Required]
         public int DeviceId { get; set; }
 
