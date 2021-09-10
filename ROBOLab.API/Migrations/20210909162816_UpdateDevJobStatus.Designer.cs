@@ -2,15 +2,17 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using ROBOLab.API;
 
 namespace ROBOLab.API.Migrations
 {
     [DbContext(typeof(ROBOLabDbContext))]
-    partial class ROBOLabDbContextModelSnapshot : ModelSnapshot
+    [Migration("20210909162816_UpdateDevJobStatus")]
+    partial class UpdateDevJobStatus
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -122,7 +124,7 @@ namespace ROBOLab.API.Migrations
                         {
                             Id = 1,
                             Body = "#FF6611",
-                            CreatedDate = new DateTime(2021, 9, 10, 10, 7, 56, 287, DateTimeKind.Local).AddTicks(1289),
+                            CreatedDate = new DateTime(2021, 9, 9, 18, 28, 15, 248, DateTimeKind.Local).AddTicks(3134),
                             DeviceId = 1,
                             Done = false,
                             JobId = 1,
@@ -132,7 +134,7 @@ namespace ROBOLab.API.Migrations
                         {
                             Id = 2,
                             Body = "",
-                            CreatedDate = new DateTime(2021, 9, 10, 10, 7, 56, 290, DateTimeKind.Local).AddTicks(2895),
+                            CreatedDate = new DateTime(2021, 9, 9, 18, 28, 15, 251, DateTimeKind.Local).AddTicks(6193),
                             DeviceId = 1,
                             Done = false,
                             JobId = 2,
@@ -142,7 +144,7 @@ namespace ROBOLab.API.Migrations
                         {
                             Id = 3,
                             Body = "",
-                            CreatedDate = new DateTime(2021, 9, 10, 10, 7, 56, 290, DateTimeKind.Local).AddTicks(2939),
+                            CreatedDate = new DateTime(2021, 9, 9, 18, 28, 15, 251, DateTimeKind.Local).AddTicks(6237),
                             DeviceId = 100,
                             Done = false,
                             JobId = 100,
@@ -152,7 +154,7 @@ namespace ROBOLab.API.Migrations
                         {
                             Id = 4,
                             Body = "",
-                            CreatedDate = new DateTime(2021, 9, 10, 10, 7, 56, 290, DateTimeKind.Local).AddTicks(2946),
+                            CreatedDate = new DateTime(2021, 9, 9, 18, 28, 15, 251, DateTimeKind.Local).AddTicks(6244),
                             DeviceId = 120,
                             Done = false,
                             JobId = 120,
@@ -162,7 +164,7 @@ namespace ROBOLab.API.Migrations
                         {
                             Id = 5,
                             Body = "",
-                            CreatedDate = new DateTime(2021, 9, 10, 10, 7, 56, 290, DateTimeKind.Local).AddTicks(2950),
+                            CreatedDate = new DateTime(2021, 9, 9, 18, 28, 15, 251, DateTimeKind.Local).AddTicks(6249),
                             DeviceId = 120,
                             Done = false,
                             JobId = 121,

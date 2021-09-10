@@ -2,15 +2,17 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using ROBOLab.API;
 
 namespace ROBOLab.API.Migrations
 {
     [DbContext(typeof(ROBOLabDbContext))]
-    partial class ROBOLabDbContextModelSnapshot : ModelSnapshot
+    [Migration("20210909160918_AddEnumTypeDevJobStatus")]
+    partial class AddEnumTypeDevJobStatus
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -109,6 +111,9 @@ namespace ROBOLab.API.Migrations
                     b.Property<DateTime?>("StatusChanged")
                         .HasColumnType("TEXT");
 
+                    b.Property<int>("StatusId")
+                        .HasColumnType("INTEGER");
+
                     b.HasKey("Id");
 
                     b.HasIndex("DeviceId");
@@ -122,51 +127,56 @@ namespace ROBOLab.API.Migrations
                         {
                             Id = 1,
                             Body = "#FF6611",
-                            CreatedDate = new DateTime(2021, 9, 10, 10, 7, 56, 287, DateTimeKind.Local).AddTicks(1289),
+                            CreatedDate = new DateTime(2021, 9, 9, 18, 9, 17, 339, DateTimeKind.Local).AddTicks(1637),
                             DeviceId = 1,
                             Done = false,
                             JobId = 1,
-                            Status = 0
+                            Status = 0,
+                            StatusId = 0
                         },
                         new
                         {
                             Id = 2,
                             Body = "",
-                            CreatedDate = new DateTime(2021, 9, 10, 10, 7, 56, 290, DateTimeKind.Local).AddTicks(2895),
+                            CreatedDate = new DateTime(2021, 9, 9, 18, 9, 17, 342, DateTimeKind.Local).AddTicks(6320),
                             DeviceId = 1,
                             Done = false,
                             JobId = 2,
-                            Status = 0
+                            Status = 0,
+                            StatusId = 0
                         },
                         new
                         {
                             Id = 3,
                             Body = "",
-                            CreatedDate = new DateTime(2021, 9, 10, 10, 7, 56, 290, DateTimeKind.Local).AddTicks(2939),
+                            CreatedDate = new DateTime(2021, 9, 9, 18, 9, 17, 342, DateTimeKind.Local).AddTicks(6370),
                             DeviceId = 100,
                             Done = false,
                             JobId = 100,
-                            Status = 0
+                            Status = 0,
+                            StatusId = 0
                         },
                         new
                         {
                             Id = 4,
                             Body = "",
-                            CreatedDate = new DateTime(2021, 9, 10, 10, 7, 56, 290, DateTimeKind.Local).AddTicks(2946),
+                            CreatedDate = new DateTime(2021, 9, 9, 18, 9, 17, 342, DateTimeKind.Local).AddTicks(6379),
                             DeviceId = 120,
                             Done = false,
                             JobId = 120,
-                            Status = 0
+                            Status = 0,
+                            StatusId = 0
                         },
                         new
                         {
                             Id = 5,
                             Body = "",
-                            CreatedDate = new DateTime(2021, 9, 10, 10, 7, 56, 290, DateTimeKind.Local).AddTicks(2950),
+                            CreatedDate = new DateTime(2021, 9, 9, 18, 9, 17, 342, DateTimeKind.Local).AddTicks(6383),
                             DeviceId = 120,
                             Done = false,
                             JobId = 121,
-                            Status = 0
+                            Status = 0,
+                            StatusId = 0
                         });
                 });
 

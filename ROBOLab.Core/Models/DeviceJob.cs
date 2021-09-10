@@ -23,8 +23,10 @@ namespace ROBOLab.Core.Models
         [Required]
         public string Body { get; set; }
 
-        public int? Status { get; set; }
-        public DateTime? StatusChanged { get; set; }          // Date, when job was added to database
+        [EnumDataType(typeof(DeviceJobStatus)), DefaultValue(DeviceJobStatus.Created)]
+        public DeviceJobStatus Status { get; set; }
+
+        public DateTime? StatusChanged { get; set; }
 
         [Required]
         public int DeviceId { get; set; }
@@ -37,5 +39,14 @@ namespace ROBOLab.Core.Models
 
         [Required]
         public virtual Job Job { get; set; }
+
+    }
+
+    public enum DeviceJobStatus
+    {
+        Created = 0,//utworzone
+        Submitted = 32,//przyjete do realizacji
+        InProgress = 128,//w trakcie realizacji
+        Completed = 1024//zakonczone
     }
 }

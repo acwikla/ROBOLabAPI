@@ -1,4 +1,5 @@
-﻿using System;
+﻿using ROBOLab.Core.Models;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
@@ -19,7 +20,10 @@ namespace ROBOLab.Core.DTO
 
         [Required]
         public string Body { get; set; }
-        public int? Status { get; set; }
+
+        [Required]
+        public DeviceJobStatus Status { get; set; }
+
         public DateTime? StatusChanged { get; set; }
 
         public int DeviceId { get; set; }

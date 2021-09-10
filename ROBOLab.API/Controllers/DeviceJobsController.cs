@@ -263,7 +263,11 @@ namespace ROBOLab.API.Controllers
 
             deviceJobDTO.Job = jobDTO;
 
-            //deviceJobs.Remove(deviceJob);
+            deviceJob.Status = DeviceJobStatus.Submitted;
+            deviceJob.StatusChanged = DateTime.Now;
+            _context.Entry(deviceJob).State = EntityState.Modified;
+            await _context.SaveChangesAsync();
+
             return Ok(deviceJobDTO);
         }
 
@@ -272,7 +276,13 @@ namespace ROBOLab.API.Controllers
         [HttpGet("device/{deviceId}/all-flase-done-flag")]
         public async Task<ActionResult<IEnumerable<ViewDeviceJobDTO>>> GetAllDeviceJobsFalseDoneFlag(int deviceId)
         {
-            List<DeviceJob> deviceJobs = await _context.DeviceJobs.Where(deviceJob => deviceJob.Done == false).Include(d => d.Device).Include(j => j.Job).Where(deviceJob => deviceJob.Device.Id == deviceId).Include(d => d.Device.DeviceType).Include(d => d.Job.DeviceType).ToListAsync();
+
+            var deviceJobs = await _context.DeviceJobs
+                .Where(deviceJob => deviceJob.Done == false && deviceJob.Device.Id == deviceId)
+                .Include(d => d.Job)
+                    .ThenInclude(j => j.DeviceType)
+                .ToListAsync();
+
             //without include device type in job and device
             //List<DeviceJob> deviceJobs = await _context.DeviceJobs.Where(deviceJob => deviceJob.Done == false).Include(d => d.Device).Include(j => j.Job).Where(deviceJob => deviceJob.Device.Id == deviceId).ToListAsync();
 
@@ -281,22 +291,14 @@ namespace ROBOLab.API.Controllers
                 return NotFound($"There is no device job with false isDone flag for device with given id: {deviceId}.");
             }
 
-            List<ViewDeviceJobDTO> deviceJobsToViewDTO = new List<ViewDeviceJobDTO>();
-            foreach (DeviceJob d in deviceJobs)
-            {
-                ViewDeviceDTO deviceDTO = _mapper.Map<ViewDeviceDTO>(d.Device);
+            var deviceJobsDTO = _mapper.Map<List<ViewDeviceJobDTO>>(deviceJobs);
 
-                JobDTO jobDTO = _mapper.Map<JobDTO>(d.Job);
-
-                ViewDeviceJobDTO deviceJobDTO = _mapper.Map<ViewDeviceJobDTO>(d);
-                
-                deviceJobDTO.Job = jobDTO;
-
-                deviceJobsToViewDTO.Add(deviceJobDTO);
-            }
+            deviceJobs.ForEach(el => { el.Status = DeviceJobStatus.Submitted; el.StatusChanged = DateTime.Now;}) ;
+            deviceJobs.ForEach( el => _context.Entry(el).State = EntityState.Modified);
             
-            //deviceJobs.Remove(deviceJob);
-            return Ok(deviceJobsToViewDTO);
+
+            await _context.SaveChangesAsync();
+            return Ok(deviceJobsDTO);
         }
 
         // PUT: api/device-jobs/5
@@ -352,7 +354,7 @@ namespace ROBOLab.API.Controllers
             deviceJobToUpdate.Done = DoneFlag.Done;
             if (DoneFlag.Done == true)
             {
-                deviceJobToUpdate.Status = 1024;
+                deviceJobToUpdate.Status = DeviceJobStatus.Completed;
                 deviceJobToUpdate.StatusChanged = DateTime.Now;
             }
 
@@ -407,7 +409,6 @@ namespace ROBOLab.API.Controllers
 
             var newDeviceJob = new DeviceJob()
             {
-                Status =0,
                 StatusChanged = DateTime.Now,
                 CreatedDate = DateTime.Now,
                 ExecutionTime = deviceJob.ExecutionTime,
