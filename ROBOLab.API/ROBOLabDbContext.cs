@@ -150,7 +150,7 @@ namespace ROBOLab.API
                 Id = 1,
                 Name = "TurnOnLED",
                 DeviceTypeId = smartTerraDevType.Id,
-                Properties = "",
+                Properties = "name: color, type: Color",
                 Description = "Turn on the LED strip and set color of the LEDs ."
             };
             var jobTurnOffLED = new
@@ -158,7 +158,7 @@ namespace ROBOLab.API
                 Id = 2,
                 Name = "TurnOffLED",
                 DeviceTypeId = smartTerraDevType.Id,
-                Properties = "",
+                Properties = "nan",
                 Description = "Turn off the LED strip."
             };
             var jobTurnOnWaterPump = new
@@ -166,7 +166,7 @@ namespace ROBOLab.API
                 Id = 3,
                 Name = "TurnOnWaterPump",
                 DeviceTypeId = smartTerraDevType.Id,
-                Properties = "",
+                Properties = "name: workingTime, type: Time",
                 Description = "Turn on the water pump for given period of time."
             };
             //--------------------
@@ -175,7 +175,7 @@ namespace ROBOLab.API
                 Id = 4,
                 Name = "MoveTeddyBear",
                 DeviceTypeId = roboArmArexxDevType.Id,
-                Properties = "",
+                Properties = "name: sixServoVal, type: int, min: 0, max: 5;",
                 Description = "Move the teddy bear to a specific place."
             };
             var jobFillCubeWithWater = new
@@ -183,7 +183,7 @@ namespace ROBOLab.API
                 Id = 5,
                 Name = "FillCubeWithWater",
                 DeviceTypeId = roboArmArexxDevType.Id,
-                Properties = "",
+                Properties = "name: pouringTime, type: Time, min: 0",
                 Description = "Pour water into the cube for given period of time."
             };
             var jobRunAnySequence = new
@@ -191,8 +191,16 @@ namespace ROBOLab.API
                 Id = 6,
                 Name = "RunAnySequence",
                 DeviceTypeId = roboArmArexxDevType.Id,
-                Properties = "",
+                Properties = "name: channels, type: table[int], min: 0, max: 12;",
                 Description = "Run the provided sequence of angles."
+            };
+            var jobRunAnyDifferenceSequence = new
+            {
+                Id = 7,
+                Name = "RunAnyDifferenceSequence ",
+                DeviceTypeId = roboArmArexxDevType.Id,
+                Description = "Run any sequence with angle difference.",
+                Properties = "name: channels, type: table[int], min: 0, max: 5; name: angleDifferences, type: table[int], min: 0, max: 180",
             };
             //-------RoboLab------
             var jobMagicanPutTheSampleOnThePress = new          // arm
@@ -236,6 +244,7 @@ namespace ROBOLab.API
                 jobMoveTeddyBear,
                 jobFillCubeWithWater,
                 jobRunAnySequence,
+                jobRunAnyDifferenceSequence,
                 jobMagicanPutTheSampleOnThePress,
                 jobPressSqueezeTheSample,
                 jobPressReleaseTheSample,
