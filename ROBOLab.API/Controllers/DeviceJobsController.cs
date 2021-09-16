@@ -74,9 +74,7 @@ namespace ROBOLab.API.Controllers
         public async Task<ActionResult<ViewDeviceJobDTO>> GetDeviceJob(int id)
         {
             var deviceJob = await _context.DeviceJobs.Include(d => d.Device).Include(j => j.Job).Where(deviceJobs => deviceJobs.Id == id).Include(d => d.Device.DeviceType).Include(d => d.Job.DeviceType).FirstOrDefaultAsync();
-            //without include device type in job and device
-            //var deviceJob = await _context.DeviceJobs.Include(d => d.Device).Include(j => j.Job).Where(deviceJobs => deviceJobs.Id == id).FirstOrDefaultAsync();
-
+            
             if (deviceJob == null)
             {
                 return NotFound($"There is no device job for given id: {id}.");
@@ -92,14 +90,8 @@ namespace ROBOLab.API.Controllers
                 return NotFound($"There is no job for device job with given id: {id}.");
             }
 
-            //ViewDeviceDTO deviceDTO = _mapper.Map<ViewDeviceDTO>(deviceJob.Device);
-
-            //JobDTO jobDTO = _mapper.Map<JobDTO>(deviceJob.Job);
-
             ViewDeviceJobDTO deviceJobDTO = _mapper.Map<ViewDeviceJobDTO>(deviceJob);
             
-            //deviceJobDTO.Job = jobDTO;
-
             return Ok(deviceJobDTO);
         }
 
@@ -119,20 +111,7 @@ namespace ROBOLab.API.Controllers
             }
 
             var deviceJobsDTO = _mapper.Map<List<ViewDeviceJobDTO>>(deviceJobs);
-            //List<ViewDeviceJobDTO> deviceJobsDTO = new List<ViewDeviceJobDTO>();
-
-            //foreach (DeviceJob d in deviceJobs)
-            //{
-            //ViewDeviceDTO deviceDTO = _mapper.Map<ViewDeviceDTO>(d.Device);
-
-            //JobDTO jobDTO = _mapper.Map<JobDTO>(d.Job);
-
-            //ViewDeviceJobDTO deviceJobDTO = _mapper.Map<ViewDeviceJobDTO>(d);
-            //deviceJobDTO.Job = jobDTO;
-
-            //deviceJobsDTO.Add(deviceJobDTO);
-            //}
-
+            
             return Ok(deviceJobsDTO);
         }
 
@@ -141,14 +120,14 @@ namespace ROBOLab.API.Controllers
         public async Task<ActionResult<ViewDeviceJobValueDTO>> GetDeviceJobValue(int valueId)
         {
             var value = await _context.Values.Include(v => v.Device).Include(v => v.Property).Include(v => v.DeviceJob).Where(v => v.Id == valueId).FirstOrDefaultAsync();
-            if (value.DeviceJob == null)
-            {
-                return NotFound($"There is no value with given id: {valueId} for any device job.");
-            }
-
             if (value == null)
             {
                 return NotFound($"There is no value for given id: {valueId}.");
+            }
+
+            if (value.DeviceJob == null)
+            {
+                return NotFound($"There is no value with given id: {valueId} for any device job.");
             }
 
             ViewDeviceJobValueDTO viewValueDTO = _mapper.Map<ViewDeviceJobValueDTO>(value);
@@ -243,40 +222,23 @@ namespace ROBOLab.API.Controllers
             }
         }
 
-        //return first job with false value done flag
         // GET: api/device-jobs/device/{id}/flase-done-flag
         [HttpGet("device/{deviceId}/false-done-flag")]
         public async Task<ActionResult<ViewDeviceJobDTO>> GetDeviceJobFalseDoneFlag(int deviceId)
         {
-            /*List<DeviceJob> deviceJobs = await _context.DeviceJobs
-                .Where(deviceJob => deviceJob.Done == false)
-                .Include(d => d.Device).Include(j => j.Job)
-                .Where(deviceJob => deviceJob.Device.Id == deviceId)
-                .Include(d => d.Device.DeviceType)
-                .Include(d => d.Job.DeviceType).ToListAsync();*/
-
             var deviceJob = await _context.DeviceJobs
                 .Where(d => d.Status == DeviceJobStatus.Created && d.Device.Id == deviceId)
                 .OrderBy(d => d.CreatedDate)
                 .Include(d => d.Job)
                     .ThenInclude(j => j.DeviceType)
                 .FirstOrDefaultAsync();
-            //without include device type in job and device
-            //List<DeviceJob> deviceJobs = await _context.DeviceJobs.Where(deviceJob => deviceJob.Done == false).Include(d => d.Device).Include(j => j.Job).Where(deviceJob => deviceJob.Device.Id == deviceId).ToListAsync();
-
-            //var deviceJob = deviceJobs.FirstOrDefault();
+            
             if (deviceJob == null)
             {
                 return NotFound($"There is no pending tasks for the device with given id: {deviceId}.");
             }
 
-            //ViewDeviceDTO deviceDTO = _mapper.Map<ViewDeviceDTO>(deviceJob.Device);
-
-            //JobDTO jobDTO = _mapper.Map<JobDTO>(deviceJob.Job);
-
             ViewDeviceJobDTO deviceJobDTO = _mapper.Map<ViewDeviceJobDTO>(deviceJob);
-
-            //deviceJobDTO.Job = jobDTO;
 
             deviceJob.Status = DeviceJobStatus.Submitted;
             deviceJob.StatusChanged = DateTime.Now;
@@ -286,7 +248,6 @@ namespace ROBOLab.API.Controllers
             return Ok(deviceJobDTO);
         }
 
-        //return all jobs with false value done flag
         // GET: api/device-jobs/device/{id}/all-flase-done-flag
         [HttpGet("device/{deviceId}/all-flase-done-flag")]
         public async Task<ActionResult<IEnumerable<ViewDeviceJobDTO>>> GetAllDeviceJobsFalseDoneFlag(int deviceId)
@@ -299,9 +260,9 @@ namespace ROBOLab.API.Controllers
                     .ThenInclude(j => j.DeviceType)
                 .ToListAsync();
             
-            if (deviceJobs == null)
+            if (deviceJobs.Count == 0)
             {
-                return NotFound($"There is no device job with false isDone flag for device with given id: {deviceId}.");
+                return NotFound($"There is no device jobs with false isDone flag for device with given id: {deviceId}.");
             }
 
             var deviceJobsDTO = _mapper.Map<List<ViewDeviceJobDTO>>(deviceJobs);
@@ -401,8 +362,6 @@ namespace ROBOLab.API.Controllers
         [HttpPost("device/{deviceId}/job/{jobId}")]
         public async Task<ActionResult<ViewDeviceJobDTO>> PostDeviceJob(int deviceId, int jobId, AddDeviceJobDTO deviceJob)
         {
-            //without include device type in job and device
-            //TODO: check if the device type in device and job are the same
             var device = await _context.Devices.Where(d => d.Id == deviceId).Include(d => d.DeviceType).FirstOrDefaultAsync();
 
             if (device == null)
