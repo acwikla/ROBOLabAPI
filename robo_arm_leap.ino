@@ -21,9 +21,10 @@ int max_angle = 180;
 int number_of_elements = 0;
 int angle_set_initial_pose [] = {5, 90, 4, 120, 3, 120, 2, 15, 1, 90, 0, 90};
 bool print_info_flag=false;
+
 void turn_on_servo_with_basic_angle_set(int angle_set [], int num_of_el, int pouring_time_millisec=0){
   
-  Serial.println("turn_on_servo_with_basic_angle_set");
+  Serial.println("[turn_on_servo_with_basic_angle_set]");
   //check if size of angleSet is even number
   if(num_of_el%2==1){
   }
@@ -33,7 +34,7 @@ void turn_on_servo_with_basic_angle_set(int angle_set [], int num_of_el, int pou
     if(!is_angle_value_valid){
       return;
     }
-    Serial.println("chanel: "+String(angle_set[i])+" angle: "+String(angle_set[i+1]));
+    print_info("chanel: "+String(angle_set[i])+" angle: "+String(angle_set[i+1]));
     int converted_angle = converted_angle = map(angle_set[i+1], 0, max_angle, 2000, 10000);
     maestro.setTarget(angle_set[i], converted_angle);
     //delay(1000);
@@ -51,7 +52,7 @@ bool check_valid_angle_set_value(int channel, int angle){
 
 void turn_on_servo_with_angle_differences(int channel_table [],int angle_differences_table [], int lenght){
   
-  Serial.println("turn_on_servo_with_angle_differences");
+  Serial.println("[turn_on_servo_with_angle_differences]");
   
   for(int i=0; i<lenght; i++){
     
@@ -64,11 +65,11 @@ void turn_on_servo_with_angle_differences(int channel_table [],int angle_differe
 
     int full_angle_radious=converted_to_radious_channel_position+angle_differences_table[i];
 
-    Serial.println("chanel: "+String(channel_table[i])+" channel_position_maestro: "+String(channel_position));
-    Serial.println("channel_position_radious: "+String(converted_to_radious_channel_position));
-    Serial.println("difference_angle_maestro: "+String(map(angle_differences_table[i], 0, max_angle, 2000, 10000)));
-    Serial.println("difference_angle_radious: "+String(angle_differences_table[i]));
-    Serial.println("full_angle_radious: "+String(full_angle_radious));
+    print_info("chanel: "+String(channel_table[i])+" channel_position_maestro: "+String(channel_position));
+    print_info("channel_position_radious: "+String(converted_to_radious_channel_position));
+    print_info("difference_angle_maestro: "+String(map(angle_differences_table[i], 0, max_angle, 2000, 10000)));
+    print_info("difference_angle_radious: "+String(angle_differences_table[i]));
+    print_info("full_angle_radious: "+String(full_angle_radious));
     
     bool is_angle_value_valid = check_valid_angle_set_value(channel_table[i], full_angle_radious);
     if(!is_angle_value_valid){
@@ -77,7 +78,7 @@ void turn_on_servo_with_angle_differences(int channel_table [],int angle_differe
     
     //finalnie dobra wartosc:
     int full_angle_radious_maestro = map(full_angle_radious, 0, max_angle, 2000, 10000);
-    Serial.println("full_angle_radious_maestro: "+String(full_angle_radious_maestro));
+    print_info("full_angle_radious_maestro: "+String(full_angle_radious_maestro));
     maestro.setTarget(channel_table[i], full_angle_radious_maestro);
     
     //delay(1000);
