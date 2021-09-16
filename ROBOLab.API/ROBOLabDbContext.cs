@@ -197,7 +197,7 @@ namespace ROBOLab.API
             var jobRunAnyDifferenceSequence = new
             {
                 Id = 7,
-                Name = "RunAnyDifferenceSequence ",
+                Name = "RunAnyDifferenceSequence",
                 DeviceTypeId = roboArmArexxDevType.Id,
                 Description = "Run any sequence with angle difference.",
                 Properties = "name: channels, type: table[int], min: 0, max: 5; name: angleDifferences, type: table[int], min: 0, max: 180",
