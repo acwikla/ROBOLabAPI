@@ -2,15 +2,17 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using ROBOLab.API;
 
 namespace ROBOLab.API.Migrations
 {
     [DbContext(typeof(ROBOLabDbContext))]
-    partial class ROBOLabDbContextModelSnapshot : ModelSnapshot
+    [Migration("20210916030254_AddSetInitRoboArmPoseJob")]
+    partial class AddSetInitRoboArmPoseJob
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -122,7 +124,7 @@ namespace ROBOLab.API.Migrations
                         {
                             Id = 1,
                             Body = "#FF6611",
-                            CreatedDate = new DateTime(2021, 9, 16, 5, 6, 14, 888, DateTimeKind.Local).AddTicks(2604),
+                            CreatedDate = new DateTime(2021, 9, 16, 5, 2, 54, 307, DateTimeKind.Local).AddTicks(8068),
                             DeviceId = 1,
                             Done = false,
                             JobId = 1,
@@ -132,7 +134,7 @@ namespace ROBOLab.API.Migrations
                         {
                             Id = 2,
                             Body = "",
-                            CreatedDate = new DateTime(2021, 9, 16, 5, 6, 14, 890, DateTimeKind.Local).AddTicks(5872),
+                            CreatedDate = new DateTime(2021, 9, 16, 5, 2, 54, 310, DateTimeKind.Local).AddTicks(735),
                             DeviceId = 1,
                             Done = false,
                             JobId = 2,
@@ -142,7 +144,7 @@ namespace ROBOLab.API.Migrations
                         {
                             Id = 3,
                             Body = "",
-                            CreatedDate = new DateTime(2021, 9, 16, 5, 6, 14, 890, DateTimeKind.Local).AddTicks(5904),
+                            CreatedDate = new DateTime(2021, 9, 16, 5, 2, 54, 310, DateTimeKind.Local).AddTicks(765),
                             DeviceId = 100,
                             Done = false,
                             JobId = 100,
@@ -152,7 +154,7 @@ namespace ROBOLab.API.Migrations
                         {
                             Id = 4,
                             Body = "",
-                            CreatedDate = new DateTime(2021, 9, 16, 5, 6, 14, 890, DateTimeKind.Local).AddTicks(5909),
+                            CreatedDate = new DateTime(2021, 9, 16, 5, 2, 54, 310, DateTimeKind.Local).AddTicks(846),
                             DeviceId = 120,
                             Done = false,
                             JobId = 120,
@@ -162,7 +164,7 @@ namespace ROBOLab.API.Migrations
                         {
                             Id = 5,
                             Body = "",
-                            CreatedDate = new DateTime(2021, 9, 16, 5, 6, 14, 890, DateTimeKind.Local).AddTicks(5912),
+                            CreatedDate = new DateTime(2021, 9, 16, 5, 2, 54, 310, DateTimeKind.Local).AddTicks(850),
                             DeviceId = 120,
                             Done = false,
                             JobId = 121,
@@ -295,7 +297,7 @@ namespace ROBOLab.API.Migrations
                             Id = 8,
                             Description = "Set initial robo arm pose.",
                             DeviceTypeId = 2,
-                            Name = "SetInitialPose",
+                            Name = "RunAnyDifferenceSequence",
                             Properties = ""
                         },
                         new

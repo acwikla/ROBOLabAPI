@@ -202,6 +202,14 @@ namespace ROBOLab.API
                 Description = "Run any sequence with angle difference.",
                 Properties = "name: channels, type: table[int], min: 0, max: 5; name: angleDifferences, type: table[int], min: 0, max: 180",
             };
+            var jobSetInitialPose = new
+            {
+                Id = 8,
+                Name = "SetInitialPose",
+                DeviceTypeId = roboArmArexxDevType.Id,
+                Description = "Set initial robo arm pose.",
+                Properties = "",
+            };
             //-------RoboLab------
             var jobMagicanPutTheSampleOnThePress = new          // arm
             {
@@ -245,6 +253,7 @@ namespace ROBOLab.API
                 jobFillCubeWithWater,
                 jobRunAnySequence,
                 jobRunAnyDifferenceSequence,
+                jobSetInitialPose,
                 jobMagicanPutTheSampleOnThePress,
                 jobPressSqueezeTheSample,
                 jobPressReleaseTheSample,
