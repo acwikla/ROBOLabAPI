@@ -89,9 +89,9 @@ namespace ROBOLab.API.Controllers
         [HttpGet("device/{deviceId}")]
         public async Task<ActionResult<IEnumerable<ViewDeviceJobDTO>>> GetDeviceJobForDevice(int deviceId)
         {
-            var device = await _context.Devices.Where(device => device.Id == deviceId).FirstOrDefaultAsync();
+            var deviceExist = await _context.Devices.AnyAsync(device => device.Id == deviceId);
 
-            if (device == null)
+            if (deviceExist == false)
             {
                 return BadRequest($"There is no device for given id: {deviceId}.");
             }

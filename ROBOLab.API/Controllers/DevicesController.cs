@@ -253,12 +253,8 @@ namespace ROBOLab.API.Controllers
         private async Task<ActionResult<ViewDeviceValueDTO>> PostNewValueForDevice(Device device, Property property, int? devJobId, string value)
         {
             // check: is device job id correct ?
-            if (devJobId == null)
-            {
-                devJobId = 0;
-            }
-
-            if (devJobId != 0)
+            
+            if (devJobId != null)
             {
                 var deviceJob = await _context.DeviceJobs.Include(d => d.Job).Include(d => d.Device)
                     .Where(d => d.Id == devJobId).FirstOrDefaultAsync();
