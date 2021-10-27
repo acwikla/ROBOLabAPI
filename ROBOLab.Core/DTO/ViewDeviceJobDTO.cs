@@ -22,6 +22,9 @@ namespace ROBOLab.Core.DTO
         public string Body { get; set; }
 
         [Required]
+        public string Title { get; set; }
+
+        [Required]
         public DeviceJobStatus Status { get; set; }
 
         public DateTime? StatusChanged { get; set; }

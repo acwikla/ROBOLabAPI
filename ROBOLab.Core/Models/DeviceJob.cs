@@ -21,6 +21,9 @@ namespace ROBOLab.Core.Models
         public bool Done { get; set; }
 
         [Required]
+        public string Title { get; set; }
+
+        [Required]
         public string Body { get; set; }
 
         [EnumDataType(typeof(DeviceJobStatus)), DefaultValue(DeviceJobStatus.Created)]

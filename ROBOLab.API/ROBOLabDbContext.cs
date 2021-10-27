@@ -349,6 +349,7 @@ namespace ROBOLab.API
                 {
                     Id = 1,
                     CreatedDate = DateTime.Now,
+                    Title = "Turn On LED1",
                     DeviceId = smartTerraDev1.Id,
                     JobId = jobTurnOnLED.Id,
                     Done = false,
@@ -361,6 +362,7 @@ namespace ROBOLab.API
                 {
                     Id = 2,
                     CreatedDate = DateTime.Now,
+                    Title = "Turn off LED1",
                     DeviceId = smartTerraDev1.Id,
                     JobId = jobTurnOffLED.Id,
                     Done = false,
@@ -373,6 +375,7 @@ namespace ROBOLab.API
                 {
                     Id = 3,
                     CreatedDate = DateTime.Now,
+                    Title = "Magician arm v2: put the sample on the press",
                     DeviceId = dobotMagicianDev.Id,
                     JobId = jobMagicanPutTheSampleOnThePress.Id,
                     Done = false,
@@ -385,6 +388,7 @@ namespace ROBOLab.API
                 {
                     Id = 4,
                     CreatedDate = DateTime.Now,
+                    Title = "Robo lab press: squeeze the sample",
                     DeviceId = roboLabPressDev.Id,
                     JobId = jobPressSqueezeTheSample.Id,
                     Done = false,
@@ -397,6 +401,7 @@ namespace ROBOLab.API
                 {
                     Id = 5,
                     CreatedDate = DateTime.Now,
+                    Title = "Robo lab press: release the sample",
                     DeviceId = roboLabPressDev.Id,
                     JobId = jobPressReleaseTheSample.Id,
                     Done = false,
